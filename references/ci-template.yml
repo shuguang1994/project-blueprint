@@ -1,0 +1,119 @@
+# GitHub Actions / Gitee Go CI 模板
+
+> Skill `project-blueprint` Step 5 参考。根据 Step 1 探测结果选择对应模板。
+
+---
+
+## TypeScript / NestJS 项目
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [develop, master]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run test -- --passWithNoTests
+```
+
+---
+
+## Vue / React 前端项目（Vite）
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [develop, master]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  lint-and-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test -- --passWithNoTests
+```
+
+---
+
+## Go 项目
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [develop, master]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - run: go build ./...
+      - run: go test ./...
+```
+
+---
+
+## Python 项目
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [develop, master]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pytest ruff
+      - run: ruff check .
+      - run: pytest --passWithNoTests
+```
+
+---
+
+## 选择规则
+
+1. 如果项目远程仓库在 **Gitee**（`git remote -v` 包含 gitee.com）→ 文件名改为 `.gitee-ci.yml`
+2. 如果项目远程仓库在 **GitHub** → 文件放在 `.github/workflows/ci.yml`
+3. 如果 CI 目录/文件已存在 → 跳过，不覆盖

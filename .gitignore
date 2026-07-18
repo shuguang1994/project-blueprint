@@ -1,0 +1,12 @@
+# Recommended .gitignore for project-blueprint repository
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+*.icloud
