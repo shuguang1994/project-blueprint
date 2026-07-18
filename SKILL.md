@@ -120,7 +120,7 @@ license: MIT
 
 ### 2.0 读取知识库
 
-**首先读取** `references/knowledge-base.md` 全文，理解其组件条目的格式：
+**按探测到的组件名**在 `references/knowledge-base.md` 中搜索对应条目（不读全文，按 `## [组件名]` 定位）:
 ```
 ## [组件名]
 **Commands**: 精确可执行命令
@@ -178,7 +178,7 @@ Step 1 探测结果
 
 ### 2.3 禁止做的事
 - ❌ 不写本项目特定信息（IP、人名、公司名）— 用占位符
-- ❌ AGENTS.md 不超过 200 行 — 超限拆分到 docs/
+- ❌ AGENTS.md 不超过 300 行 — 超限拆分到 docs/
 - ❌ 不使用任何固定预设 — 始终从 knowledge-base 实时拼接
 
 ---
@@ -221,9 +221,18 @@ docs/
 
 ### 生成规则
 - 每个占位 .md 文件只有一行标题 + "(待填写 / TBD)" 占位
-- 分类目录下放 README.md 说明用途
+- **每个分类目录下创建 README.md**（见下方维护指令），让后续 Agent 知道何时更新
 - 如果 docs/ 已存在 → 只补充缺失的目录
 - 文件名保持中英双语标注，方便国际化项目
+
+### 目录维护指令（在 README.md 中注入）
+
+创建以下 README 让 Agent 在项目生命周期中持续维护文档：
+- `docs/A/README.md`: "基准文档。架构变更时同步更新 A-02~A-04。"
+- `docs/B/README.md`: "运维文档。流程变更时同步，每次部署后检查 B-02。"
+- `docs/C/README.md`: "知识沉淀。每次重大决策或修复典型 Bug 后同步更新。"
+- `docs/D/README.md`: "方案设计。新方案确定后补充。"
+- `docs/E/README.md`: "分析优化。定期审计时更新。"
 
 ### 详细参考
 见 `references/docs-skeleton.md`
@@ -243,6 +252,15 @@ git commit -m "chore: 初始化项目规范体系 — AGENTS.md + docs/ + CI"
 git checkout -b develop
 ```
 
+### 分支策略文档
+
+在 AGENTS.md 中添加：
+```
+分支: master(生产) / develop(日常) / feat/xxx(功能) / fix/xxx(修复)
+提交格式: <type>(<scope>): <description>
+type: feat/fix/refactor/docs/test/chore/perf
+```
+
 ---
 
 ## Step 5：配置 CI/CD
@@ -255,7 +273,7 @@ git checkout -b develop
 
 ### 规则
 - 不依赖外部服务（DB/Redis/MQ）
-- 如果远程仓库是 Gitee → 创建 `.gitee-ci.yml`
+- 如果远程仓库是 Gitee → 创建 `.gitee-ci.yml`（语法与 GitHub Actions 不同，参考 [Gitee Go 文档](https://gitee.com/help/articles/4280)）
 - 如果远程仓库是 GitHub → 创建 `.github/workflows/ci.yml`
 - 如果 CI 目录/文件已存在 → 跳过，不覆盖
 
@@ -270,16 +288,24 @@ git checkout -b develop
 - Go: 无需安装（内置 testing）
 - Python: `pip install pytest`
 
-### 创建示例测试
+### 创建示例测试（按语言生成对应测试代码）
 
-在 `src/` 或 `__tests__/` 中创建一个简单测试：
-```typescript
-describe('Initial test', () => {
-  it('项目测试基础设施已就绪', () => {
-    expect(true).toBe(true);
+在项目中创建最小测试文件验证测试基础设施：
+
+- **TypeScript/JS**: `__tests__/example.spec.ts`
+  ```typescript
+  describe('Initial test', () => {
+    it('测试基础设施已就绪', () => { expect(true).toBe(true); });
   });
-});
-```
+  ```
+- **Go**: `example_test.go`
+  ```go
+  func TestInitial(t *testing.T) { t.Log("测试基础设施已就绪") }
+  ```
+- **Python**: `test_example.py`
+  ```python
+  def test_initial(): assert True
+  ```
 
 ### 在 AGENTS.md 中添加测试命令
 ```bash
@@ -351,13 +377,6 @@ AGENTS.md 的「上下文管理」章节必须包含 Agent 主动维护规则（
 - AGENTS.md 超 300 行必须精简
 - 项目记忆 (project_memory.md) 季度清理
 ```
-
-### 在 docs/ 目录注入维护 README
-
-每个分类目录下创建 `README.md`：
-- `docs/A/README.md`: "项目基准文档。架构变更时同步更新 A-02~A-04。"
-- `docs/B/README.md`: "开发运维文档。流程变更时同步，每次部署后检查 B-02。"
-- `docs/C/README.md`: "知识沉淀文档。每次重大决策或修复典型 Bug 后同步更新。"
 
 ### Agent 同步操作指南
 
