@@ -184,57 +184,78 @@ Step 1 探测结果
 
 ---
 
-## Step 3：建立 docs/ 目录骨架 + .trae/specs/
+## Step 3：建立自适应文档体系
 
-### 3.1 docs/ 目录结构
+> 不使用固定目录结构。根据项目实际框架、技术栈、业务类型动态生成。
+
+### 3.0 推断项目业务类型
+
+从 Step 1 探测结果和项目上下文推断业务类型，决定文档结构：
+
+| 线索 | 推断业务类型 | 文档侧重点 |
+|------|------------|----------|
+| 存在 `prisma/schema.prisma` / 多个 Model | 后端 API 服务 | 侧重 API 文档、数据库设计、部署运维 |
+| 存在 `pages/` / `app/` + `components/` | 前端应用 | 侧重 UI 规范、组件库、路由设计 |
+| 存在 `docker-compose.yml` + 多服务 | 微服务架构 | 侧重服务间通信、服务注册、配置管理 |
+| `package.json` description 含 `后台/管理/admin` | 管理后台 | 侧重权限、数据看板、批量操作 |
+| 存在 `mobile/` / `ios/` / `android/` / `uni-app` | 移动端应用 | 侧重蓝牙、推送、离线、多端适配 |
+| 以上组合 | 全栈项目 | 前后端分块 + 全栈部署文档 |
+| 以上都不匹配 | 通用项目 | 使用联网搜索推断或询问用户 |
+
+> **未知业务类型时**：WebSearch `"{project description} documentation best practices structure {currentYear}"`，从搜索结果中提取推荐的文档结构。
+
+### 3.1 自适应 docs/ 结构
+
+按业务类型生成对应文档（A/B/C/D/E 分类框架保留，内部文件按需增减）：
+
 ```
 docs/
-├── A/  (项目基准文档)
-│   ├── A-01-PRD.md              "产品需求文档 / PRD（待填写）"
-│   ├── A-02-技术架构.md          "技术架构说明 / Architecture（待填写）"
-│   ├── A-03-数据库设计.md         "数据库设计 / Database Design（待填写）"
-│   └── A-04-API接口.md          "API 接口文档 / API Docs（待填写）"
-├── B/  (开发运维文档)
-│   ├── B-01-开发规范.md          "开发规范 / Dev Standards（AGENTS.md 为权威源）"
-│   ├── B-02-部署指南.md          "部署操作指南 / Deployment Guide"
-│   ├── B-03-测试指南.md          "测试策略与命令 / Testing Guide"
-│   └── B-04-BUG知识库.md        "Bug 记录与修复 / Bug Knowledge Base"
-├── C/  (知识沉淀文档)
-│   ├── C-01-CodeWiki首页.md     "代码层知识库 / Code Wiki"
-│   ├── C-02-后端架构详解.md      "后端架构 / Backend Architecture"
-│   └── C-03-项目长期记忆.md      "项目长期记忆 / Project Memory"
-├── D/  (方案设计文档)
-│   └── D-01-系统运维方案.md      "运维方案 / Operations Plan"
-├── E/  (分析优化文档)
-│   └── E-01-代码耦合度分析.md    "代码质量分析 / Code Quality Analysis"
-├── archive/                      "已归档 / Archived"
-└── dev/                          "开发中 / In Development"
+├── A/  (项目基准 — 按业务类型选文件)
+│   ├── [必选] A-01-PRD.md              "产品需求文档 / PRD"
+│   ├── [按需] A-02-技术架构.md          "后端服务 / API 服务 / 微服务架构"
+│   ├── [按需] A-03-数据库设计.md         "有数据库时创建"
+│   ├── [按需] A-04-前端架构.md           "前端项目时创建"
+│   └── [按需] A-05-移动端架构.md         "移动端项目时创建"
+├── B/  (开发运维 — 始终全量)
+│   ├── B-01-开发规范.md / B-02-部署指南.md / B-03-测试指南.md / B-04-BUG知识库.md
+├── C/  (知识沉淀 — 始终全量)
+│   ├── C-01-CodeWiki首页.md / C-02-架构详解.md / C-03-项目长期记忆.md
+├── D/  (方案设计 — 按需)
+│   └── D-01-系统运维方案.md              "有后端/部署需求时创建"
+├── E/  (分析优化 — 按需)
+│   └── E-01-代码耦合度分析.md            "多模块项目时创建"
+├── archive/ / dev/
 ```
 
-### 3.2 .trae/specs/ 目录（Spec-Driven 开发基础设施）
+### 3.2 自适应模块速查表
+
+生成 AGENTS.md 模块表时，**读取实际目录结构**而非使用固定模板：
+
 ```
-mkdir -p .trae/specs/   # 确保父目录存在
+Step: 列出 src/ 或 app/ 下的一级子目录
+  → 按目录名 + 内部文件推断模块职责
+  → 写入 AGENTS.md 模块速查表
+  → 无法推断时标记为 "待补充"，提示用户完善
+```
+
+### 3.3 .trae/specs/ 目录（同前）
+```
+mkdir -p .trae/specs/
 .trae/specs/
 └── README.md   # 说明 spec.md + tasks.md + checklist.md 三件套格式
 ```
-
-> 如果使用的 IDE 是 Cursor，创建 `.cursor/specs/` 目录替代 `.trae/specs/`。
-> 如果 IDE 不支持 specs 目录，跳过此步。
+> 如果 IDE 是 Cursor → `.cursor/specs/`。不支持 specs 则跳过。
 
 ### 生成规则
-- 每个占位 .md 文件只有一行标题 + "(待填写 / TBD)" 占位
-- **每个分类目录下创建 README.md**（见下方维护指令），让后续 Agent 知道何时更新
-- 如果 docs/ 已存在 → 只补充缺失的目录
-- 文件名保持中英双语标注，方便国际化项目
-
-### 目录维护指令（在 README.md 中注入）
-
-创建以下 README 让 Agent 在项目生命周期中持续维护文档：
-- `docs/A/README.md`: "基准文档。架构变更时同步更新 A-02~A-04。"
-- `docs/B/README.md`: "运维文档。流程变更时同步，每次部署后检查 B-02。"
-- `docs/C/README.md`: "知识沉淀。每次重大决策或修复典型 Bug 后同步更新。"
-- `docs/D/README.md`: "方案设计。新方案确定后补充。"
-- `docs/E/README.md`: "分析优化。定期审计时更新。"
+- 占位文件只一行标题 + "(待填写 / TBD)"
+- 每个分类目录下创建 README.md 维护指令：
+  - `docs/A/README.md`: "基准文档。架构变更时同步更新。"
+  - `docs/B/README.md`: "运维文档。流程变更时同步，每次部署后检查。"
+  - `docs/C/README.md`: "知识沉淀。每次重大决策或修复典型 Bug 后更新。"
+  - `docs/D/README.md`: "方案设计。新方案确定后补充。"
+  - `docs/E/README.md`: "分析优化。定期审计时更新。"
+- docs/ 已存在 → 只补缺失
+- 文件名中英双语
 
 ### 详细参考
 见 `references/docs-skeleton.md`

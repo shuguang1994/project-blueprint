@@ -379,6 +379,48 @@
 ✅ 无 N+1 查询?
 ✅ API 响应格式一致?
 
+---
+
+## 业务类型文档模式
+
+> Step 3 推断业务类型后的文档生成指南。**不使用固定目录**，按业务类型 + WebSearch 动态生成。
+
+### 后端 API 服务
+**标识**: prisma/schema.prisma / go.mod + gin/echo / requirements.txt + fastapi/flask
+**文档侧重**: `A-02-技术架构.md` / `A-03-数据库设计.md` / `D-01-系统运维方案.md`
+**联网搜索**: `"{framework} API service documentation structure best practices {currentYear}"`
+
+### 前端应用
+**标识**: pages/ / app/ + components/ / src/components/
+**文档侧重**: `A-04-前端架构.md` / 组件库文档 / 路由设计
+**联网搜索**: `"{framework} frontend project documentation structure {currentYear}"`
+
+### 微服务架构
+**标识**: docker-compose.yml + 3+ services
+**文档侧重**: `A-02-技术架构.md`(服务拓扑) / 服务间通信规范 / 配置管理
+**联网搜索**: `"microservices documentation structure service topology {currentYear}"`
+
+### 管理后台
+**标识**: package.json description 含 `后台/管理/admin`
+**文档侧重**: 权限模型文档 / 数据看板说明 / 批量操作规范
+**联网搜索**: `"admin dashboard documentation structure {currentYear}"`
+
+### 移动端应用
+**标识**: mobile/ / ios/ / android/ / uni-app / React Native / Flutter
+**文档侧重**: `A-05-移动端架构.md` / 蓝牙协议 / 推送通知 / 离线策略
+**联网搜索**: `"mobile app technical documentation structure {currentYear}"`
+
+### 未知类型
+**联网搜索**: `"{project description or framework} project documentation best practices {currentYear}"`
+
+### 模块速查表生成规则
+```
+✅ 读取 src/ 或 app/ 一级子目录列表 → 写入 AGENTS.md 模块表
+✅ 按目录名 + 内部文件(controller/service/model) 推断职责
+✅ 无法推断时标记 "待补充"，提示用户完善
+❌ 不使用固定模板的占位符模块名
+```
+
 语言特定:
   TS/JS: tsc --noEmit 通过? / 无 any?
   Go:    go vet 通过? / err 都已处理?
