@@ -110,9 +110,10 @@ license: MIT
 
 ### 1.4 混合项目处理
 
-若同时存在 `package.json` + `go.mod`（前后端分离）：
-- 分两块输出: `frontend: { ... }` + `backend: { ... }`
-- 优先为后端生成完整规范，前端标记为"待补充"
+若同时存在多种语言的构建文件（前后端分离或多服务架构）：
+- 分块输出: `frontend: { ... }` + `backend: { ... }` + ...
+- 按主构建文件（package.json 优先 / go.mod / requirements.txt）优先为后端生成完整规范
+- 次要语言的块标记为"待补充"，并提示用户可再次触发 Skill 单独处理
 
 ---
 
@@ -135,7 +136,7 @@ license: MIT
 ```
 Step 1 探测结果
     ↓
-对每个组件（framework/orm/css/testing/lint/state）:
+对每个组件（language/framework/orm/css/testing/lint/state）:
     ↓
 在 references/knowledge-base.md 中查找对应组件条目
     ↓
@@ -212,6 +213,7 @@ docs/
 
 ### 3.2 .trae/specs/ 目录（Spec-Driven 开发基础设施）
 ```
+mkdir -p .trae/specs/   # 确保父目录存在
 .trae/specs/
 └── README.md   # 说明 spec.md + tasks.md + checklist.md 三件套格式
 ```
@@ -249,7 +251,7 @@ docs/
 git init  # 如果还没初始化
 git add -A
 git commit -m "chore: 初始化项目规范体系 — AGENTS.md + docs/ + CI"
-git checkout -b develop
+git checkout -b develop 2>/dev/null || git checkout develop  # 已有 develop 分支则直接切换
 ```
 
 ### 分支策略文档
@@ -287,6 +289,9 @@ type: feat/fix/refactor/docs/test/chore/perf
 - Vue/React: `npm install --save-dev vitest @vue/test-utils` / `@testing-library/react`
 - Go: 无需安装（内置 testing）
 - Python: `pip install pytest`
+- Java: 内置（JUnit 5，若未引入则 `./gradlew test`）
+- Rust: 内置（`cargo test`）
+- Ruby: `gem install rspec`
 
 ### 创建示例测试（按语言生成对应测试代码）
 
@@ -307,12 +312,14 @@ type: feat/fix/refactor/docs/test/chore/perf
   def test_initial(): assert True
   ```
 
-### 在 AGENTS.md 中添加测试命令
-```bash
-npm run test              # 运行所有测试
-npm run test -- path.ts   # 单文件测试
-npm run test:cov          # 覆盖率
-```
+### 在 AGENTS.md 中添加测试命令（按语言）
+
+从 knowledge-base 中提取对应**测试层**组件的 Commands：
+- **TypeScript/JS**: `npm run test` / `npm run test -- path.spec.ts` / `npm run test:cov`
+- **Go**: `go test ./...` / `go test -run TestName ./pkg/`
+- **Python**: `python -m pytest` / `python -m pytest tests/test_xxx.py`
+- **Java**: `./gradlew test` / `mvn test`
+- **Rust**: `cargo test`
 
 ### 配置 pre-commit hook（需用户确认后执行）
 

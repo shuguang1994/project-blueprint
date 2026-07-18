@@ -29,15 +29,13 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 
 **Our approach**: Project Blueprint reads your actual project files, detects the stack, and assembles a custom AGENTS.md from a 61-component knowledge base. It's not a template — it's a rules engine. Unknown stacks get web-searched in real-time. And it's the only tool that generates a full docs/ skeleton (A/B/C/D/E classification), CI pipeline, and testing infrastructure — all from a single sentence.
 
-项目面临的现实问题：每个新项目第一天都在搭规范体系 —— AGENTS.md、CI/CD、测试框架、文档目录。现有工具只给静态模板，不关注具体技术栈、不覆盖 CI、不设测试、不支持中文。
-
-Project Blueprint 在做的事：读真实的项目文件，探测技术栈，从 61 组件的知识库中实时拼装一套 AGENTS.md。不是模板，是规则引擎。未知栈联网搜索。唯一能一句话生成完整文档骨架 + CI + 测试基础设施的工具。
+> 中文用户请参考 [README_CN.md](README_CN.md)
 
 ## What It Generates
 
 | Output | Description |
 |--------|-------------|
-| `AGENTS.md` | Project conventions (150-200 lines, Commands + Boundaries + Code Style + Review Checklist) |
+| `AGENTS.md` | Project conventions (Commands + Boundaries + Code Style + Review Checklist, governed by architecture principles) |
 | `docs/` | A/B/C/D/E classified documentation skeleton |
 | `.github/workflows/ci.yml` | CI pipeline (auto-adapts to your tech stack) |
 | `.gitignore` | Curated gitignore rules |

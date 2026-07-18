@@ -1,7 +1,6 @@
 # 组件知识库
 
-> 规则引擎拼接 AGENTS.md 时的参考源。每个组件含 Commands / Conventions / CI 三段。
-> 从 presets/ 目录提取关键信息 + 通用最佳实践扩展。v1.0 | 2026-07-18
+> 规则引擎拼接 AGENTS.md 时的参考源。每个组件含 Commands / Conventions / CI 三段。v1.3
 
 ---
 
