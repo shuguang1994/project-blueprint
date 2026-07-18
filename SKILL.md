@@ -1,6 +1,6 @@
 ---
 name: project-blueprint
-description: 为新项目快速建立完整 AI 编程规范体系（AGENTS.md、文档目录、CI/CD、Git规范、测试框架）。自适应探测 7 语言 14 框架 61 组件，未知栈联网回退。Establish AI coding conventions for new projects — adaptive tech stack detection, AGENTS.md generation, CI/CD setup, testing infrastructure. Use when user says "init project" "setup conventions" "bootstrap project" "AGENTS.md template".
+description: 为新项目快速建立完整 AI 编程规范体系（AGENTS.md、文档目录、CI/CD、Git规范、测试制度）。自主发现引擎：扫描项目→分类文件→推断技术栈，覆盖 8 语言 15 框架 70+ 组件，未知栈三层递进联网回退。Establish AI coding conventions for new projects — autonomous discovery engine with heuristic dep classification, 8 languages 15 frameworks 70+ components, web search fallback for unknowns.
 author: 曙光 (shuguang1994)
 license: MIT
 ---
@@ -24,7 +24,9 @@ license: MIT
 
 ---
 
-## Step 1：自适应探测引擎
+## Step 1：自主发现引擎
+
+> 不预设"有哪些文件要检查"。扫描项目实际有什么，从中自主推断技术栈。
 
 ### 1.0 读取已有项目文档（增量模式）
 
@@ -38,82 +40,193 @@ license: MIT
 | `docs/` 已有文件 | 已完成文档列表 | 跳过已有，只补充缺失 |
 | `git log --oneline -20` | commit 风格（conventional / 自由格式） | 推断提交格式 |
 
-> 原则：已有项目接入时做**增量补充**，不推翻重来。如果 AGENTS.md 已存在且质量良好，仅补充 Commands / CI / 测试章节。
+> 原则：已有项目接入时做**增量补充**，不推翻重来。
+> 
+> **质量判断标准**：AGENTS.md 包含以下 4 个核心章节视为"质量良好"→ 仅做缺失检查，不覆盖：
+> - 项目身份（技术栈/部署信息）
+> - 常用命令
+> - 强制规范（模块封装/安全/性能/日志）
+> - Git 规范
+> 
+> **质量良好时**：输出 `AGENTS.md 已完善，跳过生成。检查到以下可补充项：{缺失列表}`，让用户决定是否补充。
+> **仅 1-3 个章节缺失时**：补充缺失部分，保留已有内容。
+> **完全没有或质量差时**：完整生成。
 
-### 1.1 多文件并行探测
+### 1.1 自主文件发现（扫描 → 分类 → 推断）
 
-读取以下所有存在的文件（不存在则跳过）：
+> **不预设文件列表**。扫描项目根目录和一级子目录，发现所有构建/配置/清单文件后按类别推断技术栈。
 
-| 文件 | 提取信息 | 推断规则 |
-|------|---------|---------|
-| `package.json` | dependencies/devDependencies/scripts | 按 dep key 匹配框架/ORM/CSS/测试 |
-| `tsconfig.json` | strict / paths / target | strictMode, pathAliases |
-| `go.mod` | module / go version / require | Go 版本 + 框架(gin/echo/fiber/chi) |
-| `requirements.txt` / `pyproject.toml` | 依赖列表 | fastapi/flask/django/sqlalchemy |
-| `pom.xml` / `build.gradle` | dependencies | spring-boot/jpa/lombok |
-| `Cargo.toml` | [dependencies] | actix-web/rocket/tokio |
-| `Gemfile` | gem 列表 | rails/sinatra |
-| `docker-compose.yml` | services | 数据库/缓存/消息队列 |
-| `git remote -v` | remote url | github.com / gitee.com |
-| `.eslintrc*` / `.prettierrc*` | lint 配置 | ESLint/Prettier/Biome 存在性 |
+**发现策略**：
+```
+Step A: 扫描项目根目录 + 一级子目录的所有文件（跳过 node_modules/dist/.git）
+Step B: 按文件名模式分类
+Step C: 对分类结果逐项提取信息
+```
 
-### 1.2 依赖 → 组件推断规则表
+**文件名模式 → 类别映射**（用于分类，不用于限制扫描范围）：
 
-从 package.json 的 dependencies + devDependencies 中匹配：
+| 文件名模式 | 类别 | 提取什么 |
+|-----------|------|---------|
+| `package.json` | JS/TS 项目清单 | dependencies, devDependencies, scripts → 转入 1.2 依赖分类 |
+| `*/package.json`（子目录） | 子项目清单 | 同上，标记为多子项目结构 |
+| `go.mod` | Go 项目清单 | module 名, Go 版本, require 列表 |
+| `requirements*.txt` | Python 依赖 | 依赖名列表 |
+| `pyproject.toml` | Python 项目配置 | [project] dependencies, [tool.*] |
+| `pom.xml` / `build.gradle*` | Java 项目清单 | dependencies, plugins |
+| `Cargo.toml` | Rust 项目清单 | [dependencies] |
+| `Gemfile` | Ruby 项目清单 | gem 列表 |
+| `composer.json` | PHP 项目清单 | require, require-dev |
+| `*.csproj` / `*.fsproj` | .NET 项目清单 | PackageReference |
+| `tsconfig.json` / `jsconfig.json` | TS/JS 编译配置 | strict, paths, target |
+| `vite.config.*` | Vite 构建配置 | 插件列表 → 框架推断 |
+| `next.config.*` | Next.js 配置 | 框架确认 |
+| `nuxt.config.*` | Nuxt 配置 | 框架确认 |
+| `svelte.config.*` | Svelte 配置 | 框架确认 |
+| `webpack.config.*` | Webpack 配置 | 构建工具 |
+| `tailwind.config.*` | Tailwind 配置 | CSS 框架确认 |
+| `.eslintrc*` / `eslint.config.*` | ESLint 配置 | Lint 工具 |
+| `.prettierrc*` | Prettier 配置 | 格式化工具 |
+| `biome.json` | Biome 配置 | Lint+格式 |
+| `manifest.json` + `pages.json` | uni-app 项目 | 跨端框架确认 |
+| `app.json` / `project.config.json` | 微信小程序/Taro | 小程序框架 |
+| `docker-compose.yml` / `docker-compose.yaml` | Docker 编排 | services(数据库/缓存/MQ) |
+| `Dockerfile` | Docker 镜像 | 基础镜像 → 运行时推断 |
+| `ecosystem.config.js` / `pm2.json` | PM2 配置 | 进程守护部署 |
+| `.env.example` / `.env.template` | 环境变量模板 | 所需服务（DB_HOST/REDIS_URL 等） |
+| `Makefile` / `justfile` | 任务脚本 | 常用命令 |
+| `.github/workflows/*.yml` | GitHub Actions | CI 流程 → 语言/框架确认 |
+| `.gitlab-ci.yml` | GitLab CI | CI 流程 |
+| `nginx.conf` / `nginx/` | Nginx 配置 | 反向代理/静态部署 |
 
-| 关键词 | 推断组件 | 维度 |
-|--------|---------|------|
-| `next` | Next.js | framework |
-| `react` | React | framework |
-| `vue` | Vue 3 | framework |
-| `@nestjs/core` | NestJS | framework |
-| `express` | Express | framework |
-| `fastify` | Fastify | framework |
-| `svelte` | SvelteKit | framework |
-| `nuxt` | Nuxt 3 | framework |
-| `@prisma/client` | Prisma | orm |
-| `typeorm` | TypeORM | orm |
-| `drizzle-orm` | Drizzle | orm |
-| `sequelize` | Sequelize | orm |
-| `tailwindcss` | Tailwind CSS | css |
-| `styled-components` | styled-components | css |
-| `sass` / `node-sass` | SCSS | css |
-| `jest` | Jest | testing |
-| `vitest` | Vitest | testing |
-| `@playwright/test` | Playwright | testing |
-| `eslint` | ESLint | lint |
-| `prettier` | Prettier | lint |
-| `@biomejs/biome` | Biome | lint |
-| `pinia` | Pinia | state |
-| `zustand` | Zustand | state |
-| `@tanstack/react-query` | TanStack Query | state |
+> **不在上表中的文件**：按扩展名和内容关键词推断用途。仍无法确定 → 记录文件名，报告中列出"未识别文件"供用户确认。
 
-> Go/Python/Java 框架按 go.mod/requirements.txt/pom.xml 中的依赖名直接匹配。
+**项目结构推断**（按子目录模式）：
+```
+检测到多个 */package.json / */go.mod 等构建文件在子目录中
+  ↓
+server/ + admin/ + client/ → 前后端分离（3 层）
+server/ + web/              → 前后端分离（2 层）
+packages/*/ + pnpm-workspace.yaml → monorepo
+apps/*/ + packages/*/       → turborepo/nx monorepo
+src/ 单个                    → 单项目
+```
+
+### 1.2 智能依赖分类（三层递进）
+
+> **不使用固定映射表**。从实际依赖出发，逐层推断类别和组件身份。
+
+**三层分类流程**：
+```
+扫描到的所有依赖（来自 package.json/go.mod/requirements.txt 等）
+    ↓
+第 1 层 — 知识库精确匹配
+  在 references/knowledge-base.md 中搜索依赖名
+  命中 → 提取 Commands/Conventions/CI（快速通道）
+    ↓
+第 2 层 — 命名模式启发推断
+  未命中 → 按依赖名关键词推断类别和用途
+  见下方「命名模式 → 维度推断」规则
+    ↓
+第 3 层 — 联网搜索
+  仍无法分类 → WebSearch "{depName} npm package what is it"（JS）
+          或 WebSearch "{depName} {language} package purpose"
+  从搜索结果提取：类别、用途、是否有对应知识库条目可补充
+    ↓
+输出: { depName → 维度: 组件名, 置信度: exact|heuristic|web }
+```
+
+**命名模式 → 维度推断规则**（第 2 层启发式）：
+
+| 依赖名包含 | 推断维度 | 推断逻辑 |
+|-----------|---------|---------|
+| `react` / `vue` / `angular` / `svelte` / `solid` | framework | 前端框架 |
+| `next` / `nuxt` / `sveltekit` / `remix` / `astro` | framework | 元框架 |
+| `express` / `koa` / `fastify` / `hono` / `nestjs` | framework | Node 服务端框架 |
+| `gin` / `echo` / `fiber` / `chi` / `beego` | framework | Go Web 框架 |
+| `prisma` / `typeorm` / `sequelize` / `drizzle` / `knex` / `mikro` | orm | ORM |
+| `gorm` / `sqlx` / `sqlc` / `ent` | orm | Go ORM/数据访问 |
+| `sqlalchemy` / `peewee` / `tortoise` | orm | Python ORM |
+| `tailwind` / `unocss` / `windicss` | css | 原子化 CSS |
+| `sass` / `less` / `stylus` | css | CSS 预处理器 |
+| `styled` / `emotion` / `panda` / `vanilla-extract` | css | CSS-in-JS |
+| `-ui` / `-vue` / `design` / `antd` / `element` / `naive` / `arco` / `tdesign` / `vant` / `mui` / `shadcn` / `radix` / `chakra` / `mantine` | ui | UI 组件库 |
+| `jest` / `vitest` / `mocha` / `pytest` / `junit` / `testng` | testing | 测试框架 |
+| `playwright` / `cypress` / `selenium` / `puppeteer` | testing | E2E 测试 |
+| `eslint` / `prettier` / `biome` / `oxlint` / `dprint` | lint | Lint/格式化 |
+| `pinia` / `zustand` / `redux` / `mobx` / `jotai` / `recoil` / `valtio` | state | 状态管理 |
+| `tanstack` / `react-query` / `swr` / `apollo` | state | 数据获取/缓存 |
+| `webpack` / `vite` / `rollup` / `esbuild` / `turbopack` / `rsbuild` | build | 构建工具 |
+| `docker` / `pm2` / `nginx` / `caddy` / `k8s` / `helm` | deploy | 部署/运维 |
+| `mysql` / `postgres` / `mongodb` / `redis` / `sqlite` | database | 数据库 |
+| `winston` / `pino` / `bunyan` / `log4js` / `zap` / `logrus` | logging | 日志库 |
+| `passport` / `jwt` / `oauth` / `auth` / `keycloak` / `clerk` / `auth0` | auth | 认证 |
+| `swagger` / `openapi` | docs | API 文档 |
+| `graphql` / `apollo` | api | GraphQL |
+| `grpc` / `protobuf` | api | gRPC |
+| `bull` / `bee` / `kafka` / `rabbitmq` / `amqp` | queue | 消息队列 |
+| `i18n` / `intl` / `locale` / `lingui` | i18n | 国际化 |
+| `axios` / `fetch` / `got` / `ky` / `undici` | http | HTTP 客户端 |
+| `sharp` / `jimp` / `gm` / `imagemagick` | media | 图像处理 |
+| `nodemailer` / `sendgrid` / `mailgun` | email | 邮件 |
+
+> **任何模式都不匹配**：直接进入第 3 层联网搜索。搜索结果同时用于判断是否需要将新条目补充到 knowledge-base.md。
+
+**输出格式**：
+```
+依赖分类结果：
+  @nestjs/core     → framework: NestJS        (exact match)
+  typeorm           → orm: TypeORM             (exact match)
+  ant-design-vue    → ui: Ant Design Vue       (exact match)
+  winston           → logging                  (heuristic)
+  @vben/request     → http                     (heuristic)
+  better-sqlite3    → database: SQLite         (heuristic)
+  mammoth           → media: docx parser       (web search)
+  @shadcn/ui        → ui: shadcn/ui            (heuristic)
+```
 
 ### 1.3 输出结构化探测结果
 
 ```
-探测结果：
-- 语言: TypeScript
-- 运行时: Node.js 20
-- 框架: Next.js 14
-- ORM: Prisma
-- CSS: Tailwind CSS
-- 测试: Vitest
-- Lint: ESLint + Prettier
-- 状态管理: Zustand
-- 包管理器: pnpm
-- 远程仓库: GitHub
-- strictMode: true
-- 数据库: PostgreSQL（从 docker-compose.yml 或 prisma schema 推断）
+=== 项目结构 ===
+类型: 前后端分离（3 层: server + admin + client）| monorepo | 单项目
+远程仓库: GitHub | Gitee | GitLab
+
+=== 各子项目技术栈 ===
+[server]:
+  语言: TypeScript
+  运行时: Node.js 20
+  框架: NestJS
+  ORM: TypeORM
+  数据库: MySQL
+  测试: Jest
+  Lint: ESLint + Prettier
+  包管理: pnpm
+  部署: PM2 + Docker
+
+[admin]:
+  语言: TypeScript
+  框架: Vue 3 + Vite
+  UI 库: Ant Design Vue
+  状态管理: Pinia
+  包管理: pnpm
+
+[client/app]:
+  框架: uni-app (Vue 3)
+  状态管理: Pinia
+  包管理: pnpm
+
+=== 分类置信度 ===
+  exact: 12   (知识库精确匹配)
+  heuristic: 8  (命名模式推断)
+  web: 1      (联网搜索确认)
 ```
 
 ### 1.4 混合项目处理
 
-若同时存在多种语言的构建文件（前后端分离或多服务架构）：
-- 分块输出: `frontend: { ... }` + `backend: { ... }` + ...
-- 按主构建文件（package.json 优先 / go.mod / requirements.txt）优先为后端生成完整规范
-- 次要语言的块标记为"待补充"，并提示用户可再次触发 Skill 单独处理
+若同时存在多种语言的构建文件或多子项目结构：
+- 分块输出: `server: { ... }` + `admin: { ... }` + `client: { ... }`
+- **每个子项目独立探测**：各自的 package.json/go.mod 分别跑一遍 1.2 三层分类
+- 共享组件（如根目录的 .eslintrc、docker-compose.yml）提升到顶层
 
 ---
 
@@ -136,7 +249,7 @@ license: MIT
 ```
 Step 1 探测结果
     ↓
-对每个组件（language/framework/orm/css/testing/lint/state）:
+对每个组件（language/framework/orm/css/ui/testing/lint/state/package_manager/deployment/database）:
     ↓
 在 references/knowledge-base.md 中查找对应组件条目
     ↓
@@ -162,18 +275,25 @@ Step 1 探测结果
 
 ### 2.2 联网回退
 
-**触发条件**: knowledge-base.md 中无对应组件条目时。
+**触发条件**: knowledge-base.md 中无对应组件条目时（覆盖全部 10 个维度）。
 
 **搜索策略**（`{currentYear}` 必须取系统当前真实年份，禁止硬编码）:
 
 | 未知维度 | 搜索模板 |
 |----------|---------|
-| 未知框架 | `"{framework}" AGENTS.md commands conventions best practices {currentYear}` |
+| 未知语言 | `"{language}" coding conventions best practices {currentYear}` |
+| 未知框架 | `"{framework}" project commands conventions best practices {currentYear}` |
 | 未知 ORM | `"{orm}" setup migration naming conventions {currentYear}` |
+| 未知 CSS 方案 | `"{css}" styling conventions component patterns {currentYear}` |
+| 未知 UI 组件库 | `"{ui}" component library conventions best practices {currentYear}` |
 | 未知测试框架 | `"{testing}" test commands CI GitHub Actions {currentYear}` |
-| 未知构建工具 | `"{tool}" build dev commands CI pipeline {currentYear}` |
+| 未知 Lint 工具 | `"{lint}" configuration rules conventions {currentYear}` |
+| 未知包管理器 | `"{pm}" install lockfile CI commands {currentYear}` |
+| 未知状态管理 | `"{state}" state management patterns conventions {currentYear}` |
+| 未知部署方式 | `"{deploy}" deployment best practices CI pipeline {currentYear}` |
+| 未知数据库 | `"{db}" database conventions naming schema design {currentYear}` |
 
-**提取规则**: 从搜索结果中提取 dev/build/test 命令写入 Commands，规范要点写入 Conventions。
+**提取规则**: 从搜索结果中提取 dev/build/test 命令写入 Commands，规范要点（✅/❌）写入 Conventions，CI 配置片段写入 CI job。
 
 **兜底**: 所有探测和联网均失败时，使用 `references/agents-md-template.md` 生成最小化 AGENTS.md。
 
@@ -190,19 +310,59 @@ Step 1 探测结果
 
 ### 3.0 推断项目业务类型
 
-从 Step 1 探测结果和项目上下文推断业务类型，决定文档结构：
+> **不预设固定类型**。从项目结构+依赖+README 描述启发式推断，无法确定时联网搜索。
 
-| 线索 | 推断业务类型 | 文档侧重点 |
-|------|------------|----------|
-| 存在 `prisma/schema.prisma` / 多个 Model | 后端 API 服务 | 侧重 API 文档、数据库设计、部署运维 |
-| 存在 `pages/` / `app/` + `components/` | 前端应用 | 侧重 UI 规范、组件库、路由设计 |
-| 存在 `docker-compose.yml` + 多服务 | 微服务架构 | 侧重服务间通信、服务注册、配置管理 |
-| `package.json` description 含 `后台/管理/admin` | 管理后台 | 侧重权限、数据看板、批量操作 |
-| 存在 `mobile/` / `ios/` / `android/` / `uni-app` | 移动端应用 | 侧重蓝牙、推送、离线、多端适配 |
-| 以上组合 | 全栈项目 | 前后端分块 + 全栈部署文档 |
-| 以上都不匹配 | 通用项目 | 使用联网搜索推断或询问用户 |
+**三层推断流程**：
+```
+Step 1 探测结果 + README.md 描述 + 目录结构
+    ↓
+第 1 层 — 结构特征匹配（精确）
+  按下方「特征 → 业务类型」表匹配
+    ↓
+第 2 层 — 依赖/配置启发推断
+  结构不明确时，按 package.json/go.mod 中的特定字段推断
+  见下方「配置特征 → 业务类型」表
+    ↓
+第 3 层 — 联网搜索
+  仍无法确定 → WebSearch 推断
+```
 
-> **未知业务类型时**：WebSearch `"{project description} documentation best practices structure {currentYear}"`，从搜索结果中提取推荐的文档结构。
+**第 1 层：结构特征 → 业务类型**
+
+| 特征 | 推断类型 | 文档侧重点 |
+|------|---------|----------|
+| 存在 `src/controllers/` / `src/modules/` / `src/services/` 且无 pages/app | 后端 API 服务 | API 文档、数据库设计、部署运维 |
+| 探测到 NestJS/Express/FastAPI/Gin/Django/Spring Boot 等后端框架 | 同上 | 同上 |
+| 存在 ORM 配置 + Model/Entity 定义 | 同上 | 同上 |
+| 存在 `pages/` / `app/` + `components/` | 前端应用 | UI 规范、组件库、路由设计 |
+| 存在 `docker-compose.yml` + 3+ 服务 | 微服务架构 | 服务间通信、服务注册、配置管理 |
+| `package.json` description 含 `后台/管理/admin` | 管理后台 | 权限、数据看板、批量操作 |
+| 存在 `mobile/` / `ios/` / `android/` / `uni-app` | 移动端应用 | 蓝牙、推送、离线、多端适配 |
+| 同时匹配后端 + 前端特征 | 全栈项目 | 前后端分块 + 全栈部署文档 |
+
+**第 2 层：配置特征 → 业务类型**（结构不明确时使用）
+
+| 配置特征 | 推断类型 | 判断依据 |
+|---------|---------|---------|
+| `package.json` 有 `"bin"` 字段 | CLI 工具 | 可执行命令入口 |
+| `package.json` 有 `"main"`/`"module"` 且无 `"scripts"."dev"` | 库/SDK | 发布入口 + 无开发服务器 |
+| `go.mod` 的 module 路径无 `/cmd/` 子目录 | Go 库 | 纯库，无可执行入口 |
+| `pyproject.toml` 有 `[project.scripts]` | Python CLI | 命令行入口点 |
+| `Cargo.toml` 含 `[lib]` 无 `[[bin]]` | Rust 库 | 纯库项目 |
+| `electron`/`tauri`/`nwjs` 在依赖中 | 桌面应用 | 桌面壳框架 |
+| `package.json` 含 `"@tauri-apps/cli"` | 桌面应用 (Tauri) | Tauri 构建工具 |
+| `astro`/`vitepress`/`docusaurus`/`docsify` 在依赖中 | 静态文档站点 | 文档生成器 |
+| `hugo`/`jekyll`/`hexo` 配置 | 静态内容站点 | 静态站点生成器 |
+| 以上都不匹配 | 通用项目 | → 第 3 层联网搜索 |
+
+**第 3 层：联网搜索**
+```
+WebSearch "{项目名或README首句} project type classification best practices {currentYear}"
+→ 从搜索结果提取最接近的业务类型
+→ 仍无法确定 → 标记为"通用项目"，询问用户
+```
+
+> **多类型匹配时**（如既是后端又是 CLI）：优先选择更具体的类型。优先级：全栈 > 微服务 > 桌面 > 移动端 > 管理后台 > CLI > 后端 > 前端 > 库 > 静态站点 > 通用。
 
 ### 3.1 自适应 docs/ 结构
 
@@ -227,16 +387,40 @@ docs/
 ├── archive/ / dev/
 ```
 
-### 3.2 自适应模块速查表
+### 3.2 自适应模块速查表（含联网回退）
 
-生成 AGENTS.md 模块表时，**读取实际目录结构**而非使用固定模板：
+生成 AGENTS.md 模块表时，**读取实际目录结构**而非使用固定模板。对每个无法确定的模块，启动联网搜索。
 
+**推断流程（按优先级）**：
 ```
-Step: 列出 src/ 或 app/ 下的一级子目录
-  → 按目录名 + 内部文件推断模块职责
-  → 写入 AGENTS.md 模块速查表
-  → 无法推断时标记为 "待补充"，提示用户完善
+Step 1: 列出 src/ 或 app/ 下的一级子目录
+    ↓
+Step 2: 对每个子目录，读取内部文件列表（前 10 个文件）
+    ↓
+Step 3: 按目录名 + 文件名模式推断模块职责
+    匹配已知模式（controller/service/model → API模块；handlers/verifiers → 策略模块等）
+    见 references/knowledge-base.md § 模块速查表生成规则
+    ↓
+Step 4: 无法匹配已知模式 → 联网搜索
+    WebSearch "{directory_name} module in {framework} project typical responsibilities {currentYear}"
+    从搜索结果提取职责描述
+    ↓
+Step 5: 联网也无法确定 → 标记 "待补充，建议：{搜索结果摘要}"
+    提示用户完善
+    ↓
+写入 AGENTS.md 模块速查表
 ```
+
+**联网搜索模板（按场景）**：
+
+| 场景 | 搜索模板 |
+|------|---------|
+| 陌生目录名 | `"{dirName}" module responsibility in {framework} project` |
+| 陌生文件模式 | `"{filePattern}" pattern in {language} {framework} project best practices` |
+| 多模块架构 | `"{framework}" project module organization best practices {currentYear}` |
+| 业务术语目录 | `"{dirName}" in "{businessDomain}" software architecture` |
+
+> 示例：探测到 `src/cqrs/` 目录，knowledge-base 无匹配 → WebSearch `"cqrs module NestJS project typical responsibilities 2026"` → 提取到 "命令查询职责分离，含 commands/ queries/ handlers/" → 写入模块表 "cqrs | CQRS 命令查询分离"
 
 ### 3.3 .trae/specs/ 目录（同前）
 ```
@@ -270,8 +454,8 @@ mkdir -p .trae/specs/
 ### 初始化 Git
 ```bash
 git init  # 如果还没初始化
-git add -A
-git commit -m "chore: 初始化项目规范体系 — AGENTS.md + docs/ + CI"
+git add .  # 受 .gitignore 保护，不会添加敏感文件
+git diff --cached --quiet || git commit -m "chore: 初始化项目规范体系 — AGENTS.md + docs/ + CI"
 git checkout -b develop 2>/dev/null || git checkout develop  # 已有 develop 分支则直接切换
 ```
 
@@ -298,13 +482,18 @@ type: feat/fix/refactor/docs/test/chore/perf
 - 不依赖外部服务（DB/Redis/MQ）
 - 如果远程仓库是 Gitee → 创建 `.gitee-ci.yml`（语法与 GitHub Actions 不同，参考 [Gitee Go 文档](https://gitee.com/help/articles/4280)）
 - 如果远程仓库是 GitHub → 创建 `.github/workflows/ci.yml`
+- **其他平台**（GitLab/Bitbucket/Codeberg 等）→ WebSearch `"{platform}" CI pipeline {language} {framework} setup {currentYear}"` 获取对应配置格式
 - 如果 CI 目录/文件已存在 → 跳过，不覆盖
 
 ---
 
-## Step 6：建立测试基础设施
+## Step 6：建立测试制度与基础设施
 
-### 安装测试框架（仅当 package.json 中无测试依赖时）
+> 项目初期不强制创建测试文件。先建立测试制度，随着开发推进逐步编写测试。
+
+### 6.1 安装测试框架（仅当项目无测试依赖时）
+
+按探测到的语言和框架安装：
 
 - TypeScript/NestJS: `npm install --save-dev jest ts-jest @types/jest @nestjs/testing`
 - Vue/React: `npm install --save-dev vitest @vue/test-utils` / `@testing-library/react`
@@ -314,49 +503,104 @@ type: feat/fix/refactor/docs/test/chore/perf
 - Rust: 内置（`cargo test`）
 - Ruby: `gem install rspec`
 
-### 创建示例测试（按语言生成对应测试代码）
+### 6.2 创建测试制度文档 `docs/B/B-03-测试指南.md`
 
-在项目中创建最小测试文件验证测试基础设施：
+> 不是示例测试文件，是测试制度。内容按技术栈自适应生成，结构如下：
 
-- **TypeScript/JS**: `__tests__/example.spec.ts`
-  ```typescript
-  describe('Initial test', () => {
-    it('测试基础设施已就绪', () => { expect(true).toBe(true); });
-  });
-  ```
-- **Go**: `example_test.go`
-  ```go
-  func TestInitial(t *testing.T) { t.Log("测试基础设施已就绪") }
-  ```
-- **Python**: `test_example.py`
-  ```python
-  def test_initial(): assert True
-  ```
+```markdown
+# 测试指南
 
-### 在 AGENTS.md 中添加测试命令（按语言）
+> 项目测试策略与规范。测试随项目成长逐步完善，不接受一次性全覆盖。
+> 测试框架: {从 knowledge-base 测试层提取} | 更新: {date}
 
-从 knowledge-base 中提取对应**测试层**组件的 Commands：
-- **TypeScript/JS**: `npm run test` / `npm run test -- path.spec.ts` / `npm run test:cov`
-- **Go**: `go test ./...` / `go test -run TestName ./pkg/`
-- **Python**: `python -m pytest` / `python -m pytest tests/test_xxx.py`
-- **Java**: `./gradlew test` / `mvn test`
-- **Rust**: `cargo test`
+## 一、测试分层
 
-### 配置 pre-commit hook（需用户确认后执行）
+| 层级 | 范围 | 工具 | 何时编写 |
+|------|------|------|---------|
+| 单元测试 | 单个函数/方法 | {测试框架名} | 核心业务逻辑稳定后（utils/services） |
+| 集成测试 | 模块间交互 | {测试框架名} + {supertest/testcontainers等} | API 端点完成后 |
+| E2E 测试 | 完整用户流程 | {Playwright/Cypress等} | 核心用户路径确定后 |
 
-前提：项目根已有 `package.json`。若无，先 `npm init -y`。
+## 二、编写时机（按项目阶段）
+
+| 阶段 | 测试重点 | 不写的 |
+|------|---------|--------|
+| 原型/MVP | 不强制写测试 | 快速迭代优先 |
+| 核心功能稳定 | 关键 Service 单元测试 + API 集成测试 | 工具函数、DTO |
+| 用户验收前 | 核心路径 E2E | 边缘场景 |
+| 持续迭代 | 修改处补测试、回归测试 | 纯 CRUD 可跳过 |
+
+## 三、{框架名} 测试规范
+
+> 从 `references/knowledge-base.md` 测试层 + 框架层提取。
+
+**命令**:
+{从 knowledge-base Commands 段提取}
+
+**规范**:
+{从 knowledge-base Conventions 段提取 ✅/❌ 规则}
+
+## 四、测试示例（按需参考，非强制创建）
+
+> 以下为框架特定的测试模式，在需要编写测试时参考。
+
+{按框架类型选择示例模板}
+```
+
+### 6.3 框架特定测试示例（自主获取，不创建文件）
+
+> **不预设框架列表**。根据探测到的框架，按以下优先级获取测试模式：
+
+**获取策略**：
+```
+探测到的框架名
+    ↓
+第 1 优先: 下方快速参考中有匹配 → 直接使用
+第 2 优先: knowledge-base.md 中该框架有测试相关 Conventions → 提取
+第 3 优先: WebSearch "{framework} unit test example pattern best practices {currentYear}"
+    ↓
+将获取的测试模式写入 B-03-测试指南.md「四、测试示例」章节
+```
+
+**快速参考**（常见框架，命中即用，不命中走第 2/3 优先）:
+
+- **NestJS**: Service 单元测试（Test.createTestingModule + mock Repository）
+- **Next.js / React**: 组件测试（@testing-library/react render + screen）
+- **Vue 3**: 组件测试（@vue/test-utils mount + wrapper）
+- **Go Gin**: Handler 测试（httptest.NewRequest + gin.CreateTestContext）
+- **Python FastAPI**: Endpoint 测试（TestClient + assert status_code）
+- **Spring Boot**: Service 测试（@ExtendWith MockitoExtension + @Mock + @InjectMocks）
+- **Django**: View 测试（Client + assertContains）
+- **Flask**: Route 测试（app.test_client() + assert status_code）
+- **Express**: Middleware 测试（supertest + request(app)）
+- **Laravel**: Feature 测试（php artisan make:test + assertStatus）
+- **Rust (Actix)**: Handler 测试（test::init_service + App::new().route()）
+- **Ruby on Rails**: Controller 测试（get :index + assert_response :success）
+
+> 框架不在上述列表：走第 2/3 优先流程。从 knowledge-base 框架层提取测试命令 + 联网获取具体示例代码。
+
+### 6.4 在 AGENTS.md 中添加测试命令
+
+从 knowledge-base 中提取对应**测试层**组件的 Commands，写入 AGENTS.md 二、常用命令。
+
+### 6.5 配置 pre-commit hook（需用户确认后执行，仅 JS/TS 项目）
+
+前提：项目根已有 `package.json`。若无且语言非 JS/TS，跳过此步骤。
+
 ```bash
 npm install --save-dev husky lint-staged
 npx husky init
 echo "npx lint-staged" > .husky/pre-commit
 ```
 
-在 `package.json` 中添加:
+在 `package.json` 中添加（按项目语言调整 glob）:
 ```json
 "lint-staged": {
   "*.{ts,js}": ["npx prettier --check"]
 }
 ```
+
+> Go 项目跳过，使用 `golangci-lint`。Python 项目使用 `pre-commit` 框架。
 
 ---
 
@@ -367,18 +611,17 @@ echo "npx lint-staged" > .husky/pre-commit
 ```
 ✅ 项目规范体系搭建完成，生成文件：
 - AGENTS.md (xxx 行)
-- docs/ (A/B/C/D/E 5 个分类目录 + archive + dev)
+- docs/ (A/B/C/D/E 5 个分类目录 + archive + dev)，含 B-03-测试指南（测试制度）
 - .trae/specs/ (spec-driven 开发基础设施)
 - .github/workflows/ci.yml (或 .gitee-ci.yml)
 - .gitignore (如果之前没有)
-- __tests__/example.spec.ts (示例测试)
 - CLAUDE.md / .cursor/rules/project.mdc (vendor breadcrumbs)
 - .husky/pre-commit (如果安装同意)
 
 下一步建议：
 1. 填写 docs/A/A-01-PRD.md 项目需求
 2. 根据实际项目完善 AGENTS.md 中的项目身份信息
-3. 运行 npm run test 验证测试基础设施
+3. 阅读 docs/B/B-03-测试指南.md，核心功能稳定后按制度编写首批测试
 4. git push origin develop 推送初始框架
 ```
 

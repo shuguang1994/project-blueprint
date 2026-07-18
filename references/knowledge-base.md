@@ -1,6 +1,6 @@
 # 组件知识库
 
-> 规则引擎拼接 AGENTS.md 时的参考源。每个组件含 Commands / Conventions / CI 三段。v1.3
+> 规则引擎拼接 AGENTS.md 时的参考源。每个组件含 Commands / Conventions / CI 三段。v1.4
 
 ---
 
@@ -47,7 +47,7 @@
 
 ### NestJS
 **Commands**: `npm run start:dev` / `npm run test -- path.spec.ts` / `npm run build` / `npm run test:cov`
-**Conventions**: ✅ @Controller('prefix') / ✅ JwtAuthGuard on protected routes / ✅ dataSource.transaction for multi-step writes / ✅ 跨模块走 Service 接口 / ❌ Controller 注入 Repository / ❌ console.log → Logger
+**Conventions**: ✅ @Controller('prefix') / ✅ JwtAuthGuard on protected routes / ✅ dataSource.transaction for multi-step writes / ✅ 跨模块走 Service 接口 / ✅ @nestjs/swagger API 文档 / ✅ @nestjs/schedule 定时任务 / ✅ @nestjs/event-emitter 事件解耦 / ✅ winston/nest-winston 结构化日志 / ❌ Controller 注入 Repository / ❌ console.log → Logger
 **CI job**: `setup-node@v4` + `npm ci` + `npm run test` + `npm run build`
 
 ### Next.js (App Router)
@@ -115,6 +115,11 @@
 **Conventions**: ✅ zValidator middlware 输入校验 / ✅ RPC mode type-safe client / ❌ Cloudflare Workers 不支持 Node API 需 check env
 **CI job**: `pnpm/action-setup@v2` + `setup-node@v4` + `pnpm install --frozen-lockfile` + `pnpm test`
 
+### uni-app (Vue 3)
+**Commands**: `npm run dev:mp-weixin` / `npm run build:mp-weixin` / `npm run dev:h5`
+**Conventions**: ✅ `<script setup>` / ✅ `uni.$emit` kebab-case / ✅ API 走 `api/` 封装 / ✅ 页面四态 Loading/Empty/Error/Success / ❌ Options API / ❌ 直接调 uni.request（走 api/ 封装） / ❌ import 超 3 层 `../`
+**CI job**: `setup-node@v4` + `npm ci` + `npm run build:h5`
+
 ---
 
 ## ORM 层
@@ -176,6 +181,32 @@
 ### Sass / SCSS
 **Commands**: 无单独命令，Vite / Webpack loader 自动
 **Conventions**: ✅ 变量 `$primary` + mixin 复用 / ✅ `@use` 替代 `@import` / ❌ 深层嵌套 > 3 层 / ❌ `@extend` 跨选择器
+**CI job**: 无独立步骤
+
+---
+
+## UI 组件库层
+
+> 补充 CSS 层之外的前端 UI 组件库规范。
+
+### Ant Design Vue
+**Commands**: 无单独命令，Vite 集成
+**Conventions**: ✅ `a-` 前缀组件 / ✅ ConfigProvider 全局配置 / ✅ Form model + rules 校验 / ❌ 直接修改组件内部样式（用 `:deep()` 穿透）
+**CI job**: 无独立步骤
+
+### Element Plus
+**Commands**: 无单独命令，Vite 集成
+**Conventions**: ✅ `el-` 前缀组件 / ✅ `v-model` 双向绑定 / ✅ ElMessage 全局提示 / ❌ 覆盖组件样式用 `:deep()`
+**CI job**: 无独立步骤
+
+### Naive UI
+**Commands**: 无单独命令，Vite 集成
+**Conventions**: ✅ `n-` 前缀组件 / ✅ `useMessage()` / `useDialog()` composable / ✅ 主题定制用 `NConfigProvider` / ❌ 全局样式污染
+**CI job**: 无独立步骤
+
+### Vant
+**Commands**: 无单独命令，uni-app / Vue CLI 集成
+**Conventions**: ✅ `van-` 前缀组件 / ✅ 移动端适配 rem/vw / ❌ PC 端组件混入移动端
 **CI job**: 无独立步骤
 
 ---
@@ -379,6 +410,14 @@
 ✅ 无 N+1 查询?
 ✅ API 响应格式一致?
 
+语言特定:
+  TS/JS: tsc --noEmit 通过? / 无 any?
+  Go:    go vet 通过? / err 都已处理?
+  Python: mypy 通过? / ruff 通过?
+  Java:  checkstyle 通过? / @Transactional 正确?
+  Rust:  clippy -D warnings 通过? / 无 unwrap()?
+```
+
 ---
 
 ## 业务类型文档模式
@@ -386,9 +425,14 @@
 > Step 3 推断业务类型后的文档生成指南。**不使用固定目录**，按业务类型 + WebSearch 动态生成。
 
 ### 后端 API 服务
-**标识**: prisma/schema.prisma / go.mod + gin/echo / requirements.txt + fastapi/flask
+**标识**: src/controllers/ / src/modules/ / src/services/ / 后端框架(NestJS/Express/FastAPI/Gin/Django/Spring Boot) / ORM 配置(prisma/typeorm/gorm/sqlalchemy)
 **文档侧重**: `A-02-技术架构.md` / `A-03-数据库设计.md` / `D-01-系统运维方案.md`
 **联网搜索**: `"{framework} API service documentation structure best practices {currentYear}"`
+
+### 全栈项目
+**标识**: 同时匹配后端 + 前端特征
+**文档侧重**: 前后端分块 + 全栈部署文档
+**联网搜索**: `"full-stack project documentation structure {currentYear}"`
 
 ### 前端应用
 **标识**: pages/ / app/ + components/ / src/components/
@@ -410,21 +454,101 @@
 **文档侧重**: `A-05-移动端架构.md` / 蓝牙协议 / 推送通知 / 离线策略
 **联网搜索**: `"mobile app technical documentation structure {currentYear}"`
 
+### CLI 工具
+**标识**: package.json 有 `"bin"` 字段 / pyproject.toml `[project.scripts]` / go.mod + cmd/ 目录
+**文档侧重**: 命令参考 / 安装指南 / 配置说明
+**联网搜索**: `"CLI tool documentation structure best practices {currentYear}"`
+
+### 库/SDK
+**标识**: package.json 有 `"main"`/`"module"` 无 dev server / Cargo.toml `[lib]` 无 `[[bin]]`
+**文档侧重**: API 参考 / 快速开始 / 示例代码
+**联网搜索**: `"library SDK documentation structure best practices {currentYear}"`
+
+### 桌面应用
+**标识**: electron/tauri/nwjs 在依赖中
+**文档侧重**: `A-05-移动端架构.md`(改为桌面) / 安装打包 / 系统集成
+**联网搜索**: `"desktop app documentation structure best practices {currentYear}"`
+
+### 静态站点
+**标识**: astro/vitepress/docusaurus/hugo/jekyll/hexo 配置
+**文档侧重**: 内容组织 / 部署发布
+**联网搜索**: `"static site documentation structure {currentYear}"`
+
 ### 未知类型
 **联网搜索**: `"{project description or framework} project documentation best practices {currentYear}"`
 
-### 模块速查表生成规则
+### 模块速查表生成规则（含联网回退）
+
+> 先按文件模式推断，无法匹配时联网搜索，最后才标记待补充。
+
+#### 已知文件模式 → 模块职责映射
+
+| 内部文件模式（任一匹配） | 推断模块类型 | 职责描述关键词 |
+|--------------------------|-------------|-------------|
+| `*.controller.ts` / `*Controller.java` / `*_controller.py` | API 路由模块 | 请求路由、参数校验、响应封装 |
+| `*.service.ts` / `*Service.java` / `*.service.py` | 业务逻辑层 | 核心业务、事务管理、跨模块调用 |
+| `*.repository.ts` / `*Repository.java` / `*_repository.py` | 数据访问层 | 数据库查询、ORM 操作 |
+| `*.entity.ts` / `*.model.ts` / `models.py` / `@Entity` | 数据模型 | 表结构定义、字段映射 |
+| `*.module.ts` / `*.guard.ts` / `*.interceptor.ts` | NestJS 基础设施 | 模块注册、守卫、拦截器 |
+| `handler*.ts` / `strategy*.ts` / `verifier*.ts` | 策略/处理器模块 | 多态行为、可扩展业务规则 |
+| `*.dto.ts` / `*Dto.java` / `schemas.py` | DTO/校验层 | 数据传输对象、输入校验 |
+| `*.gateway.ts` / `ws*` / `websocket*` | WebSocket 模块 | 实时通信、推送 |
+| `*.spec.ts` / `*Test.java` / `test_*.py` / `__tests__/` | 测试 | （不列入模块表，仅用于识别） |
+| `*.job.ts` / `*.cron.ts` / `*Scheduler.java` / `tasks.py` | 定时任务 | 周期调度、批处理 |
+| `*.middleware.ts` / `middleware/` / `middlewares.py` | 中间件 | 请求拦截、日志、认证前置 |
+| `migrations/` / `alembic/` / `flyway/` | 数据库迁移 | Schema 版本管理 |
+| `utils/` / `helpers/` / `lib/` / `common/` | 工具/公共层 | 通用函数、常量、类型定义 |
+
+#### 文件模式推断流程
+
 ```
-✅ 读取 src/ 或 app/ 一级子目录列表 → 写入 AGENTS.md 模块表
-✅ 按目录名 + 内部文件(controller/service/model) 推断职责
-✅ 无法推断时标记 "待补充"，提示用户完善
-❌ 不使用固定模板的占位符模块名
+列出 src/ 或 app/ 下的一级子目录
+    ↓
+对每个子目录，读取内部文件列表（限前 10 个）
+    ↓
+匹配上表已知模式 → 推断模块类型和职责
+    ↓
+无法匹配 → 联网搜索:
+  WebSearch "{dirName} directory in {framework} project typical purpose {currentYear}"
+  WebSearch "{fileList_sample} pattern in {language} {framework} architecture"
+    ↓
+联网有结果 → 提取职责关键词，写入模块表（标注 "推断，待确认"）
+联网无结果 → 标记 "待补充，建议检查：{dirName}（{文件列表摘要}）"
+    ↓
+写入 AGENTS.md 模块速查表（不包含测试目录）
 ```
 
-语言特定:
-  TS/JS: tsc --noEmit 通过? / 无 any?
-  Go:    go vet 通过? / err 都已处理?
-  Python: mypy 通过? / ruff 通过?
-  Java:  checkstyle 通过? / @Transactional 正确?
-  Rust:  clippy -D warnings 通过? / 无 unwrap()?
+#### 联网搜索模板
+
+| 场景 | 搜索模板 | 提取目标 |
+|------|---------|---------|
+| 陌生目录名 | `"{dirName}" directory purpose in {framework} project` | 目录职责、常见子文件 |
+| 陌生文件后缀 | `".{ext}" file in {language} project what is it` | 文件用途、生态位置 |
+| 架构模式关键词 | `"{pattern}" architecture pattern in {framework} example` | 模块职责描述 |
+| 英文业务术语 | `"{term}" in software "{domain}" module responsibility` | 业务含义 + 技术实现 |
+
+#### 示例
+
+```
+探测: src/notification/
+内部文件: [email.service.ts, sms.service.ts, push.service.ts, notification.module.ts]
+模式匹配: *.service.ts + *.module.ts → "业务逻辑层"
+补充推断: 目录名 "notification" → "通知模块"
+联网搜索: 无需（模式已匹配）
+输出: notification | 通知模块 | 邮件/短信/推送多渠道通知
+```
+
+```
+探测: src/sagas/
+内部文件: [order.saga.ts, payment.saga.ts, index.ts]
+模式匹配: 无已知模式 *.saga.ts
+联网搜索: "sagas directory NestJS project typical purpose 2026"
+搜索结果: "Saga pattern for distributed transaction orchestration..."
+输出: sagas | 分布式事务编排 (Saga模式) | 推断，待确认
+```
+
+```
+❌ 不使用固定模板的占位符模块名（如 "模块1/模块2/模块3"）
+❌ 不跳过无法推断的模块 — 必须联网搜索
+❌ 不在模块表中包含测试目录 (__tests__/specs/tests)
 ```

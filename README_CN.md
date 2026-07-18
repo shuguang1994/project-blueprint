@@ -10,9 +10,9 @@
 
 ## 这是什么？
 
-Project Blueprint 是一个可复用的 AI Agent 技能包，为新项目一键建立完整的开发规范体系。自动生成 AGENTS.md、文档目录骨架、CI/CD 流水线、测试基础设施 — 一句话搞定。
+Project Blueprint 是一个 **AI Agent 技能包**，为新项目一键建立完整的开发规范体系。它不是一个静态模板——它是一个**自主发现引擎**：扫描你的项目文件，智能推断技术栈，从 70+ 组件知识库实时拼装定制化的 AGENTS.md、文档骨架、CI/CD 和测试制度。
 
-只需说：**"初始化这个项目的开发规范体系"**，Agent 自动执行后续一切。
+只需说：**"初始化这个项目的开发规范体系"**。
 
 ## 快速安装
 
@@ -24,90 +24,110 @@ npx skills add shuguang1994/project-blueprint
 
 ## 为什么做这个
 
-**痛点**：每个新项目第一天都在搭规范体系 —— AGENTS.md、CI/CD、测试框架、文档目录。全是重复劳动，但没有现成工具能一次性搞定。现有的项目初始化工具只给静态模板，不关注你的具体技术栈、不覆盖 CI、不搭建测试、不支持中文。
+**2026 年 AGENTS.md 已成为行业标准**——已有 60,000+ 开源仓库使用，被 OpenAI、Google、Anthropic、Microsoft 联合推动。76% 的开发者使用 AI 编码助手，但没有 AGENTS.md 的 AI 像一个"没有入职手册的新同事"——写出的代码风格飘忽、架构混乱、CI 频繁失败。
 
-**我们的做法**：Project Blueprint 读取你真实的项目文件，自动探测技术栈，从 61 个组件的知识库中实时拼装一套定制化的 AGENTS.md。不是模板，是规则引擎。遇到知识库里没有的技术栈，自动联网搜索最新最佳实践。而且是唯一能一句话生成完整文档骨架（A/B/C/D/E 五级分类）+ CI 流水线 + 测试基础设施的工具。
+**行业数据**：Anthropic 内部基准测试显示，有 AGENTS.md 的项目可减少 **40-60%** 的"错误模式重写"。但手工编写一份高质量 AGENTS.md 需要半天到一天——每个新项目都要重复一遍。
+
+**Project Blueprint 的解法**：不预设模板。自主扫描→智能分类→动态拼装。你看到的 AGENTS.md 是基于你项目的真实技术栈生成的，不是换了个名字的通用模板。而且它是唯一能一句话搞定 AGENTS.md + 文档体系 + CI + 测试制度 + Git 规范的工具。
+
+## 核心能力
+
+| 能力               | 说明                                 |
+| ---------------- | ---------------------------------- |
+| **自主文件发现**       | 扫描项目，按 30+ 文件名模式自动分类，不预设"有哪些文件"    |
+| **智能依赖分类**       | 三层递进：知识库精确匹配 → 31 种命名模式启发推断 → 联网搜索 |
+| **业务类型推断**       | 两层启发式（结构特征 + 配置特征），覆盖 13 种业务类型     |
+| **动态 AGENTS.md** | 从 70+ 组件知识库实时拼装，非固定模板              |
+| **文档体系**         | A/B/C/D/E 五级分类，按业务类型按需生成           |
+| **测试制度**         | 按项目阶段的分层测试策略，非强行写示例文件              |
+| **增量模式**         | 已有项目只补缺失，不覆盖已有配置                   |
 
 ## 生成内容一览
 
-| 产物                          | 说明                                                          |
-| --------------------------- | ----------------------------------------------------------- |
-| `AGENTS.md` | 项目规范（架构原则约束：高内聚低耦合 / 组合优于继承 / 避免全局状态 / 纯函数优先 / 复用开源组件避免重复造轮子） |
-| `docs/`                     | A/B/C/D/E 五级分类文档骨架                                          |
-| `.github/workflows/ci.yml`  | CI 流水线（自动适配技术栈）                                             |
-| `.gitignore`                | 精选 gitignore 规则                                             |
-| `.husky/pre-commit`         | 提交前 lint 检查                                                 |
-| `CLAUDE.md`                 | Claude Code 指向文件                                            |
-| `.cursor/rules/project.mdc` | Cursor 指向文件                                                 |
-| `__tests__/example.spec.ts` | 示例单元测试                                                      |
+| 产物                          | 说明                                            |
+| --------------------------- | --------------------------------------------- |
+| `AGENTS.md`                 | 项目规范（架构原则约束：高内聚低耦合 / 组合优于继承 / 避免全局状态 / 纯函数优先） |
+| `docs/`                     | A/B/C/D/E 五级分类文档骨架 + 分类 README 维护指令           |
+| `.github/workflows/ci.yml`  | CI 流水线（语言自适应，支持 GitHub/Gitee/其他）              |
+| `.gitignore`                | 按语言选择的精选规则                                    |
+| `.husky/pre-commit`         | JS/TS 项目提交前 lint 检查（非 JS 项目跳过）                |
+| `CLAUDE.md`                 | Claude Code 指向文件                              |
+| `.cursor/rules/project.mdc` | Cursor 指向文件                                   |
+| `docs/B/B-03-测试指南.md`       | 测试制度（分层策略、编写时机、框架特定模式）                        |
 
-## 自适应探测引擎
+## 自主发现引擎
 
-Project Blueprint 读取你的项目文件自动推断技术栈：
+Project Blueprint 不预设"检查哪些文件"。它扫描你的项目，自主发现所有构建/配置/清单文件，然后分类推断。
 
-| 文件                          | 推断内容                                   |
-| --------------------------- | -------------------------------------- |
-| `package.json`              | 语言、框架、ORM、CSS 框架、测试库、Lint 工具、状态管理、包管理器 |
-| `go.mod`                    | Go 版本、框架（gin/echo/fiber/chi）           |
-| `requirements.txt`          | Python 框架（FastAPI/Flask/Django）        |
-| `pom.xml` / `build.gradle`  | Java 框架（Spring Boot）                   |
-| `Cargo.toml`                | Rust 依赖                                |
-| `docker-compose.yml`        | 数据库、缓存、消息队列                            |
-| `tsconfig.json`             | Strict 模式、路径别名                         |
-| `.eslintrc` / `.prettierrc` | Lint 配置                                |
-| `git remote -v`             | 仓库平台（GitHub/Gitee）                     |
+### 依赖分类：三层递进
 
-## 61 组件知识库
+```
+扫描到的所有依赖
+    ↓
+第 1 层：知识库精确匹配 (exact)
+  在 70+ 组件知识库中直接命中 → instant
+    ↓
+第 2 层：命名模式启发推断 (heuristic)
+  31 种模式覆盖 100+ 关键词 → 自动分类
+  例: winston → logging, antdv-next → ui, mysql2 → database
+    ↓
+第 3 层：联网搜索 (web)
+  真正未知的依赖 → 实时搜索最新信息
+```
 
-覆盖 10 层、61 个组件：
+### 技术栈覆盖
 
-| 层级       | 组件                                                                                                                      |
-| -------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **语言**   | TypeScript, JavaScript, Go, Python, Java, Rust, Ruby, PHP                                                               |
-| **框架**   | Next.js, NestJS, Vue 3, React, Express, Fastify, FastAPI, Flask, Django, Gin, Spring Boot, Actix-web, SvelteKit, Nuxt 3 |
-| **ORM**  | Prisma, TypeORM, Drizzle, Sequelize, GORM, SQLAlchemy, JPA/Hibernate                                                    |
-| **CSS**  | Tailwind CSS, CSS Modules, Scoped CSS, Styled Components, SCSS                                                          |
-| **测试**   | Vitest, Jest, Pytest, Go testing, JUnit 5, Playwright                                                                   |
-| **Lint** | ESLint, Prettier, Biome, Ruff, golangci-lint                                                                            |
-| **包管理**  | pnpm, npm/yarn, Poetry, Gradle/Maven, go mod                                                                            |
-| **部署**   | PM2, Docker, Vercel, Docker Compose, GitHub Pages                                                                       |
+| 层级                                        | 组件                                                                                                                          |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **语言** (8)                                | TypeScript, JavaScript, Go, Python, Java, Rust, Ruby, PHP                                                                   |
+| **框架** (15)                               | NestJS, Next.js, Vue 3, React, Express, FastAPI, Flask, Django, Gin, Spring Boot, SvelteKit, Nuxt 3, Laravel, Hono, uni-app |
+| **ORM** (6)                               | Prisma, TypeORM, Drizzle, GORM, SQLAlchemy, JPA/Hibernate                                                                   |
+| **CSS** (5)                               | Tailwind CSS, CSS Modules, Scoped CSS, Styled Components, SCSS                                                              |
+| **UI 库** (4)                              | Ant Design Vue, Element Plus, Naive UI, Vant                                                                                |
+| **测试** (6)                                | Vitest, Jest, Pytest, Go testing, JUnit 5, Playwright                                                                       |
+| **Lint** (5)                              | ESLint, Prettier, Biome, Ruff, golangci-lint                                                                                |
+| **部署** (5)                                | PM2, Docker, Vercel, Docker Compose, GitHub Pages                                                                           |
+| **数据库** (2)                               | MySQL, PostgreSQL                                                                                                           |
+| + 状态管理(3) + 包管理(5) + 通用规范(6) = **70+ 组件** |                                                                                                                             |
 
 ## 联网搜索回退
 
-遇到知识库中没有的技术栈时，自动触发联网搜索获取最新最佳实践：
+每个维度都有联网搜索兜底——不只是语言和框架，CSS/Lint/包管理/部署/UI库/数据库/状态管理全覆盖：
 
 ```
-探测到未知栈：Bun JavaScript 运行时
-→ 联网搜索："Bun runtime AGENTS.md commands CI best practices 2026"
-→ 提取：dev/build/test 命令、CI 配置、代码规范
-→ 写入 AGENTS.md
+未知依赖: @shadcn/ui 不在知识库中
+→ 启发式: 含 "shadcn" + "ui" → 维度: ui
+→ WebSearch: "shadcn/ui component library conventions 2026"
+→ 提取: 组件注册方式、主题定制、与 Tailwind 配合使用
+→ 写入 AGENTS.md 强制规范章节
 ```
-
-所有搜索使用**系统当前年份**（非硬编码），确保结果始终与时俱进。
 
 ## 与众不同之处
 
-- **自适应，而非模板** — 读取真实项目文件，不强制套用固定预设
-- **联网搜索回退** — 遇到知识库未覆盖的技术栈，实时搜索最新最佳实践
-- **全栈覆盖** — AGENTS.md + 文档骨架（A/B/C/D/E）+ CI/CD + 测试 + pre-commit，一句话全搞定
-- **原生中文 **— 7 种语言、14 个框架、61 个组件知识库，中文为第一语言
+- **自主发现，不预设** — 扫描项目实际有什么，不从固定列表猜测
+- **三层递进分类** — 精确匹配→模式推断→联网搜索，越用越准
+- **全栈覆盖** — AGENTS.md + 文档体系 + CI/CD + 测试制度 + Git 规范，一句话搞定
+- **增量友好** — 已有项目自动识别，不覆盖不改写
+- **原生中文** — 8 语言 15 框架 70+ 组件，中文为第一语言
 
 ## 工作流程
 
 ```
 你说："初始化这个项目的开发规范"
     ↓
-Step 1: 自动探测技术栈（10 种文件类型）
+Step 1: 自主扫描→文件分类→依赖推断（三层递进）
     ↓
-Step 2: 规则引擎从 61 组件知识库拼装 AGENTS.md
-    ↓ （未知栈 → WebSearch 回退）
-Step 3: 创建 docs/ 文档骨架（A/B/C/D/E 五级分类）
+Step 2: 规则引擎从 70+ 组件知识库拼装 AGENTS.md
+    ↓ （未知栈 → 联网搜索回退）
+Step 3: 按业务类型动态创建文档骨架（13 种类型）
     ↓
 Step 4: 配置 Git（.gitignore + 分支策略）
     ↓
-Step 5: 配置 CI/CD（语言自适应流水线）
+Step 5: 配置 CI/CD（语言 + 平台自适应）
     ↓
-Step 6: 搭建测试基础设施
+Step 6: 建立测试制度（按阶段策略，非强制示例）
+    ↓
+Step 7: 注入持续自适应维护指令
     ↓
 完成：15+ 文件生成，项目即刻 AI-Ready
 ```
@@ -121,10 +141,12 @@ Step 6: 搭建测试基础设施
 
 欢迎贡献！可参与的方向：
 
-- 向 `references/knowledge-base.md` 添加更多组件
-- 完善技术栈探测规则
-- 添加更多 CI 平台模板（GitLab CI、Jenkins 等）
-- 翻译到更多语言
+- **知识库扩展**：向 `references/knowledge-base.md` 添加更多语言/框架/ORM/UI 库组件
+- **启发规则**：扩展 `SKILL.md` Step 1.2 命名模式推断规则，覆盖更多依赖关键词
+- **文件发现**：扩展 Step 1.1 文件名模式映射表，支持更多构建工具/语言生态
+- **业务类型**：扩展 Step 3.0 配置特征推断规则，覆盖更多项目类型
+- **CI 平台**：添加更多 CI 平台模板（GitLab CI、Jenkins、CircleCI 等）
+- **实战反馈**：提供真实项目的使用案例与改进建议，帮助框架持续进化
 
 ## License
 

@@ -11,7 +11,7 @@
 
 ## What is this?
 
-Project Blueprint is a reusable AI agent skill that automatically sets up a complete development standards system for any new project. It's like a project architect that creates your AGENTS.md, documentation skeleton, CI/CD pipeline, and testing infrastructure — all in one shot.
+Project Blueprint is a reusable AI agent skill that transforms any new project into an AI-ready codebase in one sentence. It's not a static template — it's an **autonomous discovery engine**: scan your project files, intelligently classify dependencies, and dynamically assemble a customized AGENTS.md, documentation skeleton, CI/CD pipeline, and testing policy from a 70+ component knowledge base.
 
 Just say: **"Initialize this project's development standards"** and the agent does the rest.
 
@@ -21,96 +21,114 @@ Just say: **"Initialize this project's development standards"** and the agent do
 npx skills add shuguang1994/project-blueprint
 ```
 
-Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, OpenCode, and 20+ more.
+Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, OpenCode, and 27+ more.
 
 ## Why
 
-**The problem**: Every new project starts from zero. You spend the first day setting up AGENTS.md, CI/CD, testing framework, gitignore, docs structure — the boilerplate that every AI-ready project needs but no one wants to write by hand. Existing tools give you a static template. They don't adapt to your tech stack, don't cover CI, don't set up testing, and don't speak your language.
+**AGENTS.md is now an industry standard in 2026** — used by 60,000+ open-source repos, co-promoted by OpenAI, Google, Anthropic, and Microsoft. 76% of developers use AI coding assistants (Stack Overflow 2025), but without AGENTS.md, AI agents are like "new hires with no onboarding" — producing inconsistent code styles, broken architecture, and failing CI.
 
-**Our approach**: Project Blueprint reads your actual project files, detects the stack, and assembles a custom AGENTS.md from a 61-component knowledge base. It's not a template — it's a rules engine. Unknown stacks get web-searched in real-time. And it's the only tool that generates a full docs/ skeleton (A/B/C/D/E classification), CI pipeline, and testing infrastructure — all from a single sentence.
+**Industry data**: Anthropic benchmarks show AGENTS.md reduces wrong-pattern rewrites by **40-60%**. But writing a quality AGENTS.md by hand takes half a day to a full day — repeated for every new project.
 
-> 中文用户请参考 [README_CN.md](README_CN.md)
+**Project Blueprint's approach**: No preset templates. Autonomous scanning → intelligent classification → dynamic assembly. The AGENTS.md you get reflects your project's actual tech stack. And it's the only tool that generates AGENTS.md + docs skeleton + CI pipeline + testing policy + Git conventions — all from one sentence.
+
+## Core Capabilities
+
+| Capability | Description |
+|------------|-------------|
+| **Autonomous File Discovery** | Scan and classify 30+ file patterns — no preset file checklist |
+| **Intelligent Dep Classification** | 3-tier: knowledge base exact match → 31 heuristic patterns → web search |
+| **Business Type Inference** | 2-tier heuristic (structure + config features), 13 business types |
+| **Dynamic AGENTS.md** | Assembled from 70+ component knowledge base, not a template |
+| **Documentation System** | A/B/C/D/E 5-tier classification, generated per business type |
+| **Testing Policy** | Phase-appropriate layered strategy, not forced example files |
+| **Incremental Mode** | Only fills gaps on existing projects, never overwrites |
 
 ## What It Generates
 
 | Output | Description |
 |--------|-------------|
-| `AGENTS.md` | Project conventions (Commands + Boundaries + Code Style + Review Checklist, governed by architecture principles) |
-| `docs/` | A/B/C/D/E classified documentation skeleton |
-| `.github/workflows/ci.yml` | CI pipeline (auto-adapts to your tech stack) |
-| `.gitignore` | Curated gitignore rules |
-| `.husky/pre-commit` | Pre-commit lint hook |
+| `AGENTS.md` | Project conventions (governed by architecture principles) |
+| `docs/` | A/B/C/D/E classified documentation skeleton + README maintenance guides |
+| `.github/workflows/ci.yml` | CI pipeline (auto-adapts to language + platform) |
+| `.gitignore` | Curated rules per language |
+| `.husky/pre-commit` | Pre-commit lint hook (JS/TS only) |
 | `CLAUDE.md` | Claude Code vendor breadcrumb |
 | `.cursor/rules/project.mdc` | Cursor vendor breadcrumb |
-| `__tests__/example.spec.ts` | Sample unit test |
+| `docs/B/B-03-测试指南.md` | Testing policy (layers, timing, framework-specific patterns) |
 
-## Adaptive Tech Stack Detection
+## Autonomous Discovery Engine
 
-Project Blueprint reads your project files to automatically detect the tech stack:
+Project Blueprint doesn't check a fixed list of files. It scans your project and discovers everything.
 
-| File | What it detects |
-|------|----------------|
-| `package.json` | Language, framework, ORM, CSS framework, testing library, lint tools, state management, package manager |
-| `go.mod` | Go version, framework (gin/echo/fiber/chi) |
-| `requirements.txt` | Python framework (FastAPI/Flask/Django) |
-| `pom.xml` / `build.gradle` | Java framework (Spring Boot) |
-| `Cargo.toml` | Rust dependencies |
-| `docker-compose.yml` | Database, cache, message queue services |
-| `tsconfig.json` | Strict mode, path aliases |
-| `.eslintrc` / `.prettierrc` | Lint configuration |
-| `git remote -v` | Repository platform (GitHub/Gitee) |
+### Dependency Classification: 3-Tier
 
-## Built-in Knowledge Base
+```
+All detected dependencies
+    ↓
+Tier 1: Knowledge Base Exact Match
+  Hit in 70+ component KB → instant
+    ↓
+Tier 2: Name Pattern Heuristic
+  31 patterns covering 100+ keywords → auto-classify
+  e.g. winston → logging, antdv-next → ui, mysql2 → database
+    ↓
+Tier 3: Web Search
+  Truly unknown → real-time search for latest info
+```
 
-61 components across 10 categories:
+### Tech Stack Coverage
 
-| Category | Components |
-|----------|-----------|
-| **Languages** | TypeScript, JavaScript, Go, Python, Java, Rust, Ruby, PHP |
-| **Frameworks** | Next.js, NestJS, Vue 3, React, Express, Fastify, FastAPI, Flask, Django, Gin, Spring Boot, Actix-web, SvelteKit, Nuxt 3 |
-| **ORMs** | Prisma, TypeORM, Drizzle, Sequelize, GORM, SQLAlchemy, JPA/Hibernate |
-| **CSS** | Tailwind CSS, CSS Modules, Scoped CSS, Styled Components, SCSS |
-| **Testing** | Vitest, Jest, Pytest, Go testing, JUnit 5, Playwright |
-| **Linting** | ESLint, Prettier, Biome, Ruff, golangci-lint |
-| **Package Managers** | pnpm, npm/yarn, Poetry, Gradle/Maven, go mod |
-| **Deployment** | PM2, Docker, Vercel, Docker Compose, GitHub Pages |
+| Layer | Components |
+|-------|-----------|
+| **Languages** (8) | TypeScript, JavaScript, Go, Python, Java, Rust, Ruby, PHP |
+| **Frameworks** (15) | NestJS, Next.js, Vue 3, React, Express, FastAPI, Flask, Django, Gin, Spring Boot, SvelteKit, Nuxt 3, Laravel, Hono, uni-app |
+| **ORMs** (6) | Prisma, TypeORM, Drizzle, GORM, SQLAlchemy, JPA/Hibernate |
+| **CSS** (5) | Tailwind CSS, CSS Modules, Scoped CSS, Styled Components, SCSS |
+| **UI Libraries** (4) | Ant Design Vue, Element Plus, Naive UI, Vant |
+| **Testing** (6) | Vitest, Jest, Pytest, Go testing, JUnit 5, Playwright |
+| **Linting** (5) | ESLint, Prettier, Biome, Ruff, golangci-lint |
+| **Deployment** (5) | PM2, Docker, Vercel, Docker Compose, GitHub Pages |
+| **Databases** (2) | MySQL, PostgreSQL |
+| + State(3) + Package Mgmt(5) + Conventions(6) = **70+** |
 
 ## Web Search Fallback
 
-When encountering an unknown tech stack, Project Blueprint automatically triggers a web search for the latest best practices. Example:
+Every dimension has a web search fallback — not just language/framework, but CSS, lint, package manager, deployment, UI libraries, database, and state management:
 
 ```
-Unknown: Bun JavaScript runtime
-→ WebSearch: "Bun runtime AGENTS.md commands CI best practices 2026"
-→ Extracts: dev/build/test commands, CI config, conventions
+Unknown dep: @shadcn/ui not in knowledge base
+→ Heuristic: contains "shadcn" + "ui" → dimension: ui
+→ WebSearch: "shadcn/ui component library conventions 2026"
+→ Extracts: registration patterns, theming, Tailwind integration
 → Writes into AGENTS.md
 ```
 
-All search queries use the **current system year** (not hardcoded) to ensure up-to-date results.
-
 ## What Makes It Different
 
-- **Adaptive, not template-based** — reads your actual project files instead of forcing a preset
-- **Web search fallback** — unknown stacks get real-time best-practice lookup
-- **Full-stack coverage** — AGENTS.md + docs/ skeleton (A/B/C/D/E) + CI/CD + testing + pre-commit, all from one command
-- **Multi-language support** — 7 languages, 14 frameworks, 61 components, with Chinese as a first-class language
+- **Autonomous discovery, not preset** — scans what your project actually has
+- **3-tier classification** — exact match → pattern heuristic → web search
+- **Full-stack coverage** — AGENTS.md + docs + CI + testing policy + Git, one sentence
+- **Incremental-friendly** — auto-detects existing projects, adds only what's missing
+- **Chinese-first** — 8 languages, 15 frameworks, 70+ components natively in Chinese
 
 ## How It Works
 
 ```
 User says: "Initialize this project"
     ↓
-Step 1: Auto-detect tech stack (10 file types)
+Step 1: Autonomous scan → file classification → dep inference (3-tier)
     ↓
-Step 2: Rule engine assembles AGENTS.md from 61-component knowledge base
+Step 2: Rule engine assembles AGENTS.md from 70+ component KB
     ↓ (unknown stack → WebSearch fallback)
-Step 3: Create docs/ skeleton (A/B/C/D/E)
+Step 3: Dynamic docs skeleton by business type (13 types)
     ↓
 Step 4: Configure Git (.gitignore + branch strategy)
     ↓
-Step 5: Configure CI/CD (language-aware pipeline)
+Step 5: Configure CI/CD (language + platform adaptive)
     ↓
-Step 6: Set up testing infrastructure
+Step 6: Establish testing policy (phase-appropriate, not forced)
+    ↓
+Step 7: Inject continuous self-maintenance instructions
     ↓
 Done: 15+ files generated, project is AI-ready
 ```
@@ -124,10 +142,13 @@ Done: 15+ files generated, project is AI-ready
 
 Contributions welcome! Areas to help:
 
-- Add more components to `references/knowledge-base.md`
-- Improve tech stack detection rules
-- Add CI templates for more CI platforms (GitLab CI, Jenkins)
-- Translate to more languages
+- **Knowledge base**: Add more language/framework/ORM/UI library entries to `references/knowledge-base.md`
+- **Heuristic rules**: Expand Step 1.2 name pattern classification, covering more dependency keywords
+- **File discovery**: Extend Step 1.1 file pattern mapping for more build tools and language ecosystems
+- **Business types**: Expand Step 3.0 config feature inference for more project types
+- **CI platforms**: Add templates for more CI platforms (GitLab CI, Jenkins, CircleCI, etc.)
+- **Real-world feedback**: Share use cases and improvement suggestions from real projects to help the framework evolve
+- **Translations**: README to Japanese, Korean, and other languages
 
 ## License
 
