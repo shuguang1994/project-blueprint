@@ -36,12 +36,16 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 | Capability | Description |
 |------------|-------------|
 | **Autonomous File Discovery** | Scan and classify 30+ file patterns — no preset file checklist |
+| **Project Structure Detection** | Auto-identify monorepo, 2/3-tier frontend-backend, or single project |
 | **Intelligent Dep Classification** | 3-tier: knowledge base exact match → 31 heuristic patterns → web search |
 | **Business Type Inference** | 2-tier heuristic (structure + config features), 13 business types |
 | **Dynamic AGENTS.md** | Assembled from 70+ component knowledge base, not a template |
+| **Module Table Generation** | Reads actual source dirs, infers responsibilities via file patterns, web search fallback |
 | **Documentation System** | A/B/C/D/E 5-tier classification, generated per business type |
 | **Testing Policy** | Phase-appropriate layered strategy, not forced example files |
+| **Multi-IDE Support** | Auto-generates CLAUDE.md, .cursor/rules, copilot-instructions, and more |
 | **Incremental Mode** | Only fills gaps on existing projects, never overwrites |
+| **Self-Evolving** | Generated AGENTS.md includes auto-maintenance rules — updates module table, tech stack, and decisions as the project grows |
 
 ## What It Generates
 
@@ -103,12 +107,28 @@ Unknown dep: @shadcn/ui not in knowledge base
 → Writes into AGENTS.md
 ```
 
+## Unique Innovations
+
+> Verified via web search — no existing AGENTS.md generation tool implements these.
+
+| Innovation | Description | Competitor Status |
+|------------|-------------|-------------------|
+| **Full-Lifecycle Generation** | One sentence → AGENTS.md + docs + CI/CD + testing policy + Git conventions | Competitors only generate AGENTS.md |
+| **Autonomous Discovery Engine** | 3-tier classification (exact→heuristic→web search), not just reading package.json | Competitors use fixed templates or basic scanning |
+| **Self-Evolving Mechanism** | Generated AGENTS.md includes auto-maintenance rules, grows with the project | Competitors produce static files |
+| **Business Type Awareness** | 13 business type inferences drive different documentation structures | No competitor infers project type |
+| **Incremental Quality Detection** | Auto-evaluates existing AGENTS.md quality, tiered handling (complete→skip / partial→supplement / none→full) | Competitors overwrite or start fresh |
+| **Multi-IDE Ecosystem** | Auto-generates CLAUDE.md, .cursor/rules, copilot-instructions, and more | No competitor provides this |
+| **Module Table Auto-Generation** | Reads actual source directories, infers responsibilities via file patterns, web search fallback | No competitor provides this |
+| **8-Language 15-Framework KB** | 70+ components with Commands + Conventions + CI, Chinese-first | Competitors cover JS/TS ecosystem at most |
+
 ## What Makes It Different
 
 - **Autonomous discovery, not preset** — scans what your project actually has
 - **3-tier classification** — exact match → pattern heuristic → web search
 - **Full-stack coverage** — AGENTS.md + docs + CI + testing policy + Git, one sentence
 - **Incremental-friendly** — auto-detects existing projects, adds only what's missing
+- **Self-evolving** — generated AGENTS.md is not a dead file; it teaches the AI to maintain itself as the project grows
 - **Chinese-first** — 8 languages, 15 frameworks, 70+ components natively in Chinese
 
 ## How It Works
