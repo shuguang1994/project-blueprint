@@ -135,7 +135,7 @@ git push --force / git reset --hard / DELETE FROM 不带 WHERE
   | 做出架构决策 | 追加到关键架构决策表 |
   | 修复典型 Bug | 写入 docs/B/B-04-BUG知识库.md |
   | CI 流程变更 | 同步更新 docs 中 CI 描述 |
-- AGENTS.md 超 300 行必须精简
+- **架构原则控制文档规模** — 高内聚低耦合 / 模块职责单一 / 组合优于继承 / 避免全局状态 / 纯函数优先。当 AGENTS.md 容纳不下时，按职责域拆分到 docs/ 引用。
 - 项目记忆: project_memory.md 季度清理
 - 会话记忆: 自动过期保留最近 7 天
 ```

@@ -17,7 +17,7 @@ Agent 在完成以下操作后，应检查并同步相关文档：
 | 发现新代码规范 | 在 review 中反复出现同样的纠正 | 追加到强制规范章节 | AGENTS.md |
 | 修复典型 Bug | Bug 有通用参考价值 | 写入根因+方案+预防 | docs/B/B-04-BUG知识库.md |
 | 做出架构决策 | 涉及技术选型/模块拆分/性能优化 | 写入决策+理由+日期 | docs/C/C-03-项目长期记忆.md |
-| 模块超 500 行拆分 | Service 按职责域拆分 | 更新模块速查表目录字段 | AGENTS.md |
+| 文档膨胀/模块超职责 | Service 承担多个职责域 | 按架构原则拆分：高内聚低耦合 / 单一职责 | 更新模块表和 docs 引用 |
 | CI 流程变更 | `.github/workflows/ci.yml` 有变更 | 更新 docs 中 CI 描述 | docs/B/B-02-部署指南.md |
 | 新增/删除测试框架 | package.json devDependencies 测试库变更 | 更新测试命令 | AGENTS.md Commands |
 
