@@ -337,6 +337,20 @@
 
 ## 通用段落
 
+### 核心开发原则
+**Conventions**:
+```
+✅ 高内聚低耦合 — 模块只做一件事，跨模块走 Service 接口
+✅ 模块职责单一 — Service 承担多个职责域时拆分
+✅ 组合优于继承 — Decorator/Guard/Interceptor 管道组合，避免深层继承链
+✅ 避免全局状态 — Injectable 默认单例，禁止存请求级可变状态
+✅ 纯函数优先 — utils/ DTO transform 无副作用，输入确定输出确定
+✅ 复用已有代码避免重复造轮子 — 先查 utils/ 和现有模块，优先引用成熟开源组件
+❌ 重复编写已有工具函数
+❌ 不用项目中已封装的 api/ 模块而直接调底层 HTTP
+❌ 引入能由已有依赖覆盖的新依赖包
+```
+
 ### Boundaries 通用规范
 ```
 **Allowed**: src/ / app/ / pages/ / components/ / modules/ / docs/ / tests/
