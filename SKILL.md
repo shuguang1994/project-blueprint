@@ -26,6 +26,20 @@ license: MIT
 
 ## Step 1：自适应探测引擎
 
+### 1.0 读取已有项目文档（增量模式）
+
+**首先检查**项目是否已有文档，从中提取信息而非从零猜测：
+
+| 已有文件 | 提取内容 | 用途 |
+|---------|---------|------|
+| `README.md` | 项目描述、技术栈关键词 | 填充 AGENTS.md 项目身份 |
+| `CONTRIBUTING.md` / `B-01-开发规范.md` | 已有编码规范 | 合并到 AGENTS.md 规范章节 |
+| 已有 `AGENTS.md` / `CLAUDE.md` | 全部已有规则 | **保留→补充缺失**（不覆盖） |
+| `docs/` 已有文件 | 已完成文档列表 | 跳过已有，只补充缺失 |
+| `git log --oneline -20` | commit 风格（conventional / 自由格式） | 推断提交格式 |
+
+> 原则：已有项目接入时做**增量补充**，不推翻重来。如果 AGENTS.md 已存在且质量良好，仅补充 Commands / CI / 测试章节。
+
 ### 1.1 多文件并行探测
 
 读取以下所有存在的文件（不存在则跳过）：
@@ -313,3 +327,38 @@ echo "npx lint-staged" > .husky/pre-commit
 3. 运行 npm run test 验证测试基础设施
 4. git push origin develop 推送初始框架
 ```
+
+---
+
+## Step 7：持续自适应机制
+
+### 在生成的 AGENTS.md 中注入维护指令
+
+AGENTS.md 的「上下文管理」章节必须包含 Agent 主动维护规则（而非被动"每月 review"）：
+
+```markdown
+## 上下文管理
+
+- **Agent 主动维护本文件** — 每次完成以下操作时同步更新：
+  | 操作 | 更新内容 |
+  |------|---------|
+  | 新增模块/服务 | 更新模块速查表 |
+  | 新增依赖/工具 | 更新项目身份中的技术栈行 |
+  | 发现新的代码规范 | 追加到强制规范章节 |
+  | 做出架构决策 | 追加到关键架构决策表 |
+  | 修复典型 Bug | 写入 docs/B/B-04-BUG知识库.md |
+  | CI 流程变更 | 同步更新 docs 中 CI 描述 |
+- AGENTS.md 超 300 行必须精简
+- 项目记忆 (project_memory.md) 季度清理
+```
+
+### 在 docs/ 目录注入维护 README
+
+每个分类目录下创建 `README.md`：
+- `docs/A/README.md`: "项目基准文档。架构变更时同步更新 A-02~A-04。"
+- `docs/B/README.md`: "开发运维文档。流程变更时同步，每次部署后检查 B-02。"
+- `docs/C/README.md`: "知识沉淀文档。每次重大决策或修复典型 Bug 后同步更新。"
+
+### Agent 同步操作指南
+
+详见 `references/project-sync-guide.md`。
