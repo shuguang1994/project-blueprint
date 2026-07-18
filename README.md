@@ -18,7 +18,14 @@ Just say: **"Initialize this project's development standards"** and the agent do
 ## Quick Install
 
 ```bash
+# Global (GitHub)
 npx skills add shuguang1994/project-blueprint
+
+# China (Gitee mirror, no proxy needed)
+npx skills add https://gitee.com/shuguang1994/project-blueprint.git
+
+# Update later
+npx skills update project-blueprint
 ```
 
 Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, OpenCode, and 27+ more.

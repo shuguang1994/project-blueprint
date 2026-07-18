@@ -17,7 +17,14 @@ Project Blueprint 是一个 **AI Agent 技能包**，为新项目一键建立完
 ## 快速安装
 
 ```bash
+# 国际（GitHub）
 npx skills add shuguang1994/project-blueprint
+
+# 国内（Gitee，无需代理）
+npx skills add https://gitee.com/shuguang1994/project-blueprint.git
+
+# 后续更新
+npx skills update project-blueprint
 ```
 
 支持的 Agent：Claude Code、Cursor、GitHub Copilot、Codex、Windsurf、Trae、OpenCode 等 27+ 工具。
