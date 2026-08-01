@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - README_CN「与众不同之处」语言数 8 → 7 统一（知识库实际 7 个语言条目，TS/JS 合并）
 - README_CN 技术栈覆盖表末行 `<br />` 残留清理
 - .gitignore 追加 `.trae/`（IDE 本地目录，避免误提交）
+- PROJECT_STATUS 移除内部项目引用与本机绝对路径（开源仓库不暴露其他项目信息）
 
 ## [1.4.1] - 2026-08-01
 

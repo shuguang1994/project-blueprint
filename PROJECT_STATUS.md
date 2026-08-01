@@ -14,7 +14,7 @@
 |------|:---:|
 | 版本 | v1.5.0 |
 | 开发完成度 | ✅ 核心功能完整，7 Step 流程闭环 |
-| 内部测试 | ✅ 已在艳姐曼姿项目实战验证 |
+| 内部测试 | ✅ 已在真实全栈项目实战验证 |
 | 文档 | ✅ 中文 README 完善，英文 README 同步 |
 | 开源协议 | MIT |
 | GitHub | https://github.com/shuguang1994/project-blueprint |
@@ -62,64 +62,7 @@ project-blueprint/
 - 内容覆盖：项目身份、常用命令、Boundaries、强制规范（文档/SKILL.md 编写/知识库条目/版本发布/架构原则）、模块速查表、关键架构决策、Git 规范（双远程）、代码审查清单、上下文管理
 - 后续对项目文件的任何变更需同步维护 AGENTS.md（见其「上下文管理」章节）
 
-## 四、从艳姐曼姿项目独立抽离
-
-> 当前位于 `d:\xiangmu1\xiangmuces\open-source\project-blueprint\`，与艳姐曼姿主项目共享同一个 Git 仓库。以下是独立抽离方法。
-
-### 方案 A：直接复制（推荐，最简单）
-
-```powershell
-# 复制到任意独立目录
-cp -r d:\xiangmu1\xiangmuces\open-source\project-blueprint d:\projects\project-blueprint
-
-cd d:\projects\project-blueprint
-
-# 初始化独立 Git 仓库
-rm -r .git
-git init
-git add -A
-git commit -m "chore: project-blueprint v1.4.0 独立初始化"
-
-# 重新关联远程仓库
-git remote add origin https://github.com/shuguang1994/project-blueprint.git
-git remote add gitee https://gitee.com/shuguang1994/project-blueprint.git
-
-# 拉取远程历史
-git fetch origin
-git reset --mixed origin/main
-git add -A
-git commit -m "chore: 同步 v1.4.0 至独立仓库"
-git push origin main
-git push gitee main --tags
-```
-
-### 方案 B：从 GitHub 克隆（远程已有完整历史）
-
-```powershell
-cd d:\projects
-git clone https://github.com/shuguang1994/project-blueprint.git
-cd project-blueprint
-git remote add gitee https://gitee.com/shuguang1994/project-blueprint.git
-```
-
-> 推荐方案 A——保留本地最新修改，再与远程同步。
-
-### 抽离后不影响艳姐曼姿主项目
-
-`open-source/project-blueprint/` 与艳姐曼姿主项目在同一个 Git 仓库中，抽离方式：
-- 从主项目 `d:\xiangmu1\xiangmuces\` 中删除 `open-source/project-blueprint/` 目录
-- 主项目提交记录中会显示该目录被删除
-- 独立仓库继续维护
-
-```powershell
-# 在主项目中删除（在独立仓库确认正常后操作）
-cd d:\xiangmu1\xiangmuces
-rm -r open-source/project-blueprint
-git add -A
-git commit -m "chore: 移除 project-blueprint（已独立抽离至独立仓库）"
-```
-
-## 五、技术架构
+## 四、技术架构
 
 ### 7 Step 流程
 
@@ -141,7 +84,7 @@ Step 7: 持续自适应机制
 4. **全栈覆盖** — AGENTS.md + docs + CI + testing + Git
 5. **MCP 工具自动推荐** — 从探测技术栈自动匹配 MCP 工具组合（必装/推荐/可选），生成可执行安装文档；双层联网（建库期核对 + 推荐期兜底）防命令过时，全网验证无同类实现
 
-## 六、已知局限
+## 五、已知局限
 
 1. React 生态 UI 库（MUI/shadcn/ui）未列入知识库，依赖联网回退
 2. Gitee 项目已有 GitHub Actions 时不会主动建议 `.gitee-ci.yml`
@@ -149,11 +92,11 @@ Step 7: 持续自适应机制
 4. 知识库缺少 Fastify/Actix-web 框架条目
 5. `npx skills add` 安装方式依赖 skills.sh 平台
 
-## 七、下一步计划
+## 六、下一步计划
 
 - [ ] 收集开源社区反馈和使用案例
 - [ ] 扩展知识库覆盖更多框架和组件
 - [ ] 提交到 skills.sh 官方目录
 - [ ] 撰写博客/文章推广
 - [x] MCP 工具推荐能力（Step 3.4 + mcp-tools.md + B-05 文档，v1.5.0）
-- [ ] 发布 v1.5.0（CHANGELOG 已更新，待 tag + 双远程推送）
+- [ ] 发布 v1.5.0（Gitee 已推送 main + tag v1.5.0；GitHub 网络受限待补推）
