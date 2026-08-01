@@ -52,6 +52,7 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 | **Testing Policy** | Phase-appropriate layered strategy, not forced example files |
 | **Multi-IDE Support** | Auto-generates CLAUDE.md, .cursor/rules, copilot-instructions, and more |
 | **Incremental Mode** | Only fills gaps on existing projects, never overwrites |
+| **MCP Tool Recommendation** | Recommends MCP tool list + combinations from detected stack, generates `docs/B/B-05-MCP工具清单.md` with install commands (MD only, minimal intrusion) |
 | **Self-Evolving** | Generated AGENTS.md includes auto-maintenance rules — updates module table, tech stack, and decisions as the project grows |
 
 ## What It Generates
@@ -66,6 +67,7 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 | `CLAUDE.md` | Claude Code vendor breadcrumb |
 | `.cursor/rules/project.mdc` | Cursor vendor breadcrumb |
 | `docs/B/B-03-测试指南.md` | Testing policy (layers, timing, framework-specific patterns) |
+| `docs/B/B-05-MCP工具清单.md` | MCP tool list + combination suggestions + install commands (on demand) |
 
 ## Autonomous Discovery Engine
 
@@ -91,7 +93,7 @@ Tier 3: Web Search
 
 | Layer | Components |
 |-------|-----------|
-| **Languages** (8) | TypeScript, JavaScript, Go, Python, Java, Rust, Ruby, PHP |
+| **Languages** (7) | TypeScript/JavaScript, Go, Python, Java, Rust, Ruby, PHP |
 | **Frameworks** (15) | NestJS, Next.js, Vue 3, React, Express, FastAPI, Flask, Django, Gin, Spring Boot, SvelteKit, Nuxt 3, Laravel, Hono, uni-app |
 | **ORMs** (6) | Prisma, TypeORM, Drizzle, GORM, SQLAlchemy, JPA/Hibernate |
 | **CSS** (5) | Tailwind CSS, CSS Modules, Scoped CSS, Styled Components, SCSS |
@@ -100,7 +102,7 @@ Tier 3: Web Search
 | **Linting** (5) | ESLint, Prettier, Biome, Ruff, golangci-lint |
 | **Deployment** (5) | PM2, Docker, Vercel, Docker Compose, GitHub Pages |
 | **Databases** (2) | MySQL, PostgreSQL |
-| + State(3) + Package Mgmt(5) + Conventions(6) = **70+** |
+| + State(3) + Package Mgmt(5) + Conventions(4) + Doc Patterns(12) = **70+** |
 
 ## Web Search Fallback
 
@@ -113,6 +115,8 @@ Unknown dep: @shadcn/ui not in knowledge base
 → Extracts: registration patterns, theming, Tailwind integration
 → Writes into AGENTS.md
 ```
+
+> Web fallback covers two phases: **generation** (web search for unknown deps/modules) + **coding** (the generated AGENTS.md requires verifying third-party library APIs/versions against official docs before writing code).
 
 ## Unique Innovations
 
@@ -127,6 +131,7 @@ Unknown dep: @shadcn/ui not in knowledge base
 | **Incremental Quality Detection** | Auto-evaluates existing AGENTS.md quality, tiered handling (complete→skip / partial→supplement / none→full) | Competitors overwrite or start fresh |
 | **Multi-IDE Ecosystem** | Auto-generates CLAUDE.md, .cursor/rules, copilot-instructions, and more | No competitor provides this |
 | **Module Table Auto-Generation** | Reads actual source directories, infers responsibilities via file patterns, web search fallback | No competitor provides this |
+| **MCP Tool Auto-Recommendation** | Auto-matches MCP tools from detected stack via 3-tier matching, outputs combo suggestions (must/recommended/optional) + an installable MD doc; dual-layer web search keeps commands fresh | Competitors (e.g. Project Genesis Phase 9) only wire preset MCP config — no autonomous recommendation from tech stack |
 | **8-Language 15-Framework KB** | 70+ components with Commands + Conventions + CI, Chinese-first | Competitors cover JS/TS ecosystem at most |
 
 ## What Makes It Different
@@ -136,7 +141,8 @@ Unknown dep: @shadcn/ui not in knowledge base
 - **Full-stack coverage** — AGENTS.md + docs + CI + testing policy + Git, one sentence
 - **Incremental-friendly** — auto-detects existing projects, adds only what's missing
 - **Self-evolving** — generated AGENTS.md is not a dead file; it teaches the AI to maintain itself as the project grows
-- **Chinese-first** — 8 languages, 15 frameworks, 70+ components natively in Chinese
+- **MCP-ready tooling** — auto-recommends MCP tools + combos from your stack, with an installable doc that never ships outdated commands
+- **Chinese-first** — 7 languages, 15 frameworks, 70+ components natively in Chinese
 
 ## How It Works
 
@@ -147,7 +153,7 @@ Step 1: Autonomous scan → file classification → dep inference (3-tier)
     ↓
 Step 2: Rule engine assembles AGENTS.md from 70+ component KB
     ↓ (unknown stack → WebSearch fallback)
-Step 3: Dynamic docs skeleton by business type (13 types)
+Step 3: Dynamic docs skeleton by business type (13 types) + MCP tool recommendation (B-05)
     ↓
 Step 4: Configure Git (.gitignore + branch strategy)
     ↓
@@ -170,6 +176,7 @@ Done: 15+ files generated, project is AI-ready
 Contributions welcome! Areas to help:
 
 - **Knowledge base**: Add more language/framework/ORM/UI library entries to `references/knowledge-base.md`
+- **MCP tools**: Add MCP tool entries (usage/install/combination) to `references/mcp-tools.md`, expanding dimension coverage
 - **Heuristic rules**: Expand Step 1.2 name pattern classification, covering more dependency keywords
 - **File discovery**: Extend Step 1.1 file pattern mapping for more build tools and language ecosystems
 - **Business types**: Expand Step 3.0 config feature inference for more project types

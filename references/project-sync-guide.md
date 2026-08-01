@@ -20,6 +20,7 @@ Agent 在完成以下操作后，应检查并同步相关文档：
 | 文档膨胀/模块超职责 | Service 承担多个职责域 | 按架构原则拆分：高内聚低耦合 / 单一职责 | 更新模块表和 docs 引用 |
 | CI 流程变更 | `.github/workflows/ci.yml` 有变更 | 更新 docs 中 CI 描述 | docs/B/B-02-部署指南.md |
 | 新增/删除测试框架 | package.json devDependencies 测试库变更 | 更新测试命令 | AGENTS.md Commands |
+| 新增/移除 MCP 工具 | 检查 `docs/B/B-05-MCP工具清单.md` 是否存在 | 追加/移除工具条目（含安装命令），同步技术栈行 | docs/B/B-05-MCP工具清单.md + AGENTS.md |
 
 ---
 

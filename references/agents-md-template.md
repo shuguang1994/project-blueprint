@@ -89,6 +89,15 @@ git push --force / git reset --hard / DELETE FROM 不带 WHERE
 ❌ 禁止打印 SQL 全量查询结果
 ```
 
+### 4.4 第三方库使用
+
+```
+✅ 涉及第三方库（NestJS/TypeORM/BullMQ/Vant 等）的 API/版本/配置 → 先 WebSearch/WebFetch 查官方文档，确认当前版本用法后再写
+✅ 升级依赖后 → 核对官方 changelog / 迁移指南破坏性变更
+❌ 凭旧记忆写库的 API（版本差异易踩坑）
+```
+> Reason: 模型知识有截止时间，旧版本 API 写法易导致编译失败或运行期 Bug。
+
 ## 五、模块速查（按项目实际模块填写）
 
 | 模块 | 目录 | 核心职责 |
@@ -106,7 +115,7 @@ git push --force / git reset --hard / DELETE FROM 不带 WHERE
 ## 七、Git 规范
 
 - **平台**: [Gitee/GitHub/GitLab]
-- **分支**: `master`(生产) / `develop`(日常) / `feat/xxx`(功能) / `fix/xxx`(修复)
+- **分支**: `main`(唯一常驻，tag 发布) 或 `master`(生产) / `develop`(日常) — 按已有分支写入
 - **提交格式**: `<type>(<scope>): <description>`
   - type: `feat`/`fix`/`refactor`/`docs`/`test`/`chore`/`perf`
 - **禁止提交**: `.env` / `node_modules/` / `dist/` / 证书/密钥
@@ -122,6 +131,7 @@ git push --force / git reset --hard / DELETE FROM 不带 WHERE
 - [ ] 无硬编码密码/Token？
 - [ ] 新表结构有迁移脚本？
 - [ ] 关键节点有 info 日志？
+- [ ] 第三方库用法已核对当前版本文档？
 - [ ] 测试通过？（如果有测试）
 
 ## 上下文管理

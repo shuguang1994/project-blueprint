@@ -376,6 +376,9 @@
 ✅ 避免全局状态 — Injectable 默认单例，禁止存请求级可变状态
 ✅ 纯函数优先 — utils/ DTO transform 无副作用，输入确定输出确定
 ✅ 复用已有代码避免重复造轮子 — 先查 utils/ 和现有模块，优先引用成熟开源组件
+✅ 第三方库 API/版本/配置不确定时 → 先 WebSearch/WebFetch 查官方文档，确认当前版本用法后再写代码
+✅ 升级依赖后 → 核对官方 changelog / 迁移指南中的破坏性变更
+❌ 凭旧记忆写第三方库 API（TypeORM 0.2→0.3、BullMQ v4→v5、Vant 2→4 等版本差异大）
 ❌ 重复编写已有工具函数
 ❌ 不用项目中已封装的 api/ 模块而直接调底层 HTTP
 ❌ 引入能由已有依赖覆盖的新依赖包
@@ -392,7 +395,7 @@
 **Commands**: `git add <files>` / `git commit -m "<type>(<scope>): <description>"` / `git push` / `git revert <commit>`
 **Conventions**: 
 ```
-✅ 分支: master(生产) / develop(日常) / feat/xxx / fix/xxx
+✅ 分支: main(唯一常驻，tag 发布) 或 master(生产)/develop(日常) 双分支 — 按项目已有分支写入
 ✅ 提交: <type>(<scope>): <description>  — type: feat/fix/refactor/docs/test/chore/perf
 ✅ 部署前必须 commit，线上问题 git revert 回滚
 ❌ git push --force / git reset --hard
@@ -409,6 +412,7 @@
 ✅ 关键节点有日志?
 ✅ 无 N+1 查询?
 ✅ API 响应格式一致?
+✅ 第三方库用法已核对当前版本文档?
 
 语言特定:
   TS/JS: tsc --noEmit 通过? / 无 any?

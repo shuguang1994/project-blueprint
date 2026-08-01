@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-08-01
+
+### Added
+- **MCP 工具推荐能力**：Step 3 新增 3.4 子步骤，基于探测技术栈三层递进匹配 MCP 工具，生成 `docs/B/B-05-MCP工具清单.md`（推荐清单 + 组合矩阵 + 安装命令），供后期按文档安装
+  - 新增 `references/mcp-tools.md`：MCP 工具知识库（10 维度 18 条目，三段式 适用场景/安装方式/推荐组合 + 维度匹配表 + 组合矩阵）
+  - 双层联网保障：建库期条目安装命令必须 WebSearch 核对当前版本；推荐期第 3 层联网兜底未知工具；B-05 文档提示安装前联网核对
+  - 仅生成 MD 文档，不写入项目级 `.mcp.json`（最小侵入）
+  - docs-skeleton B/ 新增 B-05 行；project-sync-guide 同步操作表新增「新增/移除 MCP 工具」触发行
+  - AGENTS.md 代码审查清单新增 mcp-tools.md 三段式检查项
+
+### Fixed
+- SKILL.md Step 3.4 三层递进第 1/2 层与 mcp-tools.md 分层标注对齐（第 1 层 = 工具条目「适用场景」精确匹配，第 2 层 = 「维度 → 工具匹配」表启发）
+- README_CN「与众不同之处」语言数 8 → 7 统一（知识库实际 7 个语言条目，TS/JS 合并）
+- README_CN 技术栈覆盖表末行 `<br />` 残留清理
+- .gitignore 追加 `.trae/`（IDE 本地目录，避免误提交）
+
+## [1.4.1] - 2026-08-01
+
+### Added
+- 通用规范新增「第三方库使用」规则：涉及第三方库（NestJS/TypeORM/BullMQ/Vant 等）的 API/版本/配置时，先查官方文档确认当前版本用法再写代码
+  - knowledge-base 核心开发原则新增该约定（含升级依赖后核对破坏性变更）
+  - agents-md-template 强制规范新增 4.4 节
+  - 代码审查清单（knowledge-base + agents-md-template）新增「第三方库用法已核对当前版本文档？」检查项
+
+### Fixed
+- SKILL.md 流程描述「6 步」修正为「7 步」（实际为 Step 1~7）
+- Step 4 分支策略改为按已有分支自适应（支持 main + tag 发布），不再强制新建 develop
+- README/README_CN 数字核对：语言 8→7、通用规范 6→4，覆盖表总数按实际条目核算（79 组件）
+- ci-template.yml / knowledge-base Git 规范 / agents-md-template 分支策略同步支持 main
+
 ## [1.4.0] - 2026-07-18
 
 ### Changed — BREAKING: Step 1 自主发现引擎重构

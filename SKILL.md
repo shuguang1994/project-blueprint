@@ -1,13 +1,13 @@
 ---
 name: project-blueprint
-description: 为新项目快速建立完整 AI 编程规范体系（AGENTS.md、文档目录、CI/CD、Git规范、测试制度）。自主发现引擎：扫描项目→分类文件→推断技术栈，覆盖 8 语言 15 框架 70+ 组件，未知栈三层递进联网回退。Establish AI coding conventions for new projects — autonomous discovery engine with heuristic dep classification, 8 languages 15 frameworks 70+ components, web search fallback for unknowns.
+description: 为新项目快速建立完整 AI 编程规范体系（AGENTS.md、文档目录、CI/CD、Git规范、测试制度）。自主发现引擎：扫描项目→分类文件→推断技术栈，覆盖 7 语言 15 框架 70+ 组件，未知栈三层递进联网回退。Establish AI coding conventions for new projects — autonomous discovery engine with heuristic dep classification, 7 languages 15 frameworks 70+ components, web search fallback for unknowns.
 author: 曙光 (shuguang1994)
 license: MIT
 ---
 
 # Project Blueprint — AI 编程规范体系搭建 Skill
 
-> 跨项目可复用的 6 步规范体系搭建流程。新项目一句话触发，15+ 文件自动生成。
+> 跨项目可复用的 7 步规范体系搭建流程。新项目一句话触发，15+ 文件自动生成。
 
 ## 触发条件
 
@@ -376,8 +376,9 @@ docs/
 │   ├── [按需] A-03-数据库设计.md         "有数据库时创建"
 │   ├── [按需] A-04-前端架构.md           "前端项目时创建"
 │   └── [按需] A-05-移动端架构.md         "移动端项目时创建"
-├── B/  (开发运维 — 始终全量)
+├── B/  (开发运维 — 全量 + 按需)
 │   ├── B-01-开发规范.md / B-02-部署指南.md / B-03-测试指南.md / B-04-BUG知识库.md
+│   ├── [按需] B-05-MCP工具清单.md   "有 MCP 工具需求时创建（见 3.4）"
 ├── C/  (知识沉淀 — 始终全量)
 │   ├── C-01-CodeWiki首页.md / C-02-架构详解.md / C-03-项目长期记忆.md
 ├── D/  (方案设计 — 按需)
@@ -430,6 +431,54 @@ mkdir -p .trae/specs/
 ```
 > 如果 IDE 是 Cursor → `.cursor/specs/`。不支持 specs 则跳过。
 
+### 3.4 MCP 工具推荐（生成 docs/B/B-05-MCP工具清单.md）
+
+> 基于 Step 1 探测结果推荐 MCP 工具清单与组合，生成后期可执行的安装文档（仅 MD，不写入 `.mcp.json` 文件，最小侵入）。
+
+**输入**: Step 1 探测结果（语言/框架/ORM/数据库/部署/UI/移动端等维度）+ Step 3.0 业务类型。
+
+**三层递进匹配**（与 1.2/2.2 同模式）：
+```
+Step 1 探测结果
+    ↓
+第 1 层 — references/mcp-tools.md 工具条目精确匹配
+  按各工具条目「适用场景」命中条件匹配（如 uni-app → Android ADB MCP）
+  命中 → 提取 适用场景/安装方式/推荐组合（快速通道）
+    ↓
+第 2 层 — 维度匹配表启发
+  未命中 → 按 mcp-tools.md「一、维度 → 工具匹配」表，以依赖名/目录/配置关键词推断
+  （如 docker-compose → Docker MCP、e2e 依赖 → Playwright MCP）
+    ↓
+第 3 层 — 联网搜索
+  仍无 → WebSearch "{framework} MCP server {currentYear}"
+  搜索结果同时用于判断是否补充 mcp-tools.md 新条目
+    ↓
+输出: { 工具 → 维度, 等级: 必装|推荐|可选 }
+```
+
+**组合推荐**: 按业务类型从 mcp-tools.md「三、推荐组合矩阵」选取（全栈/移动端/设计+前端/部署运维/数据驱动/版本管理），每个工具标注等级。
+
+**生成文档** `docs/B/B-05-MCP工具清单.md`：
+```
+# MCP 工具清单
+
+> 基于本项目技术栈（{技术栈摘要}）推荐的 MCP 工具配置清单。
+> 更新: {date} | 技术栈: {Step 1 探测结果摘要}
+
+## 一、推荐工具
+| 工具 | 适用维度 | 等级 | 安装命令 |
+
+## 二、推荐组合
+| 组合 | 适用场景 | 工具列表 |
+
+## 三、安装指引
+（每个推荐工具的 npx 安装命令 + .mcp.json 配置片段，供后期直接复制安装）
+> 安装前如遇命令失效或版本不匹配，先 WebSearch 核对官方最新安装方式（MCP 生态更新快，本文档可能滞后）。
+
+## 四、维护
+新增/移除 MCP 工具时更新本文件，并同步 AGENTS.md 技术栈行。
+```
+
 ### 生成规则
 - 占位文件只一行标题 + "(待填写 / TBD)"
 - 每个分类目录下创建 README.md 维护指令：
@@ -456,17 +505,20 @@ mkdir -p .trae/specs/
 git init  # 如果还没初始化
 git add .  # 受 .gitignore 保护，不会添加敏感文件
 git diff --cached --quiet || git commit -m "chore: 初始化项目规范体系 — AGENTS.md + docs/ + CI"
-git checkout -b develop 2>/dev/null || git checkout develop  # 已有 develop 分支则直接切换
+# 不强行新建分支，按已有分支自适应（见下方分支策略）
 ```
 
-### 分支策略文档
+### 分支策略（按已有分支自适应，不预设）
 
-在 AGENTS.md 中添加：
-```
-分支: master(生产) / develop(日常) / feat/xxx(功能) / fix/xxx(修复)
-提交格式: <type>(<scope>): <description>
-type: feat/fix/refactor/docs/test/chore/perf
-```
+探测已有分支，按结果在 AGENTS.md 中写入对应策略：
+
+| 已有分支 | 写入策略 |
+|---------|---------|
+| `main` | `main`(唯一常驻，tag 发布) / `feat/xxx`(功能) / `fix/xxx`(修复) |
+| `master` + `develop` | `master`(生产) / `develop`(日常) / `feat/xxx` / `fix/xxx` |
+| 无 main/develop | 询问用户偏好，默认 `main` + tag 发布 |
+
+提交格式: `<type>(<scope>): <description>` — type: feat/fix/refactor/docs/test/chore/perf
 
 ---
 
@@ -612,6 +664,7 @@ echo "npx lint-staged" > .husky/pre-commit
 ✅ 项目规范体系搭建完成，生成文件：
 - AGENTS.md (xxx 行)
 - docs/ (A/B/C/D/E 5 个分类目录 + archive + dev)，含 B-03-测试指南（测试制度）
+- docs/B/B-05-MCP工具清单.md (MCP 工具推荐，含安装命令与组合建议，按需生成)
 - .trae/specs/ (spec-driven 开发基础设施)
 - .github/workflows/ci.yml (或 .gitee-ci.yml)
 - .gitignore (如果之前没有)
@@ -622,7 +675,7 @@ echo "npx lint-staged" > .husky/pre-commit
 1. 填写 docs/A/A-01-PRD.md 项目需求
 2. 根据实际项目完善 AGENTS.md 中的项目身份信息
 3. 阅读 docs/B/B-03-测试指南.md，核心功能稳定后按制度编写首批测试
-4. git push origin develop 推送初始框架
+4. git push origin <主分支> 推送初始框架（按分支策略：main 或 develop）
 ```
 
 ---

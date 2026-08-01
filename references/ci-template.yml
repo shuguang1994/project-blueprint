@@ -11,9 +11,9 @@ name: CI
 
 on:
   push:
-    branches: [develop, master]
+    branches: [main, develop, master]
   pull_request:
-    branches: [develop]
+    branches: [main, develop]
 
 jobs:
   typecheck:
@@ -38,9 +38,9 @@ name: CI
 
 on:
   push:
-    branches: [develop, master]
+    branches: [main, develop, master]
   pull_request:
-    branches: [develop]
+    branches: [main, develop]
 
 jobs:
   lint-and-typecheck:
@@ -68,9 +68,9 @@ name: CI
 
 on:
   push:
-    branches: [develop, master]
+    branches: [main, develop, master]
   pull_request:
-    branches: [develop]
+    branches: [main, develop]
 
 jobs:
   build-and-test:
@@ -93,9 +93,9 @@ name: CI
 
 on:
   push:
-    branches: [develop, master]
+    branches: [main, develop, master]
   pull_request:
-    branches: [develop]
+    branches: [main, develop]
 
 jobs:
   lint-and-test:
