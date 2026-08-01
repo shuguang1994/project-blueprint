@@ -99,4 +99,4 @@ Step 7: 持续自适应机制
 - [ ] 提交到 skills.sh 官方目录
 - [ ] 撰写博客/文章推广
 - [x] MCP 工具推荐能力（Step 3.4 + mcp-tools.md + B-05 文档，v1.5.0）
-- [ ] 发布 v1.5.0（Gitee 已推送 main + tag v1.5.0；GitHub 网络受限待补推）
+- [x] 发布 v1.5.0（GitHub + Gitee 双远程均已推送 main + tag v1.5.0）
