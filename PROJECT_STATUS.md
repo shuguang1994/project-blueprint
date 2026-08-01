@@ -100,3 +100,4 @@ Step 7: 持续自适应机制
 - [ ] 撰写博客/文章推广
 - [x] MCP 工具推荐能力（Step 3.4 + mcp-tools.md + B-05 文档，v1.5.0）
 - [x] 发布 v1.5.0（GitHub + Gitee 双远程均已推送 main + tag v1.5.0）
+- [ ] 双平台元数据更新（需 PAT / Gitee 私人令牌）：GitHub description/topics 同步至最新口径 + Gitee description 修正 7 语言 + Gitee 补设 MIT License（建议文本见会话记录）
