@@ -43,13 +43,14 @@
   dsh web   # Web UI 默认 http://127.0.0.1:3080
   ```
 - 踩坑记录：`npx @deepseek-ai/dsh web` 因依赖过大触发 npm 11 `ECOMPROMISED (Lock compromised)` 锁超时中断；全局安装无此限制，后续安装用 `npm install -g` 而非 npx
+- git 代理记录：本机直连 GitHub 超时，已配置 `git config --global http.https://github.com.proxy http://127.0.0.1:9674`（本机代理软件端口，仅对 GitHub 生效，不影响 Gitee）
 - 插件加载示例：`dsh plugin --profile web add 'github:shuguang1994/project-blueprint'`
 - **已验证（2026-08-14）**：本地从 `dsh-plugin/` 目录安装成功并激活
   ```bash
   dsh plugin --profile web add "file:D:/open-source/project-blueprint/dsh-plugin"
   ```
   验证：`dsh --profile web --dump-config` 可见 `# == project-blueprint` bundle 层；重启 `dsh web` 后 UI 正常、日志无错误
-- **已修复（v1.6.1，2026-08-14）**：`github:shuguang1994/project-blueprint` 此前安装的是**仓库根目录**（纯 Markdown，无 package.json），dsh 提示 `declares no dsh.bundle`，无法激活。已在仓库根目录新增 `package.json`（`dsh.bundle.patch: ./dsh-plugin/cordis.patch.yml`）。推送状态：Gitee ✅（main + tag v1.6.1，commit 4d25c8f），GitHub ⏳ 待网络恢复后 `git push origin main --tags`
+- **已修复（v1.6.1，2026-08-14）**：`github:shuguang1994/project-blueprint` 此前安装的是**仓库根目录**（纯 Markdown，无 package.json），dsh 提示 `declares no dsh.bundle`，无法激活。已在仓库根目录新增 `package.json`（`dsh.bundle.patch: ./dsh-plugin/cordis.patch.yml`）。双远程均已推送 ✅（GitHub + Gitee：main 同步至 f9face0，tag v1.3.0/v1.6.0/v1.6.1）
 
 ## 三、文件清单
 
