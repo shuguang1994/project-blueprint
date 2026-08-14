@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
   - `scripts/sync-skill.mjs`：根目录 `SKILL.md` + `references/` 同步到插件包（单一事实来源 = 仓库根）
   - 本地实测通过：在 Cordis 运行时中挂载真实插件代码，`ctx.skills.list()` 发现 `project-blueprint`（provider=custom），`ctx.skills.get()` 完整加载 SKILL.md 正文
 - README / README_CN 新增 dsh 安装方式；支持的 Agent 数量 27+ → 28+（新增 DeepSeek Harness）
+- GitHub 仓库打 14 个 Topics 标签（dsh-plugin / dsh / deepseek-harness / agent-skills / skills / spec-driven / harness-engineering / coding-conventions / scaffolding / ai-coding / claude-code / cursor / codex / opencode）；README / README_CN 顶部新增 Topics 徽章行（点击跳转 GitHub 话题页）
 
 ## [1.5.0] - 2026-08-01
 

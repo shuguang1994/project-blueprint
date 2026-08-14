@@ -5,6 +5,15 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![skills.sh](https://img.shields.io/badge/skills.sh-project--blueprint-orange)](https://skills.sh)
+
+**Topics** ·
+[![dsh-plugin](https://img.shields.io/badge/dsh--plugin-blue)](https://github.com/topics/dsh-plugin)
+[![deepseek-harness](https://img.shields.io/badge/deepseek--harness-1f6feb)](https://github.com/topics/deepseek-harness)
+[![agent-skills](https://img.shields.io/badge/agent--skills-8A2BE2)](https://github.com/topics/agent-skills)
+[![claude-code](https://img.shields.io/badge/claude--code-D97757)](https://github.com/topics/claude-code)
+[![cursor](https://img.shields.io/badge/cursor-00A67E)](https://github.com/topics/cursor)
+[![codex](https://img.shields.io/badge/codex-18181B)](https://github.com/topics/codex)
+
 [中文文档](README_CN.md)
 
 ---
