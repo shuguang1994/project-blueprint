@@ -382,6 +382,10 @@
 ❌ 重复编写已有工具函数
 ❌ 不用项目中已封装的 api/ 模块而直接调底层 HTTP
 ❌ 引入能由已有依赖覆盖的新依赖包
+❌ 只走 happy path — 每个分支都写异常/错误路径
+❌ 吞掉错误 — catch 后空处理 / 忽略 err（含异步 Promise reject）
+❌ 硬编码密钥/Token — 一律环境变量注入
+✅ 写代码前先读现有代码（已有 utils/ 封装/相似模块先复用），不理解先问
 ```
 
 ### Boundaries 通用规范
@@ -413,6 +417,11 @@
 ✅ 无 N+1 查询?
 ✅ API 响应格式一致?
 ✅ 第三方库用法已核对当前版本文档?
+✅ 无吞错误 / 无只走 happy path — catch 无空处理、无忽略 err，每分支含异常路径?
+✅ 无逐条 await 循环 — 批量请求用 Promise.all 并发?
+✅ 未绕过项目已封装的 api/ 模块直调底层 HTTP?
+✅ 密钥/Token 仅经环境变量注入（无硬编码）?
+✅ 已对照 AI 高频错误清单（references/ai-common-mistakes.md）自查?
 
 语言特定:
   TS/JS: tsc --noEmit 通过? / 无 any?

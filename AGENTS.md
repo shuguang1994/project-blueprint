@@ -10,7 +10,7 @@
 - **项目**: Project Blueprint — 为新项目一键建立完整 AI 编程规范体系（AGENTS.md + 文档骨架 + CI/CD + 测试制度 + Git 规范）的开源 AI Agent 技能包。
 - **形态**: 纯 Markdown 项目，无代码、无构建、无测试、无运行依赖。核心逻辑为 `SKILL.md`（7 Step 流程），配套 `references/` 知识库。
 - **技术栈**: Markdown (SKILL.md 格式) + 70+ 组件知识库 + MCP 工具知识库 + WebSearch 联网回退
-- **版本**: v1.6.1（语义化版本，tag 发布）
+- **版本**: v1.7.0（语义化版本，tag 发布）
 - **仓库**: GitHub `origin` = https://github.com/shuguang1994/project-blueprint / Gitee `gitee` = https://gitee.com/shuguang1994/project-blueprint
 - **作者**: 曙光 (shuguang1994) | License: MIT
 - **安装**: `npx skills add shuguang1994/project-blueprint`（国际）/ `npx skills add https://gitee.com/shuguang1994/project-blueprint.git`（国内）/ `dsh plugin --profile web add 'github:shuguang1994/project-blueprint'`（DeepSeek Harness）
@@ -105,12 +105,14 @@ node dsh-plugin/scripts/sync-skill.mjs
 |------|------|
 | `SKILL.md` | 核心逻辑：7 Step 完整流程（探测/拼接/文档/Git/CI/测试/自适应） |
 | `README.md` / `README_CN.md` | 中英文项目文档：安装、能力、工作流程、贡献指南 |
-| `CHANGELOG.md` | 版本记录（v1.0 ~ v1.6.1） |
+| `CHANGELOG.md` | 版本记录（v1.0 ~ v1.7.0） |
 | `PROJECT_STATUS.md` | 项目状态、版本演进、独立抽离指南、已知局限、下一步计划 |
 | `package.json` | DSH 插件 GitHub 安装入口（根目录，声明 dsh.bundle 指向 dsh-plugin/cordis.patch.yml，v1.6.1 新增） |
 | `dsh-plugin/` | DSH (DeepSeek Harness) 插件包：package.json + cordis.patch.yml + lib/ 零构建插件 + skills/（同步生成）+ sync-skill.mjs 同步脚本 |
 | `references/knowledge-base.md` | 70+ 组件知识库（语言/框架/ORM/CSS/UI/测试/Lint/包管理/部署/数据库/通用） |
 | `references/mcp-tools.md` | MCP 工具知识库（10 维度 18 条目，含适用场景/安装方式/推荐组合，Step 3.4 参考） |
+| `references/code-conventions.md` | 基础代码规范种子知识库（6 大类：命名/目录/错误处理/日志/安全/性能 × 语言适配，含搜索模板，Step 2 参考，v1.7.0 新增） |
+| `references/ai-common-mistakes.md` | AI 高频错误知识库（7 大类 27 条，六段式：易错点/后果/❌示范/✅做法/关联条目/搜索模板，Step 2 优先注入 + B-04 反哺迭代，v1.7.0 新增） |
 | `references/agents-md-template.md` | AGENTS.md 兜底模板（全部探测+联网失败时使用） |
 | `references/ci-template.yml` | CI 模板（TS/Go/Python/Vue 四种完整 workflow） |
 | `references/docs-skeleton.md` | docs/ 目录骨架指南（A/B/C/D/E 五级分类） |
@@ -151,6 +153,8 @@ node dsh-plugin/scripts/sync-skill.mjs
 - [ ] 代码块是否闭合（防止文档被误渲染）？
 - [ ] knowledge-base.md 新增条目是否含 Commands / Conventions / CI job 三段？
 - [ ] mcp-tools.md 新增条目是否含 适用场景 / 安装方式 / 推荐组合 三段？
+- [ ] code-conventions.md 新增条目是否含 Conventions（✅/❌）+ 搜索模板（含 {currentYear}）？
+- [ ] ai-common-mistakes.md 新增条目是否含六段（易错点/后果/❌示范/✅做法/关联知识库/搜索模板）？
 - [ ] SKILL.md 是否保持"零固定表"设计，未硬编码文件列表？
 - [ ] 文档中的数字（框架数/组件数）是否与知识库实际一致？
 - [ ] 是否使用了占位符而非写死项目特定信息（IP/人名）？

@@ -1,6 +1,6 @@
 # Project Blueprint — 项目开发状态与独立抽离指南
 
-> 生成日期: 2026-08-01 | 版本: v1.5.0 | 作者: 曙光 (shuguang1994)
+> 生成日期: 2026-08-14 | 版本: v1.7.0 | 作者: 曙光 (shuguang1994)
 
 ---
 
@@ -12,7 +12,7 @@
 
 | 维度 | 状态 |
 |------|:---:|
-| 版本 | v1.6.1 |
+| 版本 | v1.7.0 |
 | 开发完成度 | ✅ 核心功能完整，7 Step 流程闭环 |
 | 内部测试 | ✅ 已在真实全栈项目实战验证 |
 | 文档 | ✅ 中文 README 完善，英文 README 同步 |
@@ -33,6 +33,7 @@
 | **v1.5.0** | **MCP 工具推荐（Step 3.4 + references/mcp-tools.md 知识库 + docs/B/B-05 生成）** |
 | **v1.6.0** | **DSH (DeepSeek Harness) 插件支持（dsh-plugin/ 自包含插件包，零构建复用官方 skill-filesystem 提供方，Agent Plugins v1.0.0 便携清单 + 同步脚本，Cordis 运行时实测通过）+ GitHub 14 个 Topics 标签 + README 徽章** |
 | **v1.6.1** | **DSH 插件 GitHub 安装路径修复（仓库根目录新增 package.json，声明 dsh.bundle 指向 dsh-plugin/cordis.patch.yml，社区 `dsh plugin add github:...` 命令可用）** |
+| **v1.7.0** | **代码规范闭环增强（2026-08-14）：初始化实写基础代码规范（B-01 8 章）+ 新增 code-conventions.md / ai-common-mistakes.md 两个知识库 + AI 高频错误防犯专项 + BUG→规范反哺闭环 + 项目进度与文档健康检查提醒** |
 
 ### 本地 DSH 运行环境记录（2026-08-14）
 
@@ -57,10 +58,10 @@
 ```
 project-blueprint/
 ├── AGENTS.md                         # 项目开发规范 (AI Agent 强制规范，v1.0，2026-08-01 建立)
-├── SKILL.md                          # 核心逻辑 (706行，7 Step 完整流程，Step 3.4 MCP 工具推荐)
+├── SKILL.md                          # 核心逻辑 (798行，7 Step 完整流程，Step 3.4 MCP 工具推荐，Step 2/3/7 v1.7.0 代码规范闭环增强)
 ├── README.md                         # 英文文档
 ├── README_CN.md                      # 中文文档
-├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.6.1)
+├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.7.0)
 ├── LICENSE                           # MIT 协议
 ├── .gitignore
 ├── PROJECT_STATUS.md                 # 本文件
@@ -79,10 +80,12 @@ project-blueprint/
     ├── ci-template.yml               # CI 模板 (TS/Go/Python/Vue 四种完整 workflow)
     ├── docs-skeleton.md              # 文档骨架指南 (A/B/C/D/E 五级分类)
     ├── gitignore-template.md         # Git 忽略规则 (按语言选择)
+    ├── code-conventions.md           # 基础代码规范种子知识库 (6 大类 × 语言适配，v1.7.0 新增)
+    ├── ai-common-mistakes.md         # AI 高频错误知识库 (7 大类 27 条，六段式，v1.7.0 新增)
     └── project-sync-guide.md         # Agent 文档同步操作指南 (Step 7 参考)
 ```
 
-**总计**: 30 个文件，无外部依赖（dsh-plugin/ 新增 15 个，其中 `skills/` 下 7 个为根 `references/` 的同步副本；根 `package.json` 为 v1.6.1 新增）。
+**总计**: 32 个文件，无外部依赖（dsh-plugin/ 新增 15 个，其中 `skills/` 下 7 个为根 `references/` 的同步副本；references/ 新增 code-conventions.md / ai-common-mistakes.md 为 v1.7.0 新增，已通过 sync-skill.mjs 同步进插件包；根 `package.json` 为 v1.6.1 新增）。
 
 ## 三点五、AGENTS.md 建立记录（2026-08-01）
 
@@ -122,6 +125,7 @@ Step 7: 持续自适应机制
 
 ## 六、下一步计划
 
+- [ ] **代码规范闭环增强（v1.7.0 候选）** — 方案见 `docs/D/D-01-代码规范闭环增强方案.md`（2026-08-14 提出，待评审）：初始化实写基础代码规范（命名/错误/日志/安全/性能）+ AGENTS→B-01→B-04 三层引用闭环 + BUG 反哺更新规范 + 按项目进度提醒维护文档；**含 AI 高频错误防犯专项（最高优先级）**：新增 `references/ai-common-mistakes.md`（7 大类 × 技术栈），初始化优先注入 AGENTS.md 核心规则
 - [ ] 收集开源社区反馈和使用案例
 - [ ] 扩展知识库覆盖更多框架和组件
 - [ ] 提交到 skills.sh 官方目录

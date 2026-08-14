@@ -1,7 +1,7 @@
 {
   "name": "project-blueprint",
   "description": "DSH (DeepSeek Harness) plugin packaging of the Project Blueprint skill — one-command AI coding conventions (AGENTS.md, docs skeleton, CI/CD, git rules, testing policy) with an autonomous discovery engine (7 languages, 15 frameworks, 70+ components, web fallback).",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "license": "MIT",
   "type": "module",
   "main": "./dsh-plugin/lib/index.js",

@@ -244,6 +244,8 @@ src/ 单个                    → 单项目
 
 之后的拼接步骤全部基于此知识库。
 
+> 另按探测到的语言/框架，从 `references/code-conventions.md`（基础规范种子）与 `references/ai-common-mistakes.md`（AI 高频错误）提取基础规范与 AI 易错点。
+
 ### 2.1 主流程
 
 ```
@@ -261,6 +263,8 @@ Step 1 探测结果
   [Commands] ← 从各组件的 Commands 段合并去重
   [Boundaries] ← knowledge-base 通用段落
   [强制规范] ← 从各组件的 Conventions 段拼接
+  [基础代码规范] ← 从 code-conventions.md 按语言/框架提取 6 大类核心规则，每类 ≤4 条、总计 ≤20 条（优先选取 AI 高频错误对应规则），详细规则落入 docs/B/B-01
+  [AI 易错点] ← 从 ai-common-mistakes.md 按探测技术栈提取，未覆盖的易错点触发联网回退
   [CI 模板] ← 从各组件的 CI job 段合并
   [Git 规范] ← knowledge-base 通用段落
   [代码审查清单] ← knowledge-base 通用段落
@@ -271,6 +275,15 @@ Step 1 探测结果
   若远程为 GitHub → .github/copilot-instructions.md
   若存在 .gemini/ 目录 → .gemini/GEMINI.md → @AGENTS.md
   若存在 .windsurfrules → 追加 "See AGENTS.md for project conventions"
+```
+
+**在 AGENTS.md 强制规范章节末尾注入「代码规范体系」三层引用模板**（AGENTS.md 核心 → B-01 详细 → B-04 反哺）：
+
+```markdown
+### 代码规范体系（三层引用）
+- 核心规则 → 本文件 AGENTS.md「强制规范」（基础代码规范 ≤20 条、每类 ≤4 条 + AI 易错点防犯）
+- 详细规则 → docs/B/B-01-开发规范.md（8 章实写，权威源为本文件）
+- 反哺闭环 → docs/B/B-04-BUG知识库.md（修复 Bug 根因是规范缺失时，反哺 B-01 与本文件）
 ```
 
 ### 2.2 联网回退
@@ -292,6 +305,8 @@ Step 1 探测结果
 | 未知状态管理 | `"{state}" state management patterns conventions {currentYear}` |
 | 未知部署方式 | `"{deploy}" deployment best practices CI pipeline {currentYear}` |
 | 未知数据库 | `"{db}" database conventions naming schema design {currentYear}` |
+| 未知规范惯例 | `"{language}" coding conventions best practices {currentYear}`（或 `"{framework}" code style guide {currentYear}`） |
+| 未知 AI 易错点 | `"{language}/{framework}" common mistakes anti-patterns {currentYear}` |
 
 **提取规则**: 从搜索结果中提取 dev/build/test 命令写入 Commands，规范要点（✅/❌）写入 Conventions，CI 配置片段写入 CI job。
 
@@ -377,7 +392,8 @@ docs/
 │   ├── [按需] A-04-前端架构.md           "前端项目时创建"
 │   └── [按需] A-05-移动端架构.md         "移动端项目时创建"
 ├── B/  (开发运维 — 全量 + 按需)
-│   ├── B-01-开发规范.md / B-02-部署指南.md / B-03-测试指南.md / B-04-BUG知识库.md
+│   ├── [必写] B-01-开发规范.md        "初始化时实写 8 章（见下方模板），非占位符"
+│   ├── B-02-部署指南.md / B-03-测试指南.md / B-04-BUG知识库.md
 │   ├── [按需] B-05-MCP工具清单.md   "有 MCP 工具需求时创建（见 3.4）"
 ├── C/  (知识沉淀 — 始终全量)
 │   ├── C-01-CodeWiki首页.md / C-02-架构详解.md / C-03-项目长期记忆.md
@@ -386,6 +402,59 @@ docs/
 ├── E/  (分析优化 — 按需)
 │   └── E-01-代码耦合度分析.md            "多模块项目时创建"
 ├── archive/ / dev/
+```
+
+**B-01-开发规范.md 实写模板**（初始化时实写，非占位符；文件头声明权威源与反哺源）：
+
+```markdown
+# 开发规范
+
+> 本文件为项目代码规范详细版。**权威源为 AGENTS.md「强制规范」章节**（核心规则）；**B-04-BUG知识库.md 为反哺源**（修复 Bug 后反哺本文件）。
+> 技术栈: {Step 1 探测结果摘要} | 更新: {date}
+
+## 一、命名规范
+（从 code-conventions.md「1. 命名规范」提取：各语言命名约定 + 数据库表/字段命名；核心规则已入 AGENTS.md，此处展开细节）
+
+## 二、目录结构规范
+（从 code-conventions.md「2. 目录结构规范」提取：分层原则 + 本项目实际目录约定）
+
+## 三、错误处理规范
+（从 code-conventions.md「3. 错误处理规范」提取）
+
+## 四、日志规范
+（从 code-conventions.md「4. 日志规范」提取：日志分级 / 字段 / 敏感信息脱敏）
+
+## 五、安全规范
+（从 code-conventions.md「5. 安全规范」提取）
+
+## 六、性能规范
+（从 code-conventions.md「6. 性能规范」提取）
+
+## 七、技术栈特定规范
+（从 knowledge-base.md 各组件条目的 Conventions 段展开：Commands / ✅❌ 规则 / CI）
+
+## 八、AI 高频错误防犯清单
+（从 ai-common-mistakes.md 按探测技术栈裁剪：AI 易错点 + ✅ 做法 + 出现次数标记）
+
+## 九、规范维护
+- AGENTS.md 为权威源：新增 ✅/❌ 规则先入 AGENTS.md，再展开到本文件
+- B-04 反哺：修复 Bug 根因是规范缺失时，按 B-04「规范反哺」字段补充对应章节规则
+```
+
+> 一~六章内容从 code-conventions.md 提取（核心规则进 AGENTS.md，详细进本文件）；七章从 knowledge-base.md 组件 Conventions 展开；八章从 ai-common-mistakes.md 按技术栈裁剪。
+
+**B-04-BUG知识库.md 模板结构**（修复典型 Bug 时记录，含「是否规范缺失」与「规范反哺」字段）：
+
+```markdown
+# BUG 知识库
+
+> 典型 Bug 记录与规范反哺闭环。每条 Bug 记录后检查是否暴露规范缺失。更新: {date}
+
+## {BUG 编号} | {标题}
+- 现象 / 根因 / 修复方案
+- 是否规范缺失: 是 / 否
+- 规范反哺: {若是 → 补充 B-01-开发规范.md 第X章规则 + AGENTS.md 强制规范新增一条 ✅/❌ 防复发}
+- 关联: {组件知识库 / ai-common-mistakes 条目 / 出现次数}
 ```
 
 ### 3.2 自适应模块速查表（含联网回退）
@@ -663,7 +732,7 @@ echo "npx lint-staged" > .husky/pre-commit
 ```
 ✅ 项目规范体系搭建完成，生成文件：
 - AGENTS.md (xxx 行)
-- docs/ (A/B/C/D/E 5 个分类目录 + archive + dev)，含 B-03-测试指南（测试制度）
+- docs/ (A/B/C/D/E 5 个分类目录 + archive + dev)，含 B-01-开发规范（实写 8 章，非占位符）、B-03-测试指南（测试制度）
 - docs/B/B-05-MCP工具清单.md (MCP 工具推荐，含安装命令与组合建议，按需生成)
 - .trae/specs/ (spec-driven 开发基础设施)
 - .github/workflows/ci.yml (或 .gitee-ci.yml)
@@ -699,8 +768,31 @@ AGENTS.md 的「上下文管理」章节必须包含 Agent 主动维护规则（
   | 修复典型 Bug | 写入 docs/B/B-04-BUG知识库.md |
   | CI 流程变更 | 同步更新 docs 中 CI 描述 |
   | 文档膨胀 | 按职责域拆分到 docs/ 引用，保持 AGENTS.md 聚焦核心规则 |
+  | 修复 Bug 且根因是规范缺失 | 补充 B-01 对应章节规则 + AGENTS.md 强制规范新增一条 ✅/❌ 防复发 |
+  | 按项目进度检查（功能完成/重构/上线/季度） | 检查 AGENTS.md / B-01 / B-04 是否滞后于进度，滞后则提醒用户维护 |
 - 项目记忆 (project_memory.md) 季度清理
 ```
+
+### 项目进度与文档健康检查
+
+Agent 在以下里程碑主动检查文档滞后情况并提醒用户维护：
+
+| 里程碑 | 检查项 |
+|--------|--------|
+| 新功能完成 | 模块速查表 / 技术栈行 / 代码规范是否需补充 |
+| 重构完成 | 架构决策表 / 目录结构 / 耦合度分析 |
+| 上线前 | B-02 部署指南 / CI 描述 / 检查清单 |
+| 季度末 | 项目记忆清理 / B-04 归档 / 规范体系回顾 |
+
+- 用户说"看下项目进度" → 输出：最近进展 + 文档滞后清单 + 建议维护项
+
+### AI 犯错型 Bug 反哺流程
+
+修复 Bug 且根因是 **AI 犯错**时（区别于编码疏忽）：
+
+1. 检查是否命中 `references/ai-common-mistakes.md` 清单
+2. 命中 → 强化对应规则（B-01「八、AI 高频错误防犯清单」标注出现次数）
+3. 未命中 → 新增清单条目 + B-01 补规则 + AGENTS.md 强制规范加一条 ✅/❌ 防复发
 
 ### Agent 同步操作指南
 

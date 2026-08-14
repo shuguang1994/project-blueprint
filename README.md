@@ -69,13 +69,15 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 | **Incremental Mode** | Only fills gaps on existing projects, never overwrites |
 | **MCP Tool Recommendation** | Recommends MCP tool list + combinations from detected stack, generates `docs/B/B-05-MCP工具清单.md` with install commands (MD only, minimal intrusion) |
 | **Self-Evolving** | Generated AGENTS.md includes auto-maintenance rules — updates module table, tech stack, and decisions as the project grows |
+| **Real Coding Conventions** | Writes base coding conventions at init (naming/structure/error handling/logging/security/performance 6 categories), B-01 as real 8-chapter doc, not a placeholder |
+| **AI Mistake Prevention** | Built-in 7-category 27-item AI common-mistakes KB, injected into core rules at init, iterated via BUG feedback loop |
 
 ## What It Generates
 
 | Output | Description |
 |--------|-------------|
 | `AGENTS.md` | Project conventions (governed by architecture principles) |
-| `docs/` | A/B/C/D/E classified documentation skeleton + README maintenance guides |
+| `docs/` | A/B/C/D/E classified documentation skeleton + README maintenance guides (incl. B-01-开发规范, real 8-chapter conventions) |
 | `.github/workflows/ci.yml` | CI pipeline (auto-adapts to language + platform) |
 | `.gitignore` | Curated rules per language |
 | `.husky/pre-commit` | Pre-commit lint hook (JS/TS only) |
@@ -147,7 +149,7 @@ Unknown dep: @shadcn/ui not in knowledge base
 | **Multi-IDE Ecosystem** | Auto-generates CLAUDE.md, .cursor/rules, copilot-instructions, and more | No competitor provides this |
 | **Module Table Auto-Generation** | Reads actual source directories, infers responsibilities via file patterns, web search fallback | No competitor provides this |
 | **MCP Tool Auto-Recommendation** | Auto-matches MCP tools from detected stack via 3-tier matching, outputs combo suggestions (must/recommended/optional) + an installable MD doc; dual-layer web search keeps commands fresh | Competitors (e.g. Project Genesis Phase 9) only wire preset MCP config — no autonomous recommendation from tech stack |
-| **8-Language 15-Framework KB** | 70+ components with Commands + Conventions + CI, Chinese-first | Competitors cover JS/TS ecosystem at most |
+| **7-Language 15-Framework KB** | 70+ components with Commands + Conventions + CI, Chinese-first | Competitors cover JS/TS ecosystem at most |
 
 ## What Makes It Different
 
@@ -157,6 +159,7 @@ Unknown dep: @shadcn/ui not in knowledge base
 - **Incremental-friendly** — auto-detects existing projects, adds only what's missing
 - **Self-evolving** — generated AGENTS.md is not a dead file; it teaches the AI to maintain itself as the project grows
 - **MCP-ready tooling** — auto-recommends MCP tools + combos from your stack, with an installable doc that never ships outdated commands
+- **AI mistake prevention + BUG→conventions feedback loop** — built-in 7-category 27-item AI common-mistakes KB injected at init; conventions-deficiency bugs auto-feed back into AGENTS.md and B-01, so conventions evolve with real practice
 - **Chinese-first** — 7 languages, 15 frameworks, 70+ components natively in Chinese
 
 ## How It Works
@@ -192,6 +195,8 @@ Contributions welcome! Areas to help:
 
 - **Knowledge base**: Add more language/framework/ORM/UI library entries to `references/knowledge-base.md`
 - **MCP tools**: Add MCP tool entries (usage/install/combination) to `references/mcp-tools.md`, expanding dimension coverage
+- **Code conventions**: Add/refine base coding convention rules (naming/directory/error handling/logging/security/performance, with search templates) in `references/code-conventions.md`
+- **AI mistakes**: Add AI common-mistake entries (mistake/consequence/❌example/✅fix/KB link/search template) to `references/ai-common-mistakes.md`, expanding anti-pattern coverage
 - **Heuristic rules**: Expand Step 1.2 name pattern classification, covering more dependency keywords
 - **File discovery**: Extend Step 1.1 file pattern mapping for more build tools and language ecosystems
 - **Business types**: Expand Step 3.0 config feature inference for more project types
