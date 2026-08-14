@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "project-blueprint",
+  "version": "1.5.0",
+  "description": "Project Blueprint — one-command AI coding conventions for new projects (AGENTS.md, docs skeleton, CI/CD, git rules, testing policy). Autonomous discovery engine: scans a project, classifies files, infers the tech stack (7 languages, 15 frameworks, 70+ components) with a three-tier web-search fallback.",
+  "author": {
+    "name": "曙光 (shuguang1994)"
+  },
+  "homepage": "https://github.com/shuguang1994/project-blueprint",
+  "repository": "https://github.com/shuguang1994/project-blueprint.git",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "agent-skills",
+    "skills",
+    "project-blueprint",
+    "coding-conventions",
+    "scaffolding",
+    "agents-md",
+    "ci-cd",
+    "testing",
+    "git-conventions",
+    "specification-engineering"
+  ]
+}

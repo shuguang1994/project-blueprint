@@ -27,7 +27,13 @@ npx skills add https://gitee.com/shuguang1994/project-blueprint.git
 npx skills update project-blueprint
 ```
 
-支持的 Agent：Claude Code、Cursor、GitHub Copilot、Codex、Windsurf、Trae、OpenCode 等 27+ 工具。
+**DeepSeek Harness (dsh) 插件安装**：
+
+```bash
+dsh plugin --profile web add 'github:shuguang1994/project-blueprint'
+```
+
+支持的 Agent：Claude Code、Cursor、GitHub Copilot、Codex、Windsurf、Trae、OpenCode、DeepSeek Harness 等 28+ 工具。
 
 ## 为什么做这个
 

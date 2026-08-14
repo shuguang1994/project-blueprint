@@ -12,7 +12,7 @@
 
 | 维度 | 状态 |
 |------|:---:|
-| 版本 | v1.5.0 |
+| 版本 | v1.6.0 |
 | 开发完成度 | ✅ 核心功能完整，7 Step 流程闭环 |
 | 内部测试 | ✅ 已在真实全栈项目实战验证 |
 | 文档 | ✅ 中文 README 完善，英文 README 同步 |
@@ -31,6 +31,7 @@
 | **v1.4** | **自主发现引擎（扫描→分类→推断）+ 三层依赖分类 + 两层业务类型推断** |
 | **v1.4.1** | **通用规范新增「第三方库先查官方文档」规则 + 一致性修复（7 步流程/分支自适应/数字核对）** |
 | **v1.5.0** | **MCP 工具推荐（Step 3.4 + references/mcp-tools.md 知识库 + docs/B/B-05 生成）** |
+| **v1.6.0** | **DSH (DeepSeek Harness) 插件支持（dsh-plugin/ 自包含插件包，零构建复用官方 skill-filesystem 提供方，Agent Plugins v1.0.0 便携清单 + 同步脚本，Cordis 运行时实测通过）** |
 
 ## 三、文件清单
 
@@ -40,10 +41,17 @@ project-blueprint/
 ├── SKILL.md                          # 核心逻辑 (706行，7 Step 完整流程，Step 3.4 MCP 工具推荐)
 ├── README.md                         # 英文文档
 ├── README_CN.md                      # 中文文档
-├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.5.0)
+├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.6.0)
 ├── LICENSE                           # MIT 协议
 ├── .gitignore
 ├── PROJECT_STATUS.md                 # 本文件
+├── dsh-plugin/                       # DSH (DeepSeek Harness) 插件包 (v1.6.0)
+│   ├── package.json                  # npm 包元数据 + dsh.bundle.patch
+│   ├── cordis.patch.yml              # profile 挂载配置
+│   ├── plugin.json                   # Agent Plugins v1.0.0 便携清单（跨宿主）
+│   ├── lib/                          # 零构建 ESM 插件（复用 dsh-skill-filesystem）
+│   ├── skills/project-blueprint/     # 打包的技能内容（由 sync-skill.mjs 从根目录同步）
+│   └── scripts/sync-skill.mjs        # 同步脚本（发版前运行）
 └── references/
     ├── knowledge-base.md             # 70+ 组件知识库 (7层: 语言/框架/ORM/CSS/UI库/测试/Lint/部署/数据库/通用)
     ├── mcp-tools.md                  # MCP 工具知识库 (10 维度 18 条目: 适用场景/安装方式/推荐组合)
@@ -54,7 +62,7 @@ project-blueprint/
     └── project-sync-guide.md         # Agent 文档同步操作指南 (Step 7 参考)
 ```
 
-**总计**: 14 个文件，无外部依赖。
+**总计**: 29 个文件，无外部依赖（dsh-plugin/ 新增 15 个，其中 `skills/` 下 7 个为根 `references/` 的同步副本）。
 
 ## 三点五、AGENTS.md 建立记录（2026-08-01）
 

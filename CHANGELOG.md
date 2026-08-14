@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - 2026-08-14
+
+### Added
+- **DSH (DeepSeek Harness) 插件支持**：新增 `dsh-plugin/` 自包含插件包，可将 Project Blueprint 一键安装到 DeepSeek Harness（2026-08-13 开源的 "一切皆插件" Agent 框架）
+  - `package.json` + `cordis.patch.yml`：`dsh plugin --profile web add 'github:shuguang1994/project-blueprint'` 安装，复用官方 `@deepseek-ai/dsh-skill-filesystem` 提供方，零构建、零运行依赖、纯 Markdown 技能内容
+  - `lib/index.js`：极简 ESM 插件（`import.meta.url` 定位包内 skills 目录，注册 custom skill 根，rank 300），无 TS 构建链
+  - `plugin.json`：Agent Plugins v1.0.0 便携清单（跨宿主分发，同一份技能资源可被 Claude Code / Cursor / Codex 等客户端复用）
+  - `scripts/sync-skill.mjs`：根目录 `SKILL.md` + `references/` 同步到插件包（单一事实来源 = 仓库根）
+  - 本地实测通过：在 Cordis 运行时中挂载真实插件代码，`ctx.skills.list()` 发现 `project-blueprint`（provider=custom），`ctx.skills.get()` 完整加载 SKILL.md 正文
+- README / README_CN 新增 dsh 安装方式；支持的 Agent 数量 27+ → 28+（新增 DeepSeek Harness）
+
 ## [1.5.0] - 2026-08-01
 
 ### Added

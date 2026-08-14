@@ -1,0 +1,7 @@
+# Project Blueprint DSH bundle patch.
+# Mounts the skill provider plugin under its package name, resolved through
+# the profile's node_modules. The plugin registers a custom skill root that
+# points at this package's bundled `skills/` directory.
+- insert:
+    - id: project-blueprint
+      name: project-blueprint

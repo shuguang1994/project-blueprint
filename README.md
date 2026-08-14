@@ -28,7 +28,13 @@ npx skills add https://gitee.com/shuguang1994/project-blueprint.git
 npx skills update project-blueprint
 ```
 
-Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, OpenCode, and 27+ more.
+**DeepSeek Harness (dsh) plugin**:
+
+```bash
+dsh plugin --profile web add 'github:shuguang1994/project-blueprint'
+```
+
+Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, OpenCode, DeepSeek Harness, and 28+ more.
 
 ## Why
 
