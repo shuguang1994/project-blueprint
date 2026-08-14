@@ -288,7 +288,7 @@ Step 1 探测结果
 
 ### 2.2 联网回退
 
-**触发条件**: knowledge-base.md 中无对应组件条目时（覆盖全部 10 个维度）。
+**触发条件**: knowledge-base.md 中无对应组件条目时（覆盖全部 11 个维度）。
 
 **搜索策略**（`{currentYear}` 必须取系统当前真实年份，禁止硬编码）:
 
@@ -492,7 +492,7 @@ Step 5: 联网也无法确定 → 标记 "待补充，建议：{搜索结果摘�
 
 > 示例：探测到 `src/cqrs/` 目录，knowledge-base 无匹配 → WebSearch `"cqrs module NestJS project typical responsibilities 2026"` → 提取到 "命令查询职责分离，含 commands/ queries/ handlers/" → 写入模块表 "cqrs | CQRS 命令查询分离"
 
-### 3.3 .trae/specs/ 目录（同前）
+### 3.3 .trae/specs/ 目录
 ```
 mkdir -p .trae/specs/
 .trae/specs/

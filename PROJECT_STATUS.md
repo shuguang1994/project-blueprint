@@ -59,7 +59,7 @@
 ```
 project-blueprint/
 ├── AGENTS.md                         # 项目开发规范 (AI Agent 强制规范，v1.0，2026-08-01 建立)
-├── SKILL.md                          # 核心逻辑 (798行，7 Step 完整流程，Step 3.4 MCP 工具推荐，Step 2/3/7 v1.7.0 代码规范闭环增强)
+├── SKILL.md                          # 核心逻辑 (799行，7 Step 完整流程，Step 3.4 MCP 工具推荐，Step 2/3/7 v1.7.0 代码规范闭环增强)
 ├── README.md                         # 英文文档
 ├── README_CN.md                      # 中文文档
 ├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.7.0)
@@ -75,7 +75,7 @@ project-blueprint/
 │   ├── skills/project-blueprint/     # 打包的技能内容（由 sync-skill.mjs 从根目录同步）
 │   └── scripts/sync-skill.mjs        # 同步脚本（发版前运行）
 └── references/
-    ├── knowledge-base.md             # 70+ 组件知识库 (7层: 语言/框架/ORM/CSS/UI库/测试/Lint/部署/数据库/通用)
+    ├── knowledge-base.md             # 70+ 组件知识库 (13 个二级章节: 语言/框架/ORM/CSS/UI库/测试/Lint/包管理/部署/状态管理/数据库/通用/业务类型文档模式)
     ├── mcp-tools.md                  # MCP 工具知识库 (10 维度 18 条目: 适用场景/安装方式/推荐组合)
     ├── agents-md-template.md         # AGENTS.md 兜底模板 (自动探测+联网均失败时使用)
     ├── ci-template.yml               # CI 模板 (TS/Go/Python/Vue 四种完整 workflow)
@@ -86,7 +86,7 @@ project-blueprint/
     └── project-sync-guide.md         # Agent 文档同步操作指南 (Step 7 参考)
 ```
 
-**总计**: 32 个文件，无外部依赖（dsh-plugin/ 新增 15 个，其中 `skills/` 下 7 个为根 `references/` 的同步副本；references/ 新增 code-conventions.md / ai-common-mistakes.md 为 v1.7.0 新增，已通过 sync-skill.mjs 同步进插件包；根 `package.json` 为 v1.6.1 新增）。
+**总计**: 38 个文件，无外部依赖（dsh-plugin/ 17 个，其中 `skills/` 下 9 个为根 `references/` 的同步副本；references/ 的 code-conventions.md / ai-common-mistakes.md 为 v1.7.0 新增，已通过 sync-skill.mjs 同步进插件包；根 `package.json` 为 v1.6.1 新增）。
 
 ## 三点五、AGENTS.md 建立记录（2026-08-01）
 
@@ -126,7 +126,7 @@ Step 7: 持续自适应机制
 
 ## 六、下一步计划
 
-- [ ] **代码规范闭环增强（v1.7.0 候选）** — 方案见 `docs/D/D-01-代码规范闭环增强方案.md`（2026-08-14 提出，待评审）：初始化实写基础代码规范（命名/错误/日志/安全/性能）+ AGENTS→B-01→B-04 三层引用闭环 + BUG 反哺更新规范 + 按项目进度提醒维护文档；**含 AI 高频错误防犯专项（最高优先级）**：新增 `references/ai-common-mistakes.md`（7 大类 × 技术栈），初始化优先注入 AGENTS.md 核心规则
+- [x] **代码规范闭环增强（v1.7.0，2026-08-14 已发布）** — 初始化实写基础代码规范（命名/错误/日志/安全/性能）+ AGENTS→B-01→B-04 三层反哺闭环 + AI 高频错误防犯专项，详见 CHANGELOG 与 `docs/D/D-02-v1.7.0-功能发布说明.md`
 - [ ] 收集开源社区反馈和使用案例
 - [ ] 扩展知识库覆盖更多框架和组件
 - [ ] 提交到 skills.sh 官方目录

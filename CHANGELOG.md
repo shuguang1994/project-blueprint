@@ -87,7 +87,7 @@ All notable changes to this project will be documented in this file.
 
 **Step 1.2 智能依赖分类**：从「~35 条固定映射表」改为「三层递进分类引擎」
 - 第 1 层：知识库精确匹配（快速通道，置信度 exact）
-- 第 2 层：命名模式启发推断（31 种模式覆盖 100+ 依赖关键词，置信度 heuristic）
+- 第 2 层：命名模式启发推断（29 种模式覆盖 100+ 依赖关键词，置信度 heuristic）
 - 第 3 层：联网搜索（真正未知的依赖，置信度 web）
 - 分类结果附带置信度标记，便于后续审查
 

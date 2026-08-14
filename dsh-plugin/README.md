@@ -1,6 +1,6 @@
 # Project Blueprint — DSH 插件包 (DSH Plugin)
 
-[English](README.md) | 中文
+[English](../README.md) | 中文
 
 将 Project Blueprint 技能包（`SKILL.md` + `references/`）打包为 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（缩写 `dsh`）插件。DSH 采用"一切皆插件"架构，本插件以自定义 skill 根目录的形式把技能注册进 `ctx.skills`，由官方 `@deepseek-ai/dsh-skill-filesystem` 提供方加载 —— **零构建、零依赖、纯 Markdown 技能内容**。
 
@@ -10,15 +10,15 @@
 
 ```bash
 # 方式一：GitHub 仓库 tag（推荐，固定版本，任何机器可用）
-dsh plugin --profile web add 'github:shuguang1994/project-blueprint#v1.6.1'
+dsh plugin --profile web add 'github:shuguang1994/project-blueprint#v1.7.0'
 # 也可不指定 tag 安装最新 main（v1.6.1 起根目录已声明 dsh.bundle，可直接激活）
 
 # 方式二：本地路径（仅限开发调试）
-dsh plugin --profile web add D:\open-source\project-blueprint\dsh-plugin
+dsh plugin --profile web add <项目克隆路径>\dsh-plugin
 # 注意：file: 为绝对路径硬编码，换机器/移动目录后失效，需重新安装；正式使用请用方式一
 
 # 方式三：从 git 下载的 tarball（固定版本）
-dsh plugin --profile web add <path-to>/project-blueprint-dsh-1.6.0.tgz
+dsh plugin --profile web add <path-to>/project-blueprint-dsh-1.7.0.tgz
 ```
 
 > 安装方式差异：**GitHub 地址（方式一）** 与 **tarball（方式三）** 不依赖安装地址，任何机器均可安装；**本地路径（方式二）** 依赖绝对路径，仅适合本机开发调试。插件内部通过包内相对路径定位 `skills/` 目录，与 dsh 本体的安装位置无关。

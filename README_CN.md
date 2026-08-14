@@ -14,6 +14,8 @@
 [![cursor](https://img.shields.io/badge/cursor-00A67E)](https://github.com/topics/cursor)
 [![codex](https://img.shields.io/badge/codex-18181B)](https://github.com/topics/codex)
 
+[English](README.md)
+
 ***
 
 ## 这是什么？
@@ -57,7 +59,7 @@ dsh plugin --profile web add 'github:shuguang1994/project-blueprint'
 | ---------------- | ----------------------------------------------------------------- |
 | **自主文件发现**       | 扫描项目，按 30+ 文件名模式自动分类，不预设"有哪些文件"                                   |
 | **项目结构识别**       | 自动识别单项目/monorepo/前后端分离（2-3层）等项目组织方式                               |
-| **智能依赖分类**       | 三层递进：知识库精确匹配 → 31 种命名模式启发推断 → 联网搜索                                |
+| **智能依赖分类**       | 三层递进：知识库精确匹配 → 29 种命名模式启发推断 → 联网搜索                                |
 | **业务类型推断**       | 两层启发式（结构特征 + 配置特征），覆盖 13 种业务类型                                    |
 | **动态 AGENTS.md** | 从 70+ 组件知识库实时拼装，非固定模板                                             |
 | **模块速查表生成**      | 读取实际源码目录，按文件模式推断模块职责，无法确定时联网搜索                                    |
@@ -97,7 +99,7 @@ Project Blueprint 不预设"检查哪些文件"。它扫描你的项目，自主
   在 70+ 组件知识库中直接命中 → instant
     ↓
 第 2 层：命名模式启发推断 (heuristic)
-  31 种模式覆盖 100+ 关键词 → 自动分类
+  29 种模式覆盖 100+ 关键词 → 自动分类
   例: winston → logging, antdv-next → ui, mysql2 → database
     ↓
 第 3 层：联网搜索 (web)
@@ -200,6 +202,7 @@ Step 7: 注入持续自适应维护指令
 - **业务类型**：扩展 Step 3.0 配置特征推断规则，覆盖更多项目类型
 - **CI 平台**：添加更多 CI 平台模板（GitLab CI、Jenkins、CircleCI 等）
 - **实战反馈**：提供真实项目的使用案例与改进建议，帮助框架持续进化
+- **翻译**：将 README 翻译为日语、韩语等其他语言
 
 ## License
 

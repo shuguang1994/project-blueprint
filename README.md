@@ -59,7 +59,7 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 |------------|-------------|
 | **Autonomous File Discovery** | Scan and classify 30+ file patterns — no preset file checklist |
 | **Project Structure Detection** | Auto-identify monorepo, 2/3-tier frontend-backend, or single project |
-| **Intelligent Dep Classification** | 3-tier: knowledge base exact match → 31 heuristic patterns → web search |
+| **Intelligent Dep Classification** | 3-tier: knowledge base exact match → 29 heuristic patterns → web search |
 | **Business Type Inference** | 2-tier heuristic (structure + config features), 13 business types |
 | **Dynamic AGENTS.md** | Assembled from 70+ component knowledge base, not a template |
 | **Module Table Generation** | Reads actual source dirs, infers responsibilities via file patterns, web search fallback |
@@ -99,7 +99,7 @@ Tier 1: Knowledge Base Exact Match
   Hit in 70+ component KB → instant
     ↓
 Tier 2: Name Pattern Heuristic
-  31 patterns covering 100+ keywords → auto-classify
+  29 patterns covering 100+ keywords → auto-classify
   e.g. winston → logging, antdv-next → ui, mysql2 → database
     ↓
 Tier 3: Web Search

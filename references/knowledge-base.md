@@ -1,6 +1,6 @@
 # 组件知识库
 
-> 规则引擎拼接 AGENTS.md 时的参考源。每个组件含 Commands / Conventions / CI 三段。v1.4
+> 规则引擎拼接 AGENTS.md 时的参考源。每个组件含 Commands / Conventions / CI 三段。v1.7
 
 ---
 
