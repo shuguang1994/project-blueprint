@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.1] - 2026-08-14
+
+### Fixed
+- **DSH 插件 GitHub 安装路径修复**：仓库根目录新增 `package.json`（声明 `dsh.bundle.patch: ./dsh-plugin/cordis.patch.yml` + `main: ./dsh-plugin/lib/index.js`），`dsh plugin --profile web add 'github:shuguang1994/project-blueprint'` 此前因根目录无 package.json 被 dsh 判定为普通依赖（`declares no dsh.bundle`）而无法激活；修复后 bundle 正确合成进 profile，社区安装命令直接可用
+- 本地实测通过：以根目录包装形式安装 → `dsh --profile web --dump-config` 出现 `# == project-blueprint` bundle 层 → 重启 `dsh web` 运行正常
+- `dsh-plugin/package.json` 版本 1.5.0 → 1.6.0（与项目版本一致）
+
 ## [1.6.0] - 2026-08-14
 
 ### Added

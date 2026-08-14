@@ -10,7 +10,7 @@
 - **项目**: Project Blueprint — 为新项目一键建立完整 AI 编程规范体系（AGENTS.md + 文档骨架 + CI/CD + 测试制度 + Git 规范）的开源 AI Agent 技能包。
 - **形态**: 纯 Markdown 项目，无代码、无构建、无测试、无运行依赖。核心逻辑为 `SKILL.md`（7 Step 流程），配套 `references/` 知识库。
 - **技术栈**: Markdown (SKILL.md 格式) + 70+ 组件知识库 + MCP 工具知识库 + WebSearch 联网回退
-- **版本**: v1.6.0（语义化版本，tag 发布）
+- **版本**: v1.6.1（语义化版本，tag 发布）
 - **仓库**: GitHub `origin` = https://github.com/shuguang1994/project-blueprint / Gitee `gitee` = https://gitee.com/shuguang1994/project-blueprint
 - **作者**: 曙光 (shuguang1994) | License: MIT
 - **安装**: `npx skills add shuguang1994/project-blueprint`（国际）/ `npx skills add https://gitee.com/shuguang1994/project-blueprint.git`（国内）/ `dsh plugin --profile web add 'github:shuguang1994/project-blueprint'`（DeepSeek Harness）
@@ -105,8 +105,9 @@ node dsh-plugin/scripts/sync-skill.mjs
 |------|------|
 | `SKILL.md` | 核心逻辑：7 Step 完整流程（探测/拼接/文档/Git/CI/测试/自适应） |
 | `README.md` / `README_CN.md` | 中英文项目文档：安装、能力、工作流程、贡献指南 |
-| `CHANGELOG.md` | 版本记录（v1.0 ~ v1.6.0） |
+| `CHANGELOG.md` | 版本记录（v1.0 ~ v1.6.1） |
 | `PROJECT_STATUS.md` | 项目状态、版本演进、独立抽离指南、已知局限、下一步计划 |
+| `package.json` | DSH 插件 GitHub 安装入口（根目录，声明 dsh.bundle 指向 dsh-plugin/cordis.patch.yml，v1.6.1 新增） |
 | `dsh-plugin/` | DSH (DeepSeek Harness) 插件包：package.json + cordis.patch.yml + lib/ 零构建插件 + skills/（同步生成）+ sync-skill.mjs 同步脚本 |
 | `references/knowledge-base.md` | 70+ 组件知识库（语言/框架/ORM/CSS/UI/测试/Lint/包管理/部署/数据库/通用） |
 | `references/mcp-tools.md` | MCP 工具知识库（10 维度 18 条目，含适用场景/安装方式/推荐组合，Step 3.4 参考） |
@@ -128,7 +129,7 @@ node dsh-plugin/scripts/sync-skill.mjs
 | 多 IDE 适配 | 自动生成 CLAUDE.md / .cursor/rules / copilot-instructions 等 breadcrumbs（v1.1.0） |
 | 测试制度替代示例文件 | 按项目阶段的分层测试策略文档，不强制创建示例测试（v1.3.0） |
 | MCP 工具推荐 | 基于探测维度三层递进匹配 mcp-tools.md，生成 docs/B/B-05-MCP工具清单.md（仅 MD，不写 .mcp.json，v1.5.0） |
-| DSH 插件包装 | dsh-plugin/ 自包含插件包：零构建 ESM 插件复用官方 dsh-skill-filesystem 提供方，skills/ 由 sync-skill.mjs 从根目录同步（单一事实来源，v1.6.0） |
+| DSH 插件包装 | dsh-plugin/ 自包含插件包：零构建 ESM 插件复用官方 dsh-skill-filesystem 提供方，skills/ 由 sync-skill.mjs 从根目录同步（单一事实来源）；根目录 package.json 作为 GitHub 安装入口（dsh.bundle 指向 dsh-plugin/cordis.patch.yml，v1.6.1） |
 | 文档规模受架构原则约束 | 以"高内聚低耦合"控制规模，超限拆分到 docs/（v1.2.0 移除硬性行数限制） |
 
 ## 七、Git 规范

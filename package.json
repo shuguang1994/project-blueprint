@@ -4,26 +4,23 @@
   "version": "1.6.0",
   "license": "MIT",
   "type": "module",
-  "main": "lib/index.js",
-  "types": "lib/types/index.d.ts",
+  "main": "./dsh-plugin/lib/index.js",
   "exports": {
-    ".": {
-      "types": "./lib/types/index.d.ts",
-      "default": "./lib/index.js"
-    },
+    ".": "./dsh-plugin/lib/index.js",
     "./package.json": "./package.json"
   },
   "dsh": {
     "bundle": {
-      "patch": "./cordis.patch.yml"
+      "patch": "./dsh-plugin/cordis.patch.yml"
     }
   },
   "files": [
-    "lib",
-    "skills",
-    "cordis.patch.yml",
-    "plugin.json",
-    "README.md"
+    "dsh-plugin/lib",
+    "dsh-plugin/skills",
+    "dsh-plugin/cordis.patch.yml",
+    "dsh-plugin/plugin.json",
+    "dsh-plugin/package.json",
+    "dsh-plugin/README.md"
   ],
   "peerDependencies": {
     "@deepseek-ai/cordis": "*",
@@ -40,9 +37,6 @@
     "@deepseek-ai/dsh-skill-filesystem": {
       "optional": true
     }
-  },
-  "scripts": {
-    "sync": "node scripts/sync-skill.mjs"
   },
   "keywords": [
     "dsh",

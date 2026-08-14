@@ -16,7 +16,7 @@ dsh plugin --profile web add 'github:shuguang1994/project-blueprint#<tag>'
 dsh plugin --profile web add D:\open-source\project-blueprint\dsh-plugin
 
 # 方式三：从 git 下载的 tarball
-dsh plugin --profile web add <path-to>/project-blueprint-dsh-1.5.0.tgz
+dsh plugin --profile web add <path-to>/project-blueprint-dsh-1.6.0.tgz
 ```
 
 安装后重启 `dsh web`，在会话输入 `/` 或描述"初始化新项目/建立开发规范"即可触发 Project Blueprint 技能。

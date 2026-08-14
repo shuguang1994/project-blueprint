@@ -12,7 +12,7 @@
 
 | 维度 | 状态 |
 |------|:---:|
-| 版本 | v1.6.0 |
+| 版本 | v1.6.1 |
 | 开发完成度 | ✅ 核心功能完整，7 Step 流程闭环 |
 | 内部测试 | ✅ 已在真实全栈项目实战验证 |
 | 文档 | ✅ 中文 README 完善，英文 README 同步 |
@@ -32,6 +32,24 @@
 | **v1.4.1** | **通用规范新增「第三方库先查官方文档」规则 + 一致性修复（7 步流程/分支自适应/数字核对）** |
 | **v1.5.0** | **MCP 工具推荐（Step 3.4 + references/mcp-tools.md 知识库 + docs/B/B-05 生成）** |
 | **v1.6.0** | **DSH (DeepSeek Harness) 插件支持（dsh-plugin/ 自包含插件包，零构建复用官方 skill-filesystem 提供方，Agent Plugins v1.0.0 便携清单 + 同步脚本，Cordis 运行时实测通过）+ GitHub 14 个 Topics 标签 + README 徽章** |
+| **v1.6.1** | **DSH 插件 GitHub 安装路径修复（仓库根目录新增 package.json，声明 dsh.bundle 指向 dsh-plugin/cordis.patch.yml，社区 `dsh plugin add github:...` 命令可用）** |
+
+### 本地 DSH 运行环境记录（2026-08-14）
+
+- 本机已部署 `dsh`（v0.1.0-rc.5，npm 包 `@deepseek-ai/dsh`），用于 dsh-plugin 本地联调验证
+- 安装方式（国内镜像 + 全局安装，绕过 npx 锁超时问题）：
+  ```bash
+  npm install -g @deepseek-ai/dsh --registry=https://registry.npmmirror.com
+  dsh web   # Web UI 默认 http://127.0.0.1:3080
+  ```
+- 踩坑记录：`npx @deepseek-ai/dsh web` 因依赖过大触发 npm 11 `ECOMPROMISED (Lock compromised)` 锁超时中断；全局安装无此限制，后续安装用 `npm install -g` 而非 npx
+- 插件加载示例：`dsh plugin --profile web add 'github:shuguang1994/project-blueprint'`
+- **已验证（2026-08-14）**：本地从 `dsh-plugin/` 目录安装成功并激活
+  ```bash
+  dsh plugin --profile web add "file:D:/open-source/project-blueprint/dsh-plugin"
+  ```
+  验证：`dsh --profile web --dump-config` 可见 `# == project-blueprint` bundle 层；重启 `dsh web` 后 UI 正常、日志无错误
+- **已修复（v1.6.1，2026-08-14）**：`github:shuguang1994/project-blueprint` 此前安装的是**仓库根目录**（纯 Markdown，无 package.json），dsh 提示 `declares no dsh.bundle`，无法激活。已在仓库根目录新增 `package.json`（`dsh.bundle.patch: ./dsh-plugin/cordis.patch.yml`）并推送双远程，社区安装命令 `dsh plugin --profile web add 'github:shuguang1994/project-blueprint'` 现已直接可用
 
 ## 三、文件清单
 
@@ -41,10 +59,11 @@ project-blueprint/
 ├── SKILL.md                          # 核心逻辑 (706行，7 Step 完整流程，Step 3.4 MCP 工具推荐)
 ├── README.md                         # 英文文档
 ├── README_CN.md                      # 中文文档
-├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.6.0)
+├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.6.1)
 ├── LICENSE                           # MIT 协议
 ├── .gitignore
 ├── PROJECT_STATUS.md                 # 本文件
+├── package.json                      # DSH 插件 GitHub 安装入口 (v1.6.1，dsh.bundle 指向 dsh-plugin/cordis.patch.yml)
 ├── dsh-plugin/                       # DSH (DeepSeek Harness) 插件包 (v1.6.0)
 │   ├── package.json                  # npm 包元数据 + dsh.bundle.patch
 │   ├── cordis.patch.yml              # profile 挂载配置
@@ -62,7 +81,7 @@ project-blueprint/
     └── project-sync-guide.md         # Agent 文档同步操作指南 (Step 7 参考)
 ```
 
-**总计**: 29 个文件，无外部依赖（dsh-plugin/ 新增 15 个，其中 `skills/` 下 7 个为根 `references/` 的同步副本）。
+**总计**: 30 个文件，无外部依赖（dsh-plugin/ 新增 15 个，其中 `skills/` 下 7 个为根 `references/` 的同步副本；根 `package.json` 为 v1.6.1 新增）。
 
 ## 三点五、AGENTS.md 建立记录（2026-08-01）
 
