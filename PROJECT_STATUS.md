@@ -34,6 +34,7 @@
 | **v1.6.0** | **DSH (DeepSeek Harness) 插件支持（dsh-plugin/ 自包含插件包，零构建复用官方 skill-filesystem 提供方，Agent Plugins v1.0.0 便携清单 + 同步脚本，Cordis 运行时实测通过）+ GitHub 14 个 Topics 标签 + README 徽章** |
 | **v1.6.1** | **DSH 插件 GitHub 安装路径修复（仓库根目录新增 package.json，声明 dsh.bundle 指向 dsh-plugin/cordis.patch.yml，社区 `dsh plugin add github:...` 命令可用）** |
 | **v1.7.0** | **代码规范闭环增强（2026-08-14）：初始化实写基础代码规范（B-01 8 章）+ 新增 code-conventions.md / ai-common-mistakes.md 两个知识库 + AI 高频错误防犯专项 + BUG→规范反哺闭环 + 项目进度与文档健康检查提醒** |
+| **v1.7.0 发布记录** | **（2026-08-14）commit 432756d，双远程均已推送 ✅（GitHub origin + Gitee gitee：main 同步至 432756d，tag v1.7.0 双远程同步）** |
 
 ### 本地 DSH 运行环境记录（2026-08-14）
 
