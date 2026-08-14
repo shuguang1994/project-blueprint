@@ -49,7 +49,7 @@
   dsh plugin --profile web add "file:D:/open-source/project-blueprint/dsh-plugin"
   ```
   验证：`dsh --profile web --dump-config` 可见 `# == project-blueprint` bundle 层；重启 `dsh web` 后 UI 正常、日志无错误
-- **已修复（v1.6.1，2026-08-14）**：`github:shuguang1994/project-blueprint` 此前安装的是**仓库根目录**（纯 Markdown，无 package.json），dsh 提示 `declares no dsh.bundle`，无法激活。已在仓库根目录新增 `package.json`（`dsh.bundle.patch: ./dsh-plugin/cordis.patch.yml`）并推送双远程，社区安装命令 `dsh plugin --profile web add 'github:shuguang1994/project-blueprint'` 现已直接可用
+- **已修复（v1.6.1，2026-08-14）**：`github:shuguang1994/project-blueprint` 此前安装的是**仓库根目录**（纯 Markdown，无 package.json），dsh 提示 `declares no dsh.bundle`，无法激活。已在仓库根目录新增 `package.json`（`dsh.bundle.patch: ./dsh-plugin/cordis.patch.yml`）。推送状态：Gitee ✅（main + tag v1.6.1，commit 4d25c8f），GitHub ⏳ 待网络恢复后 `git push origin main --tags`
 
 ## 三、文件清单
 
