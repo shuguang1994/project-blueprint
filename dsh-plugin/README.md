@@ -9,15 +9,19 @@
 需要 DSH `0.1.0-rc.x` 及以上（已 `npx @deepseek-ai/dsh web` 启动过 Web UI）。
 
 ```bash
-# 方式一：GitHub 仓库 tag（推荐，固定版本）
-dsh plugin --profile web add 'github:shuguang1994/project-blueprint#<tag>'
+# 方式一：GitHub 仓库 tag（推荐，固定版本，任何机器可用）
+dsh plugin --profile web add 'github:shuguang1994/project-blueprint#v1.6.1'
+# 也可不指定 tag 安装最新 main（v1.6.1 起根目录已声明 dsh.bundle，可直接激活）
 
-# 方式二：本地路径（开发调试）
+# 方式二：本地路径（仅限开发调试）
 dsh plugin --profile web add D:\open-source\project-blueprint\dsh-plugin
+# 注意：file: 为绝对路径硬编码，换机器/移动目录后失效，需重新安装；正式使用请用方式一
 
-# 方式三：从 git 下载的 tarball
+# 方式三：从 git 下载的 tarball（固定版本）
 dsh plugin --profile web add <path-to>/project-blueprint-dsh-1.6.0.tgz
 ```
+
+> 安装方式差异：**GitHub 地址（方式一）** 与 **tarball（方式三）** 不依赖安装地址，任何机器均可安装；**本地路径（方式二）** 依赖绝对路径，仅适合本机开发调试。插件内部通过包内相对路径定位 `skills/` 目录，与 dsh 本体的安装位置无关。
 
 安装后重启 `dsh web`，在会话输入 `/` 或描述"初始化新项目/建立开发规范"即可触发 Project Blueprint 技能。
 
