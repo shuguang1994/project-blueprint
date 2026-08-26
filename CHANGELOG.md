@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - **初始化流程生成 CHANGELOG.md**：SKILL.md Step 4 新增「CHANGELOG.md（如果没有则创建）」小节（[Unreleased] 初始化占位模板 + 增量跳过规则），输出验收清单补充 CHANGELOG.md 产物。修复「AGENTS.md 发布规范要求发版更新 CHANGELOG，但 skill 初始化不生成该文件」的不一致缺口
 
+### Fixed
+- **PROJECT_STATUS.md 版本演进表 v1.7.1 行丢失**（并发编辑竞态：后写覆盖先写，同 v1.7.0 记录过的 README 竞态问题）：已重补并逐行核对落盘。**对策**：同一文件的多个修改改为串行执行，每次修改后 Read/Grep 验证实际落盘
+
 ### Verified
 - **DSH 0.1.1-rc.2 兼容性验证（2026-08-22）**：dsh 升级含破坏性变更（v0.1.0-rc.8 SQLite 会话存储格式不兼容、Session Projection API 迁移），实测 dsh-plugin **无需适配**——`ctx.skills.registerProvider` / `FileSystemSkillProvider` / `ctx.effect` 签名未变，`dsh.bundle.patch` 安装机制原样保留，隔离环境运行时验证通过（provider 成功发现 `project-blueprint` 技能）。详见 `dsh-plugin/README.md`「兼容性」
 
