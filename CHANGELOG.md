@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.7.1] - 2026-08-26
+
+### Added
+- **初始化流程生成 CHANGELOG.md**：SKILL.md Step 4 新增「CHANGELOG.md（如果没有则创建）」小节（[Unreleased] 初始化占位模板 + 增量跳过规则），输出验收清单补充 CHANGELOG.md 产物。修复「AGENTS.md 发布规范要求发版更新 CHANGELOG，但 skill 初始化不生成该文件」的不一致缺口
+
+### Verified
+- **DSH 0.1.1-rc.2 兼容性验证（2026-08-22）**：dsh 升级含破坏性变更（v0.1.0-rc.8 SQLite 会话存储格式不兼容、Session Projection API 迁移），实测 dsh-plugin **无需适配**——`ctx.skills.registerProvider` / `FileSystemSkillProvider` / `ctx.effect` 签名未变，`dsh.bundle.patch` 安装机制原样保留，隔离环境运行时验证通过（provider 成功发现 `project-blueprint` 技能）。详见 `dsh-plugin/README.md`「兼容性」
+
 ## [1.7.0] - 2026-08-14
 
 > 详细发布说明见 [D-02-v1.7.0-功能发布说明.md](docs/D/D-02-v1.7.0-功能发布说明.md) | 方案见 [D-01-代码规范闭环增强方案.md](docs/D/D-01-代码规范闭环增强方案.md)

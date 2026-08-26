@@ -569,6 +569,24 @@ Step 1 探测结果
 ### .gitignore（如果没有则创建）
 参考 `references/gitignore-template.md`，按语言选择对应规则。
 
+### CHANGELOG.md（如果没有则创建）
+
+初始化时创建版本记录文件，与生成的 AGENTS.md「版本发布规范」（每次发版：CHANGELOG 更新 → tag 打版本）配套：
+
+```markdown
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+
+### Added
+- 项目初始化：AI 编程规范体系（AGENTS.md + docs/ + CI + Git 规范 + 测试制度）
+```
+
+> 后续发版按 AGENTS.md 发布规范更新：版本号倒序记录，标注 Breaking Change / Added / Changed / Fixed。
+> 已有 CHANGELOG.md → 跳过，不覆盖（增量友好）。
+
 ### 初始化 Git
 ```bash
 git init  # 如果还没初始化
@@ -737,6 +755,7 @@ echo "npx lint-staged" > .husky/pre-commit
 - .trae/specs/ (spec-driven 开发基础设施)
 - .github/workflows/ci.yml (或 .gitee-ci.yml)
 - .gitignore (如果之前没有)
+- CHANGELOG.md (版本记录，[Unreleased] 初始化占位，发版按 AGENTS.md 发布规范更新)
 - CLAUDE.md / .cursor/rules/project.mdc (vendor breadcrumbs)
 - .husky/pre-commit (如果安装同意)
 

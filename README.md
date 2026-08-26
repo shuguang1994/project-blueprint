@@ -80,6 +80,7 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 | `docs/` | A/B/C/D/E classified documentation skeleton + README maintenance guides (incl. B-01-开发规范, real 8-chapter conventions) |
 | `.github/workflows/ci.yml` | CI pipeline (auto-adapts to language + platform) |
 | `.gitignore` | Curated rules per language |
+| `CHANGELOG.md` | Version log ([Unreleased] init placeholder, updated per AGENTS.md release policy) |
 | `.husky/pre-commit` | Pre-commit lint hook (JS/TS only) |
 | `CLAUDE.md` | Claude Code vendor breadcrumb |
 | `.cursor/rules/project.mdc` | Cursor vendor breadcrumb |

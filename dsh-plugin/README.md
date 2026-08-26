@@ -6,7 +6,7 @@
 
 ## 安装
 
-需要 DSH `0.1.0-rc.x` 及以上（已 `npx @deepseek-ai/dsh web` 启动过 Web UI）。
+需要 DSH `0.1.0-rc.x` 及以上（已 `npx @deepseek-ai/dsh web` 启动过 Web UI）。已实测兼容至 `0.1.1-rc.2`（2026-08-22，见下方「兼容性」）。
 
 ```bash
 # 方式一：GitHub 仓库 tag（推荐，固定版本，任何机器可用）
@@ -18,12 +18,20 @@ dsh plugin --profile web add <项目克隆路径>\dsh-plugin
 # 注意：file: 为绝对路径硬编码，换机器/移动目录后失效，需重新安装；正式使用请用方式一
 
 # 方式三：从 git 下载的 tarball（固定版本）
-dsh plugin --profile web add <path-to>/project-blueprint-dsh-1.7.0.tgz
+dsh plugin --profile web add <path-to>/project-blueprint-dsh-1.7.1.tgz
 ```
 
 > 安装方式差异：**GitHub 地址（方式一）** 与 **tarball（方式三）** 不依赖安装地址，任何机器均可安装；**本地路径（方式二）** 依赖绝对路径，仅适合本机开发调试。插件内部通过包内相对路径定位 `skills/` 目录，与 dsh 本体的安装位置无关。
 
 安装后重启 `dsh web`，在会话输入 `/` 或描述"初始化新项目/建立开发规范"即可触发 Project Blueprint 技能。
+
+## 兼容性
+
+- **已验证至 DSH `0.1.1-rc.2`（2026-08-22）**：dsh 升级包含破坏性变更（v0.1.0-rc.8 SQLite 会话存储格式不兼容、Session Projection API 迁移），实测本插件 **无需适配**：
+  - `ctx.skills.registerProvider`（`@deepseek-ai/dsh-skill@0.1.1-rc.2`）、`FileSystemSkillProvider(ctx, control, {providerName, includeDefaultRoots, customSkillDirs})`（`@deepseek-ai/dsh-skill-filesystem@0.1.1-rc.2`）、`ctx.effect`（`@deepseek-ai/cordis@4.0.1`）签名均未变
+  - 安装机制 `dsh.bundle.patch` 判定与 `dsh.profile.bundles` 合成逻辑在 0.1.1-rc.2 原样保留（dsh 主包 plugin 模块核对）
+  - 隔离环境运行时验证：0.1.1-rc.2 依赖 + 官方 `LocalFileSystem` 加载本插件，provider 正常发现 `project-blueprint` 技能 ✅
+  - 官方破坏性变更均不触及本插件：SQLite 会话存储不兼容仅影响旧会话数据迁移；Session Projection API 迁移影响 dsh-billing 等会话统计类插件
 
 ## 原理
 

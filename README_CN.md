@@ -80,6 +80,7 @@ dsh plugin --profile web add 'github:shuguang1994/project-blueprint'
 | `docs/`                     | A/B/C/D/E 五级分类文档骨架 + 分类 README 维护指令（含 B-01-开发规范，实写 8 章）           |
 | `.github/workflows/ci.yml`  | CI 流水线（语言自适应，支持 GitHub/Gitee/其他）              |
 | `.gitignore`                | 按语言选择的精选规则                                    |
+| `CHANGELOG.md`              | 版本记录（[Unreleased] 初始化占位，发版按 AGENTS.md 发布规范更新） |
 | `.husky/pre-commit`         | JS/TS 项目提交前 lint 检查（非 JS 项目跳过）                |
 | `CLAUDE.md`                 | Claude Code 指向文件                              |
 | `.cursor/rules/project.mdc` | Cursor 指向文件                                   |

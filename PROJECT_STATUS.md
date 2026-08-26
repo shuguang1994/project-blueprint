@@ -12,7 +12,7 @@
 
 | 维度 | 状态 |
 |------|:---:|
-| 版本 | v1.7.0 |
+| 版本 | v1.7.1 |
 | 开发完成度 | ✅ 核心功能完整，7 Step 流程闭环 |
 | 内部测试 | ✅ 已在真实全栈项目实战验证 |
 | 文档 | ✅ 中文 README 完善，英文 README 同步 |
@@ -53,16 +53,22 @@
   ```
   验证：`dsh --profile web --dump-config` 可见 `# == project-blueprint` bundle 层；重启 `dsh web` 后 UI 正常、日志无错误
 - **已修复（v1.6.1，2026-08-14）**：`github:shuguang1994/project-blueprint` 此前安装的是**仓库根目录**（纯 Markdown，无 package.json），dsh 提示 `declares no dsh.bundle`，无法激活。已在仓库根目录新增 `package.json`（`dsh.bundle.patch: ./dsh-plugin/cordis.patch.yml`）。双远程均已推送 ✅（GitHub + Gitee：main 同步至 f9face0，tag v1.3.0/v1.6.0/v1.6.1）
+- **已验证兼容（2026-08-22）**：dsh 更新至 `0.1.1-rc.2`（npm latest/next 均指向该版），本次升级含破坏性变更，实测本插件 **无需适配**
+  - 类型层确认：`ctx.skills.registerProvider`（dsh-skill@0.1.1-rc.2）、`FileSystemSkillProvider(ctx, control, {providerName, includeDefaultRoots, customSkillDirs})`（dsh-skill-filesystem@0.1.1-rc.2）、`ctx.effect`（cordis@4.0.1）签名均未变
+  - 安装机制确认：`dsh.bundle.patch` 判定与 `dsh.profile.bundles` 合成逻辑在 0.1.1-rc.2 原样保留（dsh 主包 plugin 模块源码核对）
+  - 运行时验证：隔离环境以 0.1.1-rc.2 依赖 + 官方 LocalFileSystem 加载插件，registerProvider 注册成功、provider 正常发现 `project-blueprint` 技能 ✅
+  - 官方破坏性变更均不触及本插件：rc.8 SQLite 会话存储格式不兼容（仅影响旧会话数据迁移）、Session Projection API 迁移（影响 dsh-billing 等会话统计类插件）
+  - 详见 dsh-plugin/README.md「兼容性」
 
 ## 三、文件清单
 
 ```
 project-blueprint/
 ├── AGENTS.md                         # 项目开发规范 (AI Agent 强制规范，v1.0，2026-08-01 建立)
-├── SKILL.md                          # 核心逻辑 (799行，7 Step 完整流程，Step 3.4 MCP 工具推荐，Step 2/3/7 v1.7.0 代码规范闭环增强)
+├── SKILL.md                          # 核心逻辑 (817行，7 Step 完整流程，Step 4 生成 CHANGELOG.md，Step 3.4 MCP 工具推荐，Step 2/3/7 v1.7.0 代码规范闭环增强)
 ├── README.md                         # 英文文档
 ├── README_CN.md                      # 中文文档
-├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.7.0)
+├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.7.1)
 ├── LICENSE                           # MIT 协议
 ├── .gitignore
 ├── PROJECT_STATUS.md                 # 本文件
@@ -126,6 +132,7 @@ Step 7: 持续自适应机制
 
 ## 六、下一步计划
 
+- [x] **初始化流程生成 CHANGELOG.md（v1.7.1，2026-08-26 已发布）** — SKILL.md Step 4 新增生成 CHANGELOG.md 步骤（[Unreleased] 占位模板 + 增量跳过），输出验收清单补充 CHANGELOG.md 产物；修复「AGENTS.md 发布规范要求发版更新 CHANGELOG，但 skill 初始化不生成该文件」的不一致缺口；README 双语 / CHANGELOG / PROJECT_STATUS 已同步，双远程推送完成
 - [x] **代码规范闭环增强（v1.7.0，2026-08-14 已发布）** — 初始化实写基础代码规范（命名/错误/日志/安全/性能）+ AGENTS→B-01→B-04 三层反哺闭环 + AI 高频错误防犯专项，详见 CHANGELOG 与 `docs/D/D-02-v1.7.0-功能发布说明.md`
 - [ ] 收集开源社区反馈和使用案例
 - [ ] 扩展知识库覆盖更多框架和组件

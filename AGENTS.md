@@ -10,7 +10,7 @@
 - **项目**: Project Blueprint — 为新项目一键建立完整 AI 编程规范体系（AGENTS.md + 文档骨架 + CI/CD + 测试制度 + Git 规范）的开源 AI Agent 技能包。
 - **形态**: 纯 Markdown 项目，无代码、无构建、无测试、无运行依赖。核心逻辑为 `SKILL.md`（7 Step 流程），配套 `references/` 知识库。
 - **技术栈**: Markdown (SKILL.md 格式) + 70+ 组件知识库 + MCP 工具知识库 + WebSearch 联网回退
-- **版本**: v1.7.0（语义化版本，tag 发布）
+- **版本**: v1.7.1（语义化版本，tag 发布）
 - **仓库**: GitHub `origin` = https://github.com/shuguang1994/project-blueprint / Gitee `gitee` = https://gitee.com/shuguang1994/project-blueprint
 - **作者**: 曙光 (shuguang1994) | License: MIT
 - **安装**: `npx skills add shuguang1994/project-blueprint`（国际）/ `npx skills add https://gitee.com/shuguang1994/project-blueprint.git`（国内）/ `dsh plugin --profile web add 'github:shuguang1994/project-blueprint'`（DeepSeek Harness）
@@ -52,6 +52,7 @@ node dsh-plugin/scripts/sync-skill.mjs
 ```
 ✅ README.md 与 README_CN.md 内容保持同步（中英对照，同一特性两处都要更新）
 ✅ 新增特性同时更新：README / README_CN / CHANGELOG / PROJECT_STATUS
+✅ 初始化项目时生成 CHANGELOG.md（[Unreleased] 占位，首次发版后转版本号记录）
 ✅ 文件名中英双语标注，按 A/B/C/D/E 五级分类存放
 ✅ 代码块必须闭合（开闭围栏语言标记一致），防止后续章节被误渲染
 ✅ 对外文档中的数字保持一致（如框架数量 15、组件数量 70+）
@@ -105,7 +106,7 @@ node dsh-plugin/scripts/sync-skill.mjs
 |------|------|
 | `SKILL.md` | 核心逻辑：7 Step 完整流程（探测/拼接/文档/Git/CI/测试/自适应） |
 | `README.md` / `README_CN.md` | 中英文项目文档：安装、能力、工作流程、贡献指南 |
-| `CHANGELOG.md` | 版本记录（v1.0 ~ v1.7.0） |
+| `CHANGELOG.md` | 版本记录（v1.0 ~ v1.7.1） |
 | `PROJECT_STATUS.md` | 项目状态、版本演进、独立抽离指南、已知局限、下一步计划 |
 | `package.json` | DSH 插件 GitHub 安装入口（根目录，声明 dsh.bundle 指向 dsh-plugin/cordis.patch.yml，v1.6.1 新增） |
 | `dsh-plugin/` | DSH (DeepSeek Harness) 插件包：package.json + cordis.patch.yml + lib/ 零构建插件 + skills/（同步生成）+ sync-skill.mjs 同步脚本 |
