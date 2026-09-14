@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [1.9.0] - 2026-09-14
 
 > 主题：跨栈通用性与规范不漂移 —— SKILL.md 按 Step 拆分瘦身、Monorepo 嵌套 AGENTS.md、规范漂移门（第二条种子门禁）+ 仓库自吃狗粮
+> 详细发布说明见 [D-06-v1.9.0-功能发布说明.md](docs/D/D-06-v1.9.0-功能发布说明.md)（中文）/ [D-06-v1.9.0-Release-Notes-EN.md](docs/D/D-06-v1.9.0-Release-Notes-EN.md)（English）
 > 差距来源见 [D-05-行业对标与体系完备性评估报告.md](docs/D/D-05-行业对标与体系完备性评估报告.md)（P0-1 / P0-2 / P0-3 / P1-4 / P1-5 / P1-6 / P2-8 / P2-9 / P2-10）
 
 ### Added
