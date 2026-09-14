@@ -38,7 +38,9 @@
 | **v1.7.1** | **初始化流程生成 CHANGELOG.md（2026-08-26）：SKILL.md Step 4 新增生成 CHANGELOG.md 步骤 + 输出验收清单补充；修复「发布规范要求发版更新 CHANGELOG 但 skill 初始化不生成该文件」缺口** |
 | **v1.7.1 发布记录** | **（2026-08-26）commit c83a1ae，双远程均已推送 ✅（GitHub origin + Gitee gitee：main 同步至 c83a1ae，tag v1.7.1 双远程同步；GitHub 首次推送因本机代理未运行失败，代理恢复后重试成功）** |
 | **v1.8.0** | **宪法层与门禁生长机制（2026-09-13）：把门禁从"初始化一次性产物"升级为"宪法驱动的生长物"——AGENTS.md 写入 3 条元规则 + 6 步生长流程 + `scripts/gates.json` 唯一事实源 + `check-constitution` 宪法自校验；新增跨语言门禁配方表（10 条）+ 组件 `Gate` 第 4 段（12 个高频组件）+ 门禁装配 Step 5.5 + 文档契约与 `docs-check` 校验脚本 + AI 编程工作协议（7 步/证据标准/DoD）；新增 `references/ai-work-protocol.md`、`references/gates-templates.md`、`references/docs-check.mjs`；仓库首次启用 `.trae/specs/` spec 驱动开发** |
+| **v1.8.0 发布记录** | **（2026-09-14 说明）v1.8.0 未单独发版、未打 tag**——其内容在开发完成后一直未提交，最终随 v1.9.0 一次性发布（同一 commit）。如需按 v1.8.0 快照分发，需另行确认是否补打 tag（补打会指向同一 commit，与「v1.8.0 内容已含在 v1.9.0 中」的事实相符） |
 | **v1.9.0** | **跨栈通用性与规范不漂移（2026-09-14）：三大主线——① SKILL.md 按 Step 拆分瘦身（1012 → 113 行索引层，7 个 `references/step-*.md` 按需加载）；② 跨栈与 Monorepo 通用性（知识库 +5 域 15 条目、Monorepo 嵌套 AGENTS.md、spec 驱动六阶段、工具私有增强层）；③ 规范漂移门与自吃狗粮（新增 `references/drift-check.mjs` + 第二条种子门禁 `spec-drift` + 本仓库 `scripts/` 门禁层 `gates.json`/`verify.mjs`/`check-constitution.mjs`）** |
+| **v1.9.0 发布记录** | **（2026-09-14）commit `d90ded9`（64 files changed, 8914 insertions(+), 1611 deletions(-)）+ tag `v1.9.0`（`d655187`）；Gitee 已推送 ✅（main + tag 双同步）；GitHub `main` 已推送 ✅（`f227ce5..d90ded9` 直连成功）、**GitHub tag `v1.9.0` 待补推**（本机代理 `127.0.0.1:9674` 未运行、直连两次 21s 超时；补推命令见 CHANGELOG「未闭环」）** |
 
 ### 本地 DSH 运行环境记录（2026-08-14）
 
@@ -191,7 +193,7 @@ Step 7: 持续自适应机制
 - [x] **P1-4 知识库扩展（v1.9.0 已实施）** — `references/knowledge-base.md` 新增 5 个维度章节 + 15 个组件条目（AI/LLM 4、IaC 与云原生 3、可观测性 3、数据工程 2、原生移动 3）；现状 917 行 / 18 个二级章节 / 95 个组件条目
 - [x] **P1-5 spec 驱动命令化（v1.9.0 已实施）** — 新增 `references/spec-driven.md`（specify → plan → tasks → checklist → implement → verify 六阶段 + 准入门槛 + checklist 可注册为门禁 `source: spec#<change-id>`）；`step-3-docs.md` 3.3 升级为六阶段流程
 - [x] **P1-6 工具私有增强层（v1.9.0 已实施）** — 新增 `references/vendor-breadcrumbs.md`（Cursor `.mdc` glob 分层 / Claude Code hooks·subagents / Copilot instructions 分层模板）；Step 2 breadcrumbs 升级为「基线 + 私有增强层」
-- [ ] **P2-7 v1.8.0 + v1.9.0 合并发版待执行** — 两版 CHANGELOG 已就绪，HEAD 仍为 `f227ce5`（v1.7.1）；工作区改动与新增未提交、无 v1.8.0 / v1.9.0 tag。发版前先执行 commit / push / tag（v1.8.0 与 v1.9.0 一并推送）
+- [x] **P2-7 v1.9.0 发版（2026-09-14 已执行）** — commit `d90ded9`（64 files changed, 8914 insertions(+), 1611 deletions(-)）+ tag `v1.9.0`（`d655187`）；Gitee 已推送（main + tag），GitHub `main` 已推送（`f227ce5..d90ded9`）。**遗留**：GitHub tag `v1.9.0` 待补推（本机代理 `127.0.0.1:9674` 未运行、直连超时；命令见 CHANGELOG「未闭环」）
 - [x] **P2-8 自身门禁空转修复（v1.9.0 已实施）** — `references/docs-check.mjs` 校验范围改为自适应（遍历 `docs/` 实际存在的子目录），本仓库 `docs/D` 已被真实校验（编号连续性 / 状态头 / 体积均实际执行）；新增 `scripts/` 门禁层（2 条种子门禁）；**并新建 `docs/README.md` 索引**，使 `docs-consistency` 的存量 warning 由 5 条 → 1 条 → **0 条**（`0 error / 0 warning / 4 info` exit 0）
 - [x] **P2-9 口径漂移修正（v1.9.0 已实施）** — MCP 口径统一为「§一 匹配表 14 行 / §二 18 个工具条目」；行数快照更新为实测值（`SKILL.md` 113 行、`AGENTS.md` 211 行）；README 技术栈汇总行更新为「18 个二级章节（16 个技术栈维度）+ 95 个组件条目」
 - [x] **P2-10 质量评估基准（v1.9.0 已实施）** — 新增 `references/eval-baseline.md`（规模指标 / 闭环指标 / 3 类 golden case 期望产物 / 已知不覆盖项）

@@ -68,8 +68,11 @@ All notable changes to this project will be documented in this file.
 - **代码围栏闭合校验**（真实执行）：`SKILL.md` 与全部 `references/*.md` 的行首三反引号计数均为偶数（无未闭合围栏）
 - **同步副本校验**（真实执行）：`node dsh-plugin/scripts/sync-skill.mjs` 后，根 `SKILL.md` 与 `dsh-plugin/skills/project-blueprint/SKILL.md` SHA256 一致；`references/` 与插件副本的文件名集合一致（各 24 个）
 
+- **发版**（真实执行）：commit `d90ded9` — `feat: v1.9.0 体系差距全量补齐 + v1.8.0 宪法层与门禁生长机制`（64 files changed, 8914 insertions(+), 1611 deletions(-)）；tag `v1.9.0`（`d655187`）。双远程推送状态见「未闭环」
+
 ### 未闭环
-- 本次改动未执行 `git commit` / `git push` / `git tag`，未发布到 GitHub / Gitee 双远程（v1.8.0 与 v1.9.0 合并发版待执行）
+- ~~本次改动未执行 `git commit` / `git push` / `git tag`~~ → **已发版（2026-09-14）**：commit `d90ded9` + tag `v1.9.0`；**Gitee 已推送**（`main` → `d90ded9`，tag `v1.9.0`）；**GitHub `main` 已推送**（`f227ce5..d90ded9` 直连成功）
+- **GitHub tag `v1.9.0` 待补推**：本机代理（`http.https://github.com.proxy` = `127.0.0.1:9674`）当前未运行，直连推送 tag 连续两次 21s 超时；补推命令：`git push origin v1.9.0`（代理启动后）或 `git -c http.https://github.com.proxy= push origin v1.9.0`（直连）
 - ~~`docs-check` 仍有 1 条存量 warning（缺 `docs/README.md` 索引）~~ → **已闭环**：新建 `docs/README.md` 索引后复跑 `node references/docs-check.mjs` → `0 error / 0 warning / 4 info` exit 0（保留此行作为闭环记录）
 
 ## [1.8.0] - 2026-09-13
