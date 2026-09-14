@@ -112,6 +112,76 @@ jobs:
 
 ---
 
+## 门禁统一入口 job（各语言 workflow 追加片段）
+
+> 目的：CI 复用与本地**同一个** `scripts/verify.*` 入口（**本地与 CI 同语义**），避免"本地能过、CI 跑的却是另一套命令"。
+> 用法：把下列片段追加到对应 workflow 的 `jobs:` 下。该 job 失败即阻断合入；`level: warn` 的门禁可拆为独立非阻断 job 或仅输出报告。
+
+### Node / TypeScript（完整 job 示例）
+
+```yaml
+  constitution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: node scripts/verify.mjs                # 统一门禁入口（本地与 CI 同语义）
+      - run: node scripts/check-constitution.mjs    # 宪法一致性校验（仅 error 阻断）
+```
+
+### Vue / React 前端（pnpm 项目等价写法）
+
+```yaml
+  constitution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - run: node scripts/verify.mjs                # 统一门禁入口（本地与 CI 同语义）
+      - run: node scripts/check-constitution.mjs
+```
+
+### Go（编译型语言，复用 make 目标等价写法）
+
+```yaml
+  constitution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - run: make verify                            # 复用同一 verify 入口（本地与 CI 同语义）
+```
+
+### Python（无 Node 时 `verify.py` 宿主等价写法）
+
+```yaml
+  constitution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/verify.py               # 统一门禁入口（本地与 CI 同语义）
+      - run: python scripts/check-constitution.py
+```
+
+> 不想阻断的 `level: warn` 门禁，可另起一个带 `continue-on-error: true` 的 job，或在 `verify` 中按 `--stage` 过滤后仅在报告步骤输出。
+
+---
+
 ## 选择规则
 
 1. 如果项目远程仓库在 **Gitee**（`git remote -v` 包含 gitee.com）→ 文件名改为 `.gitee-ci.yml`

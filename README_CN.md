@@ -59,6 +59,7 @@ dsh plugin --profile web add 'github:shuguang1994/project-blueprint'
 | ---------------- | ----------------------------------------------------------------- |
 | **自主文件发现**       | 扫描项目，按 30+ 文件名模式自动分类，不预设"有哪些文件"                                   |
 | **项目结构识别**       | 自动识别单项目/monorepo/前后端分离（2-3层）等项目组织方式                               |
+| **Monorepo 嵌套 AGENTS.md** | 根 `AGENTS.md`（全局约束 + 子项目索引表）+ 各子项目包级 `AGENTS.md`（就近原则 closest-file-wins），≥2 个构建/清单文件时触发 |
 | **智能依赖分类**       | 三层递进：知识库精确匹配 → 29 种命名模式启发推断 → 联网搜索                                |
 | **业务类型推断**       | 两层启发式（结构特征 + 配置特征），覆盖 13 种业务类型                                    |
 | **动态 AGENTS.md** | 从 70+ 组件知识库实时拼装，非固定模板                                             |
@@ -66,26 +67,43 @@ dsh plugin --profile web add 'github:shuguang1994/project-blueprint'
 | **文档体系**         | A/B/C/D/E 五级分类，按业务类型按需生成                                          |
 | **测试制度**         | 按项目阶段的分层测试策略，非强行写示例文件                                             |
 | **多 IDE 适配**     | 自动生成 CLAUDE.md / .cursor/rules / copilot-instructions 等指向文件       |
+| **工具私有增强层**     | breadcrumbs 之上：Cursor `.mdc` glob 激活 / Claude Code hooks·subagents 骨架 / Copilot instructions 分层 |
 | **增量模式**         | 已有项目只补缺失，不覆盖已有配置                                                  |
 | **MCP 工具推荐**     | 按探测技术栈推荐 MCP 工具清单与组合，生成 `docs/B/B-05-MCP工具清单.md`（含安装命令，仅 MD 最小侵入） |
 | **持续自适应**        | 生成的 AGENTS.md 内含 Agent 主动维护指令，随项目进展自动更新                           |
+| **按需加载（渐进式披露）** | `SKILL.md` 瘦身为 ≤200 行索引层，Step 细节按需从 `references/step-*.md` 加载 |
 | **基础代码规范实写**    | 初始化即写入基础代码规范（命名/目录结构/错误处理/日志/安全/性能 6 类），B-01 实写 8 章，非占位符 |
 | **AI 高频错误防犯**    | 内置 7 大类 27 条 AI 高频错误知识库，初始化优先注入防犯规则，BUG 反哺持续迭代 |
+| **宪法层与门禁生长**    | AGENTS.md 写入元规则 + 6 步生长流程，项目的 AI 在开发中按宪法自动长出领域门禁 |
+| **门禁清单与统一入口**   | `scripts/gates.json` 唯一事实源 + `verify.*` 统一入口 + `check-constitution` 宪法自校验 |
+| **文档契约与校验**     | 文档状态头/编号/索引契约 + `docs-check` 校验脚本（error 阻断 / warning 不阻断） |
+| **AI 编程工作协议**    | 7 步任务生命周期 + 证据标准 + DoD + 缺陷复盘模板 |
+| **规范驱动开发六阶段**   | specify → plan → tasks → checklist → implement → verify；spec checklist 可直接注册为门禁（`source: spec#<change-id>`） |
+| **规范漂移门**        | 种子门禁校验依赖清单↔AGENTS.md 技术栈行、模块速查表↔实际目录、门禁有效性（`drift-check.*`） |
 
 ## 生成内容一览
 
 | 产物                          | 说明                                            |
 | --------------------------- | --------------------------------------------- |
-| `AGENTS.md`                 | 项目规范（架构原则约束：高内聚低耦合 / 组合优于继承 / 避免全局状态 / 纯函数优先） |
+| `AGENTS.md`                 | 项目规范（架构原则约束：高内聚低耦合 / 组合优于继承 / 避免全局状态 / 纯函数优先）；monorepo 下为「全局约束 + 子项目索引」 |
+| `<子项目>/AGENTS.md`          | ≥2 个构建/清单文件时的各子项目包级规范（monorepo：根 = 全局 + 索引，包 = 就近包级，closest-file-wins） |
 | `docs/`                     | A/B/C/D/E 五级分类文档骨架 + 分类 README 维护指令（含 B-01-开发规范，实写 8 章）           |
 | `.github/workflows/ci.yml`  | CI 流水线（语言自适应，支持 GitHub/Gitee/其他）              |
 | `.gitignore`                | 按语言选择的精选规则                                    |
 | `CHANGELOG.md`              | 版本记录（[Unreleased] 初始化占位，发版按 AGENTS.md 发布规范更新） |
 | `.husky/pre-commit`         | JS/TS 项目提交前 lint 检查（非 JS 项目跳过）                |
-| `CLAUDE.md`                 | Claude Code 指向文件                              |
-| `.cursor/rules/project.mdc` | Cursor 指向文件                                   |
+| `CLAUDE.md`                 | Claude Code 指向文件（基线）                          |
+| `.cursor/rules/project.mdc` | Cursor 指向文件（基线 + 私有增强层）                        |
 | `docs/B/B-03-测试指南.md`       | 测试制度（分层策略、编写时机、框架特定模式）                        |
 | `docs/B/B-05-MCP工具清单.md`    | MCP 工具清单 + 组合建议 + 安装命令（按需生成）                  |
+| `scripts/gates.json`        | 门禁清单（唯一事实源，含来源/级别/装配阶段/命令；默认播种 2 条种子门禁）       |
+| `scripts/verify.*`          | 门禁统一入口（宿主按项目自适应：Node/Python/make/shell）          |
+| `scripts/check-constitution.*` | 宪法自校验（AGENTS.md 红线 ↔ 门禁清单双向一致）                 |
+| `scripts/docs-check.*`      | 文档一致性校验（编号/状态头/索引/归档冲突 + 体积；**校验范围自适应**：遍历 `docs/` 实际存在的子目录；error 阻断） |
+| `scripts/drift-check.*`     | 规范漂移校验（依赖↔技术栈行 / 模块速查表↔实际目录 / 门禁有效性）—— 第二条种子门禁 `spec-drift` |
+| `docs/B/B-06-门禁与工作协议.md`   | 门禁生长流程 + 证据标准 + DoD（中大型项目按需生成）                 |
+
+> **按需生成**：小型项目只生成单条门禁 + 统一入口，不生成完整门禁层与协议文档（保持轻量，避免过度工程）。
 
 ## 自主发现引擎
 
@@ -120,7 +138,12 @@ Project Blueprint 不预设"检查哪些文件"。它扫描你的项目，自主
 | **Lint** (5)                                             | ESLint, Prettier, Biome, Ruff, golangci-lint                                                                                |
 | **部署** (5)                                               | PM2, Docker, Vercel, Docker Compose, GitHub Pages                                                                           |
 | **数据库** (2)                                              | MySQL, PostgreSQL                                                                                                           |
-| + 状态管理(3) + 包管理(5) + 通用规范(4) + 业务类型文档模式(12) = **70+ 组件** |  |                                                                                                                     |
+| **AI/LLM 栈** (4)                                          | LangChain / LangGraph, LlamaIndex, pgvector, Ollama / vLLM                                                                   |
+| **IaC 与云原生** (3)                                          | Terraform, Helm, Kubernetes manifest（kubectl / kustomize）                                                                    |
+| **可观测性** (3)                                              | OpenTelemetry, Sentry, Prometheus + Grafana                                                                                 |
+| **数据工程** (2)                                              | dbt, Airflow                                                                                                                |
+| **原生移动** (3)                                              | Flutter, SwiftUI（Swift）, Jetpack Compose（Kotlin）                                                                           |
+| **合计**                                                    | **18 个二级章节 / 16 个技术栈维度、95 个组件条目**（另含状态管理 3、包管理 5、通用段落、12 种业务类型文档模式） |
 
 ## 联网搜索回退
 
@@ -158,9 +181,14 @@ Project Blueprint 不预设"检查哪些文件"。它扫描你的项目，自主
 - **三层递进分类** — 精确匹配→模式推断→联网搜索，越用越准
 - **全栈覆盖** — AGENTS.md + 文档体系 + CI/CD + 测试制度 + Git 规范，一句话搞定
 - **增量友好** — 已有项目自动识别，不覆盖不改写
+- **Monorepo 就近覆盖（closest-file-wins）** — 多子项目自动生成根 + 包级 `AGENTS.md`，贴近 AGENTS.md 官方语义
 - **持续进化** — 生成的规范不是死文件，AGENTS.md 内含 Agent 主动维护指令：新增模块自动更新速查表、新依赖自动补技术栈、架构决策自动记录
 - **MCP 工具自动推荐** — 从探测技术栈自动匹配 MCP 工具组合并生成可安装文档，双层联网杜绝过时命令
 - **防 AI 高频错误 + 规范反哺闭环** — 内置 7 大类 27 条 AI 高频错误知识库，初始化优先注入防犯规则；规范缺失型 Bug 自动反哺更新 AGENTS.md 与 B-01，规范随实战持续迭代
+- **规范不腐化** — 不是只生成静态规范：每条阻断级红线都配可执行检查，门禁清单有唯一事实源与宪法自校验，规范随项目长出来而非漂移
+- **门禁可生长** — 初始化只播种通用门禁；项目的 AI 在开发中按元规则把真实踩过的坑长成领域门禁（无门禁不立规 / 缺陷必闭环）
+- **规范不漂移（spec-code drift）** — 种子门禁 `drift-check` 校验依赖清单↔技术栈行、模块速查表↔实际目录、门禁有效性，规范无法与代码静默漂移（quality gates 实践）
+- **渐进式披露（progressive disclosure）** — 技能正文瘦身为 ≤200 行索引层，Step 细节按需加载，常驻上下文更小、知识深度不减
 - **原生中文** — 7 语言 15 框架 70+ 组件，中文为第一语言
 
 ## 工作流程
@@ -169,9 +197,10 @@ Project Blueprint 不预设"检查哪些文件"。它扫描你的项目，自主
 你说："初始化这个项目的开发规范"
     ↓
 Step 1: 自主扫描→文件分类→依赖推断（三层递进）
-    ↓
+    ↓ （Step 细节按需加载：references/step-*.md）
 Step 2: 规则引擎从 70+ 组件知识库拼装 AGENTS.md
     ↓ （未知栈 → 联网搜索回退）
+    ↓ （多子项目 → 根 AGENTS.md + 各包级 AGENTS.md）
 Step 3: 按业务类型动态创建文档骨架（13 种类型）+ MCP 工具推荐（B-05）
     ↓
 Step 4: 配置 Git（.gitignore + 分支策略）
@@ -182,7 +211,7 @@ Step 6: 建立测试制度（按阶段策略，非强制示例）
     ↓
 Step 7: 注入持续自适应维护指令
     ↓
-完成：15+ 文件生成，项目即刻 AI-Ready
+完成：15+ 文件生成（多子项目时另生成各包级 AGENTS.md），项目即刻 AI-Ready
 ```
 
 ## 环境要求
@@ -198,6 +227,7 @@ Step 7: 注入持续自适应维护指令
 - **MCP 工具库**：向 `references/mcp-tools.md` 添加 MCP 工具条目（适用场景/安装方式/推荐组合），扩展维度覆盖
 - **基础规范库**：向 `references/code-conventions.md` 添加/完善基础代码规范规则（命名/目录/错误处理/日志/安全/性能，含搜索模板）
 - **AI 易错点库**：向 `references/ai-common-mistakes.md` 添加 AI 高频错误条目（易错点/后果/❌示范/✅做法/关联条目/搜索模板），扩展防犯覆盖
+- **门禁脚本**：为某技术栈的常见坑写一个检查脚本（单文件、零外部依赖），即可被任意项目复用
 - **启发规则**：扩展 `SKILL.md` Step 1.2 命名模式推断规则，覆盖更多依赖关键词
 - **文件发现**：扩展 Step 1.1 文件名模式映射表，支持更多构建工具/语言生态
 - **业务类型**：扩展 Step 3.0 配置特征推断规则，覆盖更多项目类型

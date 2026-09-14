@@ -1,0 +1,20 @@
+[
+  {
+    "id": "docs-consistency",
+    "source": "AGENTS#文档规范",
+    "level": "blocking",
+    "stage": ["pre-push", "ci"],
+    "run": "node references/docs-check.mjs",
+    "cwd": ".",
+    "why": "本仓库文档契约门禁曾长期空转：docs/B、docs/C 不存在，docs-check 的 5 条检查全部因目录缺失被跳过，编号连续性/状态头/体积均未真实执行；docs/D 已成规模（7 篇），改造为自适应校验范围后登记为阻断级"
+  },
+  {
+    "id": "spec-drift",
+    "source": "AGENTS#模块速查表",
+    "level": "warn",
+    "stage": ["pre-push", "ci"],
+    "run": "node references/drift-check.mjs",
+    "cwd": ".",
+    "why": "规范漂移无人发现：本仓库为纯 Markdown 项目，无依赖清单与源码根，漂移门实际覆盖「模块速查表 ↔ 实际目录」与「门禁有效性（gates.json 引用脚本存在性）」；后者在本条门禁登记后开始生效，存量项目按约定先记 warn"
+  }
+]

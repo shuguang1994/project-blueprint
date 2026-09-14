@@ -1,6 +1,6 @@
 # 组件知识库
 
-> 规则引擎拼接 AGENTS.md 时的参考源。每个组件含 Commands / Conventions / CI 三段。v1.7
+> 规则引擎拼接 AGENTS.md 时的参考源。基础条目为三段（**Commands / Conventions / CI job**）；高频组件附加第 4 段 **Gate**（可机检红线 → 检查方式），新增条目一律四段齐全。**Gate 段写「可机检红线 → 检查方式（命令 / 脚本要点 / 适用条件）」，供 Step 5.5 门禁装配与 Step 7 门禁生长使用**。v1.7
 
 ---
 
@@ -10,16 +10,19 @@
 **Commands**: `npx tsc --noEmit` / `node --experimental-strip-types src/index.ts`
 **Conventions**: ✅ 显式类型 / ✅ const 默认 / ❌ any（需 `// @ts-expect-error` + 注释） / ❌ var
 **CI job**: `setup-node@v4` node-version 20 + `npm ci` + `npx tsc --noEmit`
+**Gate**: 类型错误 → npx tsc --noEmit / any 滥用 → eslint @typescript-eslint/no-explicit-any / 调试残留 → eslint no-console
 
 ### Go
 **Commands**: `go build ./...` / `go run ./cmd/server` / `go test ./...`
 **Conventions**: ✅ error 永不忽略 / ✅ context.Context 贯穿 IO / ❌ panic（除 init/main） / ❌ 全局变量
 **CI job**: `setup-go@v5` go-version '1.21' + `go vet ./...` + `go build ./...`
+**Gate**: 静态问题 → go vet ./... / 未处理 error → errcheck（若已装） / 格式 → gofmt -l
 
 ### Python
 **Commands**: `python -m py_compile src/**/*.py` / `uvicorn main:app --reload` / `python -m pytest`
 **Conventions**: ✅ type hints 公开函数 / ✅ logging 替代 print / ❌ `from module import *` / ❌ 可变默认参数
 **CI job**: `setup-python@v5` python-version '3.12' + `pip install -r requirements.txt` + `ruff check .` + `mypy src/`
+**Gate**: 类型 → mypy src/ / lint → ruff check . / 格式 → ruff format --check / 调试残留 → ruff 规则 T201 (print)
 
 ### Java
 **Commands**: `./gradlew build` / `mvn verify` / `./gradlew test`
@@ -49,6 +52,7 @@
 **Commands**: `npm run start:dev` / `npm run test -- path.spec.ts` / `npm run build` / `npm run test:cov`
 **Conventions**: ✅ @Controller('prefix') / ✅ JwtAuthGuard on protected routes / ✅ dataSource.transaction for multi-step writes / ✅ 跨模块走 Service 接口 / ✅ @nestjs/swagger API 文档 / ✅ @nestjs/schedule 定时任务 / ✅ @nestjs/event-emitter 事件解耦 / ✅ winston/nest-winston 结构化日志 / ❌ Controller 注入 Repository / ❌ console.log → Logger
 **CI job**: `setup-node@v4` + `npm ci` + `npm run test` + `npm run build`
+**Gate**: 未加守卫的路由 → 自写检查脚本（扫描 Controller 方法装饰器，缺 @UseGuards 且不在公开白名单即报错） / Controller 注入 Repository → 自写检查（扫描 constructor 参数） / console.log → eslint no-console
 
 ### Next.js (App Router)
 **Commands**: `pnpm dev` / `pnpm build` / `pnpm start` / `pnpm db:push` / `pnpm lint` / `npm run test -- path.spec.ts`
@@ -59,6 +63,7 @@
 **Commands**: `pnpm dev` / `pnpm build` / `pnpm preview` / `pnpm lint` / `pnpm test:unit` / `pnpm typecheck`
 **Conventions**: ✅ `<script setup lang="ts">` / ✅ defineProps + defineEmits 显式类型 / ✅ composables 放 composables/ / ❌ Options API / ❌ class 组件
 **CI job**: `pnpm/action-setup@v2` + `setup-node@v4` + `pnpm install --frozen-lockfile` + `pnpm typecheck` + `pnpm lint` + `pnpm test:unit -- --passWithNoTests`
+**Gate**: 类型错误 → pnpm typecheck (vue-tsc --noEmit) / lint 错误 → pnpm lint / 调试残留 → eslint no-console
 
 ### React + Vite
 **Commands**: `pnpm dev` / `pnpm build` / `pnpm preview` / `pnpm lint` / `pnpm test` / `pnpm typecheck`
@@ -128,11 +133,13 @@
 **Commands**: `npx prisma generate` / `npx prisma db push` / `npx prisma studio` / `npx prisma migrate dev`
 **Conventions**: ✅ schema.prisma 为单一真相源 / ✅ relation 字段双向定义 / ❌ db push --force-reset --accept-data-loss / ❌ 手动改迁移 SQL
 **CI job**: `setup-node@v4` + `npm ci` + `npx prisma generate` + `npm test`
+**Gate**: schema 与迁移漂移 → npx prisma migrate diff --exit-code / 客户端未生成 → npx prisma generate 后 git diff --exit-code
 
 ### TypeORM
 **Commands**: `npx typeorm migration:generate` / `npx typeorm migration:run` / `npx ts-node src/migration-runner.ts`
 **Conventions**: ✅ Entity 字段 camelCase → column snake_case / ✅ dataSource.transaction 多步写 / ❌ `.from('table_name')` 裸表名 / ❌ forFeature 注册其他模块 Entity
 **CI job**: `setup-node@v4` + `npm ci` + `npx tsc --noEmit` + `npm run migration:run -- --dry-run`
+**Gate**: 迁移与实体不一致 → 自写检查（比对 migrations 目录与 entity 定义） / 裸表名查询 → 自写检查（扫描 .from('…')）
 
 ### GORM
 **Commands**: 无 CLI，使用 `db.AutoMigrate(&Model{})` 或 migration 文件
@@ -217,11 +224,13 @@
 **Commands**: `npx vitest` / `npx vitest --coverage` / `npx vitest --ui`
 **Conventions**: ✅ describe / it 语义化 / ✅ `vi.fn()` / `vi.spyOn()` mock / ❌ 测试间共享可变状态 / ❌ setTimeout 不 await
 **CI job**: `setup-node@v4` + `npm ci` + `npx vitest run --coverage --passWithNoTests`
+**Gate**: 测试失败 → npx vitest run / 覆盖率阈值 → test:cov 配置 threshold 后据此退出非 0
 
 ### Jest
 **Commands**: `npx jest` / `npx jest --coverage` / `npx jest --watch`
 **Conventions**: ✅ `jest.mock()` 模块级别 / ✅ `beforeEach` 重置状态 / ❌ 异步测试无 `await expect().rejects` / ❌ 测试代码依赖执行顺序
 **CI job**: `setup-node@v4` + `npm ci` + `npx jest --coverage --passWithNoTests`
+**Gate**: 测试失败 → npx jest --runInBand / 覆盖率阈值 → test:cov 配置 threshold 后据此退出非 0
 
 ### pytest
 **Commands**: `python -m pytest` / `python -m pytest --cov` / `python -m pytest -k "pattern"`
@@ -251,11 +260,13 @@
 **Commands**: `npx eslint .` / `npx eslint . --fix` / `npm run lint`
 **Conventions**: ✅ flat config (eslint.config.mjs) v9+ / ✅ extends 最少规则 / ❌ `// eslint-disable` 不加理由注释 / ❌ 全局 disable 规则在非项目范围
 **CI job**: 含在 `pnpm lint` / `npm run lint`
+**Gate**: lint 错误 → npx eslint .
 
 ### Prettier
 **Commands**: `npx prettier --check .` / `npx prettier --write .`
 **Conventions**: ✅ `.prettierrc` 单一配置 / ✅ CI 中 `--check` 模式 / ❌ ESLint + Prettier 冲突规则 → eslint-config-prettier
 **CI job**: `setup-node@v4` + `npm ci` + `npx prettier --check .`
+**Gate**: 格式不一致 → npx prettier --check .
 
 ### ruff
 **Commands**: `ruff check .` / `ruff check --fix .` / `ruff format --check .`
@@ -280,6 +291,7 @@
 **Commands**: `pnpm install` / `pnpm install --frozen-lockfile` / `pnpm update` / `pnpm why <pkg>`
 **Conventions**: ✅ workspace monorepo / ✅ `pnpm.overrides` for security patches / ❌ npm / yarn 混用
 **CI job**: `pnpm/action-setup@v2` version 9 + `pnpm install --frozen-lockfile`
+**Gate**: 锁文件不一致 → pnpm install --frozen-lockfile
 
 ### npm / yarn
 **Commands**: `npm ci` / `npm test` / `npm run build` / `yarn --frozen-lockfile`
@@ -354,14 +366,327 @@
 ## 数据库
 
 ### MySQL
-**Commands**: `mysql -u root -p` / `mysqldump -u root app_db > backup.sql` / `mysql -u root app_db < backup.sql`
+**Commands**: `mysql -u root -p` / `mysqldump -u root <db_name> > backup.sql` / `mysql -u root <db_name> < backup.sql`
 **Conventions**: ✅ InnoDB 引擎 / ✅ utf8mb4 编码 / ✅ snake_case 表名 / ❌ root 账号裸连 → 应用专用账号
 **CI job**: `mirromutth/mysql-action@v1.1` 服务容器 `mysql:8.0` + health check
 
 ### PostgreSQL
-**Commands**: `psql -U postgres` / `pg_dump dbname > backup.sql` / `psql dbname < backup.sql`
+**Commands**: `psql -U postgres` / `pg_dump <db_name> > backup.sql` / `psql <db_name> < backup.sql`
 **Conventions**: ✅ snake_case 表名 / ✅ TIMESTAMPTZ / ❌ VARCHAR without limit (= TEXT) / ❌ SERIAL → GENERATED AS IDENTITY
 **CI job**: `postgres:16-alpine` services container + health check `pg_isready`
+
+---
+
+## AI/LLM 栈
+
+### LangChain / LangGraph
+**Commands**: `pip install -U langchain langgraph`（Python ≥3.10）/ `pip install langgraph-cli` + `langgraph dev`（本地 Agent Server，默认 2024 端口）/ JS: `npm i langchain @langchain/langgraph @langchain/core` + `npx @langchain/langgraph-cli dev`
+**Conventions**:
+```
+✅ 模型调用统一走 provider 抽象层，业务代码不直连各家 SDK
+✅ 提示词模板与图/链定义外置（prompts/ 或配置），与业务逻辑分离
+✅ 调用参数（model / temperature）走配置，可环境变量覆盖
+❌ 硬编码 API Key / base_url / 模型名
+❌ 在循环中逐条同步调用 LLM（应并发或批量）
+```
+**CI job**:
+```yaml
+- uses: actions/setup-python@v5
+  with: { python-version: '3.12' }
+- run: pip install -r requirements.txt
+- run: pytest -q   # LLM 调用必须 mock，不得打真实 API
+```
+**Gate**: 硬编码密钥 → 密钥扫描（见门禁配方表「硬编码密钥 / Token」） / 依赖清单漂移 → 比对 `pyproject.toml` / `package.json` 与 AGENTS.md 技术栈行（见「依赖清单 ↔ 规范漂移」） / 依赖未锁 → `pip install --require-hashes`
+
+### LlamaIndex
+**Commands**: `pip install llama-index`（starter bundle：core + llms-openai + readers-file）/ 按需装集成：`pip install llama-index-core llama-index-llms-ollama llama-index-embeddings-huggingface` / TS: `npm i llamaindex @llamaindex/openai @llamaindex/workflow`
+**Conventions**:
+```
+✅ 只装用到的集成（llama-index-* 命名空间包），不整包引入
+✅ 默认 LLM / embedding 模型显式配置，不依赖库内置默认值
+✅ 索引与存储落盘位置显式指定（`LLAMA_INDEX_CACHE_DIR` 可覆盖）
+✅ 检索参数（top_k / similarity_cutoff）走配置
+❌ 硬编码 `OPENAI_API_KEY` 等凭据（一律环境变量）
+❌ 把离线缓存目录提交进仓库
+```
+**CI job**:
+```yaml
+- uses: actions/setup-python@v5
+  with: { python-version: '3.12' }
+- run: pip install -r requirements.txt
+- run: python -m pytest --passWithNoTests   # 用假 embedding 测索引/检索
+```
+**Gate**: 硬编码密钥 → 密钥扫描（见「硬编码密钥 / Token」） / 缓存目录入库 → `.gitignore` 含缓存目录 + `git ls-files` 断言无命中 / 依赖清单漂移 → 比对 `requirements*.txt` / `pyproject.toml` 与 AGENTS.md 技术栈行（见「依赖清单 ↔ 规范漂移」）
+
+### pgvector
+**Commands**: 库内启用 `CREATE EXTENSION IF NOT EXISTS vector;` / 升级扩展 `ALTER EXTENSION vector UPDATE;` / 校验已装 `SELECT * FROM pg_extension WHERE extname = 'vector';`（扩展版本以官方发布为准）
+**Conventions**:
+```
+✅ 向量维度与 embedding 模型输出严格一致（如 `vector(1536)`）
+✅ 建 HNSW / IVFFlat 索引加速近邻查询，不只靠顺序扫描
+✅ 向量列与业务元数据同表存放，减少额外 join
+✅ 扩展在迁移脚本中声明，不依赖运维手工执行
+❌ 在应用代码里执行 `CREATE EXTENSION`（属迁移 / DDL 职责）
+❌ 向量维度写死成与模型输出不符的值
+```
+**CI job**:
+```yaml
+services:
+  db:
+    image: pgvector/pgvector   # 标签按项目 PG 版本固定，勿用 latest
+- run: psql "$DATABASE_URL" -c 'CREATE EXTENSION IF NOT EXISTS vector;'
+- run: psql "$DATABASE_URL" -f db/migrations/*.sql
+```
+**Gate**: 扩展未启用 → CI 连库断言 `pg_extension` 含 `vector` / 维度不一致 → 比对模型输出维度与迁移中的 `vector(n)` / 迁移与模型定义漂移 → 比对 `migrations/` 与 schema 定义（见门禁配方表「迁移与模型定义不一致」）
+
+### Ollama / vLLM（本地推理服务）
+**Commands**: `ollama serve`（默认监听 11434）/ `ollama pull <model>` + `ollama run <model>` / `ollama ls` / `ollama ps` / `ollama create -f Modelfile` / vLLM: `pip install vllm` + `vllm serve <model> --port 8000`
+**Conventions**:
+```
+✅ 服务地址（`OLLAMA_HOST` / `--host`）走环境变量，不写死 IP
+✅ 模型名与量化/权重版本显式声明，不用隐式默认
+✅ 上下文长度（`OLLAMA_CONTEXT_LENGTH` / `--max-model-len`）按业务显式设置
+✅ 自定义模型用 Modelfile 纳入版本管理
+❌ 生产沿用默认单并发配置（需评估并发与显存）
+❌ 在代码里硬编码对外暴露地址（如 `0.0.0.0:11434`）
+```
+**CI job**:
+```yaml
+# 本地推理服务一般不进单元测试；集成测试用容器起服务做冒烟
+- run: docker run -d -p 11434:11434 ollama/ollama
+- run: curl -fsS http://localhost:11434/api/tags   # 健康检查，超时即失败
+```
+**Gate**: 端点硬编码 → grep 检查（源码禁止出现 `localhost:11434` / `127.0.0.1:11434` 字面量，须读 `OLLAMA_HOST`） / 服务健康 → `curl -f $OLLAMA_HOST/api/tags` / 版本漂移 → 镜像与依赖 tag 固定（禁 `latest`，对应「锁文件与清单不一致」思路）
+
+---
+
+## IaC 与云原生
+
+### Terraform
+**Commands**: `terraform init -backend=false` / `terraform fmt -check -recursive` / `terraform validate` / `terraform plan -detailed-exitcode`（0 无变更 / 1 出错 / 2 有变更）/ `terraform test`（`.tftest.hcl`）
+**Conventions**:
+```
+✅ provider 与 `required_version` 显式固定版本约束
+✅ 变量含 type + description，敏感变量标 `sensitive = true`
+✅ 状态存远端后端（S3 / GCS / Terraform Cloud），本地 state 不入库
+✅ 模块名用 `terraform-<PROVIDER>-<NAME>`，嵌套保持浅层
+❌ 提交 `.terraform/` / `*.tfstate` / 含明文凭据的 `*.tfvars`
+❌ 资源名重复资源类型（`aws_instance.web_server` 而非 `webserver_instance`）
+```
+**CI job**:
+```yaml
+- uses: hashicorp/setup-terraform@v3
+- run: terraform fmt -check -recursive
+- run: terraform init -backend=false && terraform validate
+- run: terraform test
+```
+**Gate**: 格式 → `terraform fmt -check -recursive` / 语法与内部一致性 → `terraform validate` / IaC 安全 → trivy / tfsec / checkov（明文密钥、公网暴露） / 状态文件入库 → `git ls-files '*.tfstate*'` 须为空
+
+### Helm
+**Commands**: `helm lint <chart>` / `helm template <release> <chart> --debug` / `helm install <release> <chart> --dry-run=server` / `helm dependency build` / `helm test <release>`
+**Conventions**:
+```
+✅ `Chart.yaml` 用 `apiVersion: v2`（Helm 3+），name 与目录名一致
+✅ 可配置项全部进 `values.yaml` 并带注释，模板内不写死
+✅ 依赖版本用 `~X.Y.Z` 锁定，变更后跑 `helm dependency update`
+✅ 标准标签（`app.kubernetes.io/*`）经 `_helpers.tpl` 统一注入
+❌ 模板中硬编码镜像 tag / 域名 / storageClass
+❌ `Chart.yaml` 依赖与 `Chart.lock` 不一致
+```
+**CI job**:
+```yaml
+- run: helm lint deploy/chart
+- run: helm template ci deploy/chart > /tmp/rendered.yaml
+- run: helm dependency build deploy/chart
+```
+**Gate**: chart 规范 → `helm lint` / 模板可渲染 → `helm template ... --debug` 非零即报 / 依赖锁一致 → `helm dependency build` 后 `git diff --exit-code`（对应门禁配方表「锁文件与清单不一致」） / 渲染后清单校验 → kubeconform / trivy config
+
+### Kubernetes manifest（kubectl / kustomize）
+**Commands**: `kubectl kustomize <dir>` / `kubectl apply -k <dir>` / `kubectl diff -k <dir>`（部署前预检）/ `kubectl apply --dry-run=server -f <dir>` / 独立 CLI: `kustomize build <dir>`
+**Conventions**:
+```
+✅ 环境差异用 overlay 表达（base + `overlays/<env>`），不整份复制清单
+✅ 所有资源显式声明 namespace 与 `resources.requests/limits`
+✅ 镜像 tag 用不可变版本（digest 或精确 tag），禁 `latest`
+✅ 敏感值走 Secret / 外部密钥管理，清单内不出现明文
+❌ 在 base 中写环境专属值（副本数 / 域名 / 存储类）
+❌ 用 `kubectl edit` 直接改线上资源而不回写清单
+```
+**CI job**:
+```yaml
+- run: kubectl kustomize overlays/${{ matrix.env }} > /tmp/manifest.yaml
+- run: kubectl apply -f /tmp/manifest.yaml --dry-run=server
+- run: kubeconform -strict /tmp/manifest.yaml
+```
+**Gate**: 渲染可构建 → `kubectl kustomize` 非零即报 / 清单 schema → kubeconform `-strict`（拒绝未知字段）/ 清单与集群漂移 → `kubectl diff -k` 输出非空即报（部署前预检）/ 明文密钥 → 密钥扫描
+
+---
+
+## 可观测性
+
+### OpenTelemetry
+**Commands**: 以环境变量配置：`OTEL_EXPORTER_OTLP_ENDPOINT`（gRPC 默认 `http://localhost:4317`，HTTP 默认 `http://localhost:4318`）/ `OTEL_SERVICE_NAME` / `OTEL_EXPORTER_OTLP_HEADERS` / 零代码接入：Java Agent、`opentelemetry-instrument`
+**Conventions**:
+```
+✅ endpoint / headers 一律读环境变量，源码内不写死 collector 地址
+✅ 每个服务显式设置 `service.name`（与部署名一致）
+✅ span 属性按语义约定（semantic conventions）命名
+✅ 采样率按环境配置（生产不默认全采）
+❌ 硬编码 exporter endpoint / auth header / token
+❌ 上报时 service.name 缺失默认值（无法按服务聚合）
+```
+**CI job**:
+```yaml
+- run: grep -rn "OTEL_EXPORTER_OTLP_ENDPOINT" src/   # 断言只出现在配置读取处
+- run: ./scripts/otel-selftest.sh   # 起本地 collector，断言能收到 span
+```
+**Gate**: 端点硬编码 → grep 检查（源码禁止出现 `http://localhost:4317` / `:4318` 字面量，必须经环境变量）/ 服务名缺失 → 检查初始化处含 `OTEL_SERVICE_NAME` 或 resource `service.name` / 密钥进入代码 → 密钥扫描
+
+### Sentry
+**Commands**: `npx @sentry/wizard@latest -i sourcemaps`（自动接入）/ `sentry-cli sourcemaps inject <dir>` 后 `sentry-cli sourcemaps upload <dir>` / 发布：`sentry-cli releases new <name>`
+**Conventions**:
+```
+✅ DSN 与 auth token 一律环境变量（`SENTRY_DSN` / `SENTRY_AUTH_TOKEN`）
+✅ release 名与构建版本一致，source map 仅在生产构建上传
+✅ environment 与 tracesSampleRate 显式配置
+✅ 上报前剥离 PII（用户标识哈希化）
+❌ 前端 bundle 暴露 `SENTRY_AUTH_TOKEN`
+❌ 开发构建上传 source map（污染 release）
+```
+**CI job**:
+```yaml
+- run: npx @sentry/cli sourcemaps inject ./dist
+- run: npx @sentry/cli sourcemaps upload ./dist
+  env:
+    SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+```
+**Gate**: token 未走环境变量 → 密钥扫描（见「硬编码密钥 / Token」）/ source map 未注入 → 构建产物 grep `debugId` 注释缺失即报 / 依赖清单漂移 → 比对 `package.json` 与 AGENTS.md 技术栈行（见「依赖清单 ↔ 规范漂移」）
+
+### Prometheus + Grafana
+**Commands**: `promtool check config prometheus.yml` / `promtool check rules rules/*.yml` / `promtool test rules tests/*.yml` / 指标名规范：`cat metrics.prom | promtool check metrics` / Grafana 用 provisioning 目录（datasources/ + dashboards/）声明式管理
+**Conventions**:
+```
+✅ 采集配置与告警/记录规则进版本库，禁止 UI 手改
+✅ 告警规则带 `for` 持续时间与 `severity` 标签
+✅ 仪表盘以 JSON / provisioning 声明，纳入 Git
+✅ 指标命名遵循约定（`_total` / `_seconds` 等后缀）
+❌ 高基数标签（user_id / request_id）进指标维度
+❌ 在代码中硬编码 Grafana / Alertmanager 凭据
+```
+**CI job**:
+```yaml
+- run: promtool check config deploy/prometheus/prometheus.yml
+- run: promtool check rules deploy/prometheus/rules/*.yml
+- run: promtool test rules deploy/prometheus/tests/*.yml
+```
+**Gate**: 配置合法 → `promtool check config` / 规则合法与重复 → `promtool check rules --lint=all` / 规则单测 → `promtool test rules` 非零即报 / 凭据硬编码 → 密钥扫描
+
+---
+
+## 数据工程
+
+### dbt
+**Commands**: `dbt deps` / `dbt build --select state:modified+`（Slim CI：跑变更模型及下游并带测试）/ `dbt test` / `dbt compile` / `dbt clone --select state:modified+,config.materialized:incremental,state:old`
+**Conventions**:
+```
+✅ 模型分层（staging / intermediate / marts），目录即分层
+✅ 每个模型在 YAML 声明 description 与 tests（unique / not_null 起步）
+✅ 增量模型显式设 `unique_key` 与 `on_schema_change`
+✅ 源表用 `source()`、跨模型用 `ref()`，禁硬编码库表名
+❌ 提交 `target/` 产物；`--state` 与 `--target-path` 指向同一路径
+❌ 用 `dbt run` 替代 `dbt build`（会漏掉测试）
+```
+**CI job**:
+```yaml
+- run: dbt deps
+- run: dbt build --select state:modified+ --defer --state ./state
+  env:
+    DBT_PROFILES_DIR: ./ci
+```
+**Gate**: 模型/测试未通过 → `dbt build` 非零即报 / 改了模型未同步测试 → `dbt build --select state:modified+` 须覆盖对应 test 节点 / 契约漂移 → 比对模型 YAML 声明的 contract 与导出 schema（见门禁配方表「契约漂移」）
+
+### Airflow
+**Commands**: `airflow db migrate`（升级元数据库）/ `airflow dags test <DAG_ID> -f <path>` / `airflow tasks test <dag_id> <task_id>` / `airflow dags list` / `airflow connections test <conn_id>`（Airflow 3.x，`--subdir` 已移除）
+**Conventions**:
+```
+✅ DAG 幂等可重跑，任务显式设 retries + retry_delay
+✅ 连接/变量走 Airflow Connections / Variables，不在 DAG 写死凭据
+✅ `catchup=False` + 显式 schedule，避免历史补跑风暴
+✅ DAG 文件统一放 `dags/`（对应 `dags_folder` 配置），模块化拆分
+❌ 任务代码 import 数据库 session 直连元数据库（Airflow 3 已禁止）
+❌ 在 DAG 顶层做重 IO（拖慢 DAG 解析与调度器）
+```
+**CI job**:
+```yaml
+- uses: actions/setup-python@v5
+  with: { python-version: '3.12' }
+- run: pip install -r requirements.txt
+- run: airflow dags list   # DAG 导入/解析失败即非零退出
+```
+**Gate**: DAG 可解析 → `airflow dags list`（导入报错即失败）/ 单任务可跑 → `airflow tasks test` / 元数据库与代码版本一致 → `airflow db migrate --show-sql-only` 检视后执行（对应「迁移与模型定义不一致」思路）/ 凭据硬编码 → 密钥扫描
+
+---
+
+## 原生移动
+
+### Flutter
+**Commands**: `flutter pub get` / `flutter analyze` / `dart format --set-exit-if-changed .` / `flutter test` / 集成测试 `flutter test integration_test/app_test.dart` / 构建 `flutter build apk --release`
+**Conventions**:
+```
+✅ 状态管理选型统一（Riverpod / Bloc / Provider 择一），不混用
+✅ widget 拆小，业务逻辑放 service / repository 层
+✅ `analysis_options.yaml` 启用 `flutter_lints` 规则集
+✅ 本地化资源经 `flutter gen-l10n` 生成，不手写 arb 映射
+❌ 业务代码用 `print`（用 `debugPrint` 或日志库）
+❌ 提交 `build/` / `.dart_tool/`
+```
+**CI job**:
+```yaml
+- uses: subosito/flutter-action@v2
+  with: { channel: stable }
+- run: flutter pub get
+- run: flutter analyze && flutter test
+```
+**Gate**: 静态分析 → `flutter analyze`（warning 视为失败）/ 格式化 → `dart format --set-exit-if-changed .` / 单元与 widget 测试 → `flutter test` / 调试残留 → `flutter analyze` 的 `avoid_print` 规则 / 锁文件一致 → `flutter pub get` 后 `git diff --exit-code`（`pubspec.lock`）
+
+### SwiftUI（Swift）
+**Commands**: SPM: `swift build` / `swift test` / `swift package resolve` / Xcode 工程: `xcodebuild -scheme <App> -destination 'platform=iOS Simulator,name=iPhone 16' build|test` / lint: `swiftformat --lint .` + `swiftlint`
+**Conventions**:
+```
+✅ View 保持无副作用，业务逻辑放 @Observable / ViewModel
+✅ 依赖走 SPM，提交 `Package.resolved` 锁文件
+✅ Swift 并发用 async/await + actor，避免跨线程共享可变状态
+✅ 测试用 Swift Testing（@Test / #expect）或 XCTest，全项目统一
+❌ 在 View body 内做重计算 / 网络请求
+❌ 提交 `DerivedData/` / `build/` / `*.xcuserstate`
+```
+**CI job**:
+```yaml
+- uses: swift-actions/setup-swift@v2
+  with: { swift-version: '6.0' }   # 版本按 setup-swift 支持列表固定
+- run: swift build
+- run: swift test
+```
+**Gate**: 构建 → `swift build` / 单测 → `swift test` / 格式 → `swiftformat --lint .` / 静态检查 → `swiftlint --strict`（warning 即失败）/ 锁文件一致 → `swift package resolve` 后 `git diff --exit-code`
+
+### Jetpack Compose（Kotlin）
+**Commands**: `./gradlew assembleDebug` / `./gradlew test` / `./gradlew lint` / 设备测试 `./gradlew connectedAndroidTest` / Compose 编译器插件（Kotlin 2.0+ 必须）：`org.jetbrains.kotlin.plugin.compose`
+**Conventions**:
+```
+✅ Compose 编译器用 `org.jetbrains.kotlin.plugin.compose`，不再手写 composeOptions
+✅ 插件与依赖版本经 Gradle version catalog（`libs.versions.toml`）统一
+✅ `@Composable` 保持无副作用，状态用 remember / ViewModel 提升
+✅ 每个 `@Preview` 覆盖明暗主题与关键状态
+❌ Composable 中直接发起网络 / 数据库 IO（放 ViewModel / Repository）
+❌ 只在部分模块接入 Compose 导致 UI 与状态层割裂
+```
+**CI job**:
+```yaml
+- uses: actions/setup-java@v4
+  with: { distribution: temurin, java-version: '17' }
+- run: ./gradlew lint test
+```
+**Gate**: 编译 → `./gradlew assembleDebug` / 静态检查 → `./gradlew lint` / 单测 → `./gradlew test` / 编译器插件缺失 → 断言使用 Compose 的模块均 apply `org.jetbrains.kotlin.plugin.compose`
 
 ---
 
@@ -430,6 +755,30 @@
   Java:  checkstyle 通过? / @Transactional 正确?
   Rust:  clippy -D warnings 通过? / 无 unwrap()?
 ```
+
+### 跨语言门禁配方表
+
+> 这张表用于"为新项目自适应生成门禁"——按探测到的技术栈取对应行的等价检查；门禁只允许使用项目已安装的工具，不得要求用户新装依赖。
+
+| 通用红线 | 检查方式 | 跨语言等价 |
+|---|---|---|
+| 契约漂移（接口 schema 与代码不一致） | 从源码导出 schema，再 `git diff --exit-code` 卡住未重导 | JS/TS: `npm run openapi:export`；Go: `swag init`；Python: FastAPI 导出 `app.openapi()`；Java: springdoc；通用: OpenAPI / JSON Schema / protobuf / GraphQL SDL |
+| 硬编码密钥 / Token | 密钥扫描 | gitleaks / trufflehog / 自写正则（`sk-`、`BEGIN PRIVATE KEY`、`password=`） |
+| 锁文件与清单不一致 | 冻结安装 | `npm ci` / `pnpm i --frozen-lockfile` / `pip install --require-hashes` / `go mod verify` / `cargo build --locked` |
+| 调试残留输出 | 禁用输出语句 | ESLint `no-console` / `grep -rn "print("` / `go vet` / checkstyle / `clippy` |
+| 静态检查 / 类型错误 | 编译器或类型检查器 | `tsc --noEmit` / `go vet ./...` / `mypy src/` / `./gradlew check` / `cargo clippy -- -D warnings` |
+| 格式不一致 | `--check` 模式 | `prettier --check` / `gofmt -l` / `black --check` / `ktlint` / `ruff format --check` |
+| 测试未达标 | 跑测试 + 覆盖率阈值 | jest / vitest / `pytest --cov` / `go test -cover` / jacoco |
+| 迁移与模型定义不一致 | 比对迁移目录与 schema 定义（数量/命名） | 按项目迁移方案（`migrations/` 目录 vs ORM schema/Entity） |
+| 文档漂移（编号/状态头/索引缺失） | 文档一致性脚本（语言无关） | `node scripts/docs-check.mjs`（或等价的 Python / shell 实现） |
+| 依赖清单 ↔ 规范漂移（新增依赖但 AGENTS.md 技术栈行未同步） | 解析依赖清单并与 AGENTS.md 技术栈描述比对，差异即报 | JS/TS: `package.json`；Go: `go.mod`；Python: `pyproject.toml` / `requirements*.txt`；Java: `pom.xml` / `build.gradle*`；Rust: `Cargo.toml` |
+| 模块速查表 ↔ 实际目录漂移（源码目录新增/改名但模块速查表未同步） | 比对源码一级子目录集合与模块速查表首列，集合不一致即报 | Node: `src/`；Go: `internal/` + `cmd/`；Python: 包目录（含 `__init__.py`）；Java: `src/main/java/**` |
+| spec ↔ 代码漂移（spec 描述与实现不一致） | spec 与代码不一致时同样以导出物 / 契约方式卡住：比对 spec 声明的字段与代码导出产物 | 语言无关（与「契约漂移」分工：契约漂移管「源码 ↔ 导出物」，本行管「spec ↔ 代码」；spec 归档于 `.trae/specs/` 或等价目录） |
+| 单文件过大（可维护性下降） | 行数校验 | 语言无关（AGENTS.md 与 docs 单篇行数上限） |
+
+> 不可机检的红线不建门禁，只写规范并标注 `[无门禁]`——真实工程中约 1/4 的缺陷模式最终会固化为门禁。
+
+> 漂移类配方（依赖清单 / 模块速查表 / spec ↔ 代码）的参考实现见 `references/drift-check.mjs`，经 `scripts/verify.*` 统一入口装配。
 
 ---
 
@@ -555,7 +904,7 @@
 探测: src/sagas/
 内部文件: [order.saga.ts, payment.saga.ts, index.ts]
 模式匹配: 无已知模式 *.saga.ts
-联网搜索: "sagas directory NestJS project typical purpose 2026"
+联网搜索: "sagas directory NestJS project typical purpose {currentYear}"
 搜索结果: "Saga pattern for distributed transaction orchestration..."
 输出: sagas | 分布式事务编排 (Saga模式) | 推断，待确认
 ```

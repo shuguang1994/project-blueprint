@@ -163,7 +163,7 @@
 - ❌ 多行/自由文本格式（日志采集与检索困难）
 - ✅ JSON 单行输出（便于采集），示例：
 ```json
-{"ts":"2026-01-01T00:00:00.000Z","level":"info","msg":"user login","service":"user-api","trace_id":"<id>","user_id":"<id>"}
+{"ts":"<ISO8601 时间戳>","level":"info","msg":"user login","service":"user-api","trace_id":"<id>","user_id":"<id>"}
 ```
 
 ### 日志级别与上下文

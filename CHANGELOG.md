@@ -2,6 +2,128 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2026-09-14
+
+> 主题：跨栈通用性与规范不漂移 —— SKILL.md 按 Step 拆分瘦身、Monorepo 嵌套 AGENTS.md、规范漂移门（第二条种子门禁）+ 仓库自吃狗粮
+> 差距来源见 [D-05-行业对标与体系完备性评估报告.md](docs/D/D-05-行业对标与体系完备性评估报告.md)（P0-1 / P0-2 / P0-3 / P1-4 / P1-5 / P1-6 / P2-8 / P2-9 / P2-10）
+
+### Added
+- **Monorepo 嵌套 AGENTS.md**：多子项目（≥2 个构建/清单文件）由「根单文件分块写入」升级为「根 `AGENTS.md`（全局约束 + 子项目索引表）+ 各子项目包级 `AGENTS.md`（包级规范）」，对齐 AGENTS.md 官方「就近原则 closest-file-wins」；单项目行为与 v1.8.0 一致（零变化）。新增参考文件 `references/monorepo-agents.md`
+- **规范漂移门（第二条种子门禁）**：新增零依赖参考实现 `references/drift-check.mjs`（依赖 ↔ AGENTS.md 技术栈行 / 模块速查表 ↔ 实际目录 / 门禁有效性），并登记为种子门禁 `spec-drift`；种子门禁由 1 条（`docs-consistency`）升级为 **2 条**（`docs-consistency` + `spec-drift`）
+- **知识库 5 域扩展（15 个组件条目）**：`references/knowledge-base.md` 新增 5 个维度章节并补齐 15 个组件条目（每条四段：Commands / Conventions / CI job / Gate）
+  - AI/LLM 栈（4）：LangChain / LangGraph、LlamaIndex、pgvector、Ollama / vLLM（本地推理服务）
+  - IaC 与云原生（3）：Terraform、Helm、Kubernetes manifest（kubectl / kustomize）
+  - 可观测性（3）：OpenTelemetry、Sentry、Prometheus + Grafana
+  - 数据工程（2）：dbt、Airflow
+  - 原生移动（3）：Flutter、SwiftUI（Swift）、Jetpack Compose（Kotlin）
+  - 现状：`knowledge-base.md` 917 行 / 18 个二级章节（16 个技术栈维度 + 通用段落 + 业务类型文档模式）/ 95 个组件条目（`### [组件名]`）
+- **规范驱动开发六阶段**：新增 `references/spec-driven.md`（specify → plan → tasks → checklist → implement → verify，每阶段有产物与准入门槛；三件套模板；`checklist` 可转门禁，标注 `source: spec#<change-id>`）；`references/step-3-docs.md` 3.3 由「仅说明三件套格式」升级为六阶段流程；`references/docs-skeleton.md` / `references/project-sync-guide.md` 同步
+- **工具私有增强层**：新增 `references/vendor-breadcrumbs.md`（工具能力矩阵 + Cursor `.mdc` glob 分层 / Claude Code hooks·subagents / Copilot instructions 分层模板 + 增量与防漂移条款）；Step 2 的 breadcrumbs 由「仅指向文件」升级为「基线 + 私有增强层」
+- **量化评估基准**：新增 `references/eval-baseline.md`（规模指标 / 闭环指标 / 3 类 golden case 期望产物 / 已知不覆盖项）
+- **本仓库自吃狗粮（scripts/ 门禁层）**：新增 `scripts/gates.json`（2 条门禁）+ `scripts/verify.mjs`（统一入口，支持 `--stage=`）+ `scripts/check-constitution.mjs`（宪法自校验 A~D 规则）
+
+### Changed
+- `SKILL.md` 按 Step 拆分：正文由 1012 行压缩为 **113 行索引层**（触发条件 / 执行原则 / Step 索引与按需加载表 / 输出验收清单 / 参考文件索引）；7 个 Step 细节迁至 `references/step-1-discovery.md` ~ `step-7-adaptive.md`（Step 5.5 门禁装配并入 step-5）；内容零丢失（原 78 个 `##`/`###` 标题 100% 可定位）
+- `references/docs-check.mjs` 校验范围改为**自适应**：遍历 `docs/` 实际存在的子目录（排除 archive / dev / node_modules），缺失目录不再整块跳过；本仓库 `docs/D` 已被真实校验（不再是「5 条检查全部跳过」）
+- 口径唯一化：索引 24/24 对齐、技术栈维度清单 11 → 16、组件条目层级统一 `### [组件名]`、`knowledge-base.md` 头注由「每个组件四段」改为准确表述（95 个组件条目中 27 个含 `**Gate**` 段）
+- README / README_CN：核心能力表 +5 行（Monorepo 嵌套 AGENTS.md / 工具私有增强层 / 按需加载 / 规范驱动开发六阶段 / 规范漂移门）；生成内容一览 +`scripts/drift-check.*`、+「多子项目时各子项目目录下的 `AGENTS.md`」，更新 `scripts/docs-check.*`（校验范围自适应）与 `scripts/gates.json`（默认播种 2 条种子门禁）；技术栈覆盖表新增 5 个域行、汇总行更新为「18 个二级章节（16 个技术栈维度）+ 95 个组件条目」；工作流程补「Step 细节按需加载」与「多子项目 → 根 + 包级 AGENTS.md」分支，「15+ 文件」表述改为「多子项目时另生成各包级 AGENTS.md」；「与众不同之处」+3 条（规范不漂移 / Monorepo 就近覆盖 / 渐进式披露）
+- `AGENTS.md`：模块速查表补 `scripts/` 门禁层与 4 个新参考文件 + 7 个 step 文件（合并一行）；强制规范补「`SKILL.md` ≤ 200 行 / `references/step-*.md` ≤ 500 行」与「对外数字口径唯一源」；关键架构决策表 +4 条；版本/日期更新为 v1.9.0 / 2026-09-14
+
+### Fixed
+- `AGENTS.md` 知识库条目层级表述错误：`## [组件名]` 更正为 `### [组件名]`（知识库实际为 `##` 维度章节 + `###` 组件条目）
+- `references/docs-check.mjs` 文件头注释「首个门禁种子」更正为「种子门禁之一（docs-consistency）」（仅注释，逻辑未变）
+- 新建 `docs/README.md` 文档索引（A~E 分类约定 + 维护规则 + D 级 5 条编号 / 7 篇文档登记），消除 `docs-consistency` 的最后 1 条 warning（「`docs/` 有文档但缺索引」）；索引内的相对链接可被门禁校验
+- `docs/D/` 存量 4 篇文档补状态头（`D-01-代码规范闭环增强方案.md` / `D-02-v1.7.0-功能发布说明.md` / `D-02-v1.7.0-Release-Notes-EN.md` / `D-04-v1.8.0-Release-Notes-EN.md`），仅追加一行状态头，未改动既有内容；`docs-check` 存量 warning 由 5 条降至 1 条
+
+### BREAKING
+- **SKILL.md 文件结构重构**：正文由单文件拆分为 113 行索引层 + 7 个 `references/step-*.md` 细节文件（`references/` 文件数 12 → 24）。外部若有文档/脚本**按章节定位 `SKILL.md` 正文**，需改为指向对应 `references/step-*.md`（章节标题保持可定位，便于迁移）
+- **多子项目场景生成物结构变化**：多子项目（≥2 个构建/清单文件）生成的根 `AGENTS.md` 由「包含各子项目规范分块」改为「**全局约束 + 子项目索引**」，各子项目规范改生成到各自目录下的 `AGENTS.md`（包级）
+- 以上两项均为 **增量补充、不覆盖已有内容**；单项目场景行为与 v1.8.0 完全一致（零变化）
+
+### 验证
+- **规模校验**（真实执行）：`SKILL.md` = **113 行**（≤ 200）；step 文件行数：step-1-discovery 230 / step-2-assembly 159 / step-3-docs 293 / step-4-git 61 / step-5-ci-and-gates 68 / step-6-testing 131 / step-7-adaptive 89（均 ≤ 500）
+- **文档一致性门禁**（真实执行，补状态头 + 补索引后）：
+  ```bash
+  node references/docs-check.mjs
+  结果：0 error / 0 warning / 4 info   （exit 0）
+  ```
+  存量 warning 收敛过程（真实执行）：补状态头前 `0 error / 5 warning / 4 info`（4 篇 docs/D 缺状态头 + 缺 `docs/README.md` 索引）→ 补状态头后 `0 error / 1 warning / 4 info` → **新建 `docs/README.md` 索引后 `0 error / 0 warning / 4 info`**（索引覆盖关系已可校验：D 系列 5 条编号 7 篇文档全部被索引覆盖，索引内相对链接全部指向存在文件）
+- **规范漂移门**（真实执行）：
+  ```bash
+  node references/drift-check.mjs
+  结果：0 error / 0 warning / 2 info   （exit 0）
+  ```
+  （本仓库无依赖清单、无源码根，检查 A/B 输出 info；检查 C 门禁有效性在 `scripts/gates.json` 登记后生效）
+- **门禁统一入口**（真实执行）：
+  ```bash
+  node scripts/verify.mjs
+  结果：共 2 条门禁（blocking 失败 0 条 / warn 失败 0 条），耗时合计 298ms   （exit 0）
+  ```
+- **宪法自校验**（真实执行）：
+  ```bash
+  node scripts/check-constitution.mjs
+  结果：0 error / 0 warning / 3 info   （exit 0）
+  ```
+- **负向验证**（真实执行并已还原）：临时创建 `docs/D/D-05-临时重复.md` → `docs-check` 报 `1 error`（编号冲突）exit 1；删除后恢复 `0 error` exit 0
+- **代码围栏闭合校验**（真实执行）：`SKILL.md` 与全部 `references/*.md` 的行首三反引号计数均为偶数（无未闭合围栏）
+- **同步副本校验**（真实执行）：`node dsh-plugin/scripts/sync-skill.mjs` 后，根 `SKILL.md` 与 `dsh-plugin/skills/project-blueprint/SKILL.md` SHA256 一致；`references/` 与插件副本的文件名集合一致（各 24 个）
+
+### 未闭环
+- 本次改动未执行 `git commit` / `git push` / `git tag`，未发布到 GitHub / Gitee 双远程（v1.8.0 与 v1.9.0 合并发版待执行）
+- ~~`docs-check` 仍有 1 条存量 warning（缺 `docs/README.md` 索引）~~ → **已闭环**：新建 `docs/README.md` 索引后复跑 `node references/docs-check.mjs` → `0 error / 0 warning / 4 info` exit 0（保留此行作为闭环记录）
+
+## [1.8.0] - 2026-09-13
+
+> 主题：宪法层与门禁生长机制 —— 把门禁从"初始化一次性产物"升级为"宪法驱动的生长物"
+> 详细发布说明见 [D-04-v1.8.0-功能发布说明.md](docs/D/D-04-v1.8.0-功能发布说明.md)（中文）/ [D-04-v1.8.0-Release-Notes-EN.md](docs/D/D-04-v1.8.0-Release-Notes-EN.md)（English） | 评估报告见 [D-03-真实项目文档体系优化引入评估报告.md](docs/D/D-03-真实项目文档体系优化引入评估报告.md)
+
+### Added
+- **宪法层元规则（写入 AGENTS.md）**：3 条元规则（无门禁不立规 / 缺陷必闭环 / 契约唯一源）+ 开工前置（读取 `scripts/gates.json`，新会话先了解本仓库现有门禁）；并配套三件套：门禁清单唯一事实源 `scripts/gates.json`、统一入口 `scripts/verify.*`、宪法自校验 `scripts/check-constitution.*`。元规则章节控制在 ≤ 15 行，细则一律外链，防宪法膨胀
+- **门禁生长流程（6 步）**：① 触发 → ② 判定（准入门槛四问：可机检？零新依赖？真发生过？误报可控？）→ ③ 生成（三层递进取配方：跨语言门禁配方表 → 组件 `Gate` 段 → 联网搜索）→ ④ 注册（写具体检查 `scripts/checks/<id>.*` + `gates.json` 追加一条）→ ⑤ 验证（负向验证：故意制造违规确认门禁能拦住）→ ⑥ 登记（BUG 知识库 + 协议文档 + CHANGELOG）
+- **门禁模板集 `references/gates-templates.md`**：`gates.json` 结构 / `verify.*` 统一入口 / `check-constitution.*` 宪法自校验 / 宿主与装配点选择 / 三版翻译要点
+- **跨语言门禁配方表（10 条）+ 组件 `Gate` 第 4 段**：`references/knowledge-base.md` 通用段落新增 10 条语言无关门禁配方（契约漂移 / 硬编码密钥 / 锁文件一致 / 调试残留 / 静态检查 / 格式化 / 测试覆盖率 / 迁移与模型一致 / 文档一致性等）；组件条目格式由 3 段升级为 4 段（新增 `**Gate**`），12 个高频组件补齐 Gate 段
+- **文档契约 + `docs-check` 校验脚本**：文档状态头（`> 版本: … | 更新: … | 状态: …`）/ 编号连续性 / 索引覆盖 / 归档冲突 + 单文件体积校验；输出分级 `error`（阻断）/ `warning`（不阻断）/ `info`（提示）；新增 `references/docs-check.mjs` 参考实现，作为首个门禁种子
+- **AI 编程工作协议 `references/ai-work-protocol.md`**：7 步任务生命周期（读规范 → 查先例 → 定契约 → 列计划 → 实施 → 跑门禁 → 回写文档）/ 证据标准（改动给 `文件:行号`、验证给命令实际输出，禁止"应该没问题"）/ DoD 完成定义 8 条 / 违规处理表 / 缺陷复盘模板
+- **SKILL.md 新增 Step 5.5「门禁装配」**：宿主选择（优先复用项目已有入口 → Node → Python → make → shell 兜底）+ 装配点（pre-commit / pre-push / CI）+ 生成后实跑自测 + `blocking` / `warn` 分级
+- **按规模阈值触发**：小型项目只生成单条门禁（docs-check）+ 统一入口，不生成完整门禁层与协议文档，避免过度工程
+- **仓库首次启用 spec 驱动开发**：`.trae/specs/implement-gate-constitution/`（spec.md / tasks.md / checklist.md 三件套）
+- **新增 `docs/D/` v1.8.0 发布说明**（中文 [D-04-v1.8.0-功能发布说明.md](docs/D/D-04-v1.8.0-功能发布说明.md) + 英文 [D-04-v1.8.0-Release-Notes-EN.md](docs/D/D-04-v1.8.0-Release-Notes-EN.md)，中英互链，面向社区：为什么做 / 核心更新 / 差异速览 / BREAKING 与迁移 / 验证与未闭环）
+
+### Changed
+- `SKILL.md` 流程改造：新增 Step 5.5「门禁装配」；Step 2 新增宪法层注入（元规则 / 门禁清单与装配 / 规模硬阈值 / 文档契约）；Step 3 新增 3.5「门禁层与协议文档生成」+ 按规模阈值触发；Step 4 CHANGELOG 模板升级（「验证」/「未闭环」双节）；Step 5 新增门禁统一入口 job 与分级；Step 6.5 hooks 按语言选择；Step 7 新增门禁生长机制；输出验收清单同步更新
+- `references/knowledge-base.md`：通用段落新增「跨语言门禁配方表」10 条；组件条目格式由 3 段升级为 4 段（新增 `**Gate**`）；12 个高频组件补 Gate 段
+- `references/agents-md-template.md`：新增「九、门禁即规则（元规则）」「十、门禁清单与装配」；上下文管理新增规模硬阈值 / 文档契约 / 门禁生长登记；补齐缺失的 `> Reason:`
+- `references/docs-skeleton.md`：新增 `B-06-门禁与工作协议.md`、`docs/issues/`、archive 归档登记表、文档契约章节；B-04 描述升级
+- `references/project-sync-guide.md`：新增「门禁生长登记流程」「BUG 知识库升级要点」；何时同步表 +2 行；同步原则 +1 条
+- `references/ci-template.yml`：新增「门禁统一入口 job」章节（Node/TS 完整示例 + Vue/Go/Python 等价写法）
+- `docs/D/D-03-真实项目文档体系优化引入评估报告.md` v1.3：**源项目本机绝对路径脱敏**——33 处 `file:///d:/…` 链接前缀与 1 处头部路径统一替换为 `<源项目>` / `源项目/` 占位符，本仓库自身绝对路径改为相对链接；满足公开仓库不含本机路径的要求
+
+### Fixed
+- `references/knowledge-base.md` 数据库条目示例库名统一为占位符 `<db_name>`：MySQL 原写死 `app_db`、PostgreSQL 原用裸词 `dbname`，两者不一致且易被当作真实库名照抄；统一后与仓库既有占位符风格（`<pkg>` / `<entity>_id`）一致，符合「不写死项目特定信息」规范
+  ```bash
+  node dsh-plugin/scripts/sync-skill.mjs
+  [sync-skill] synced SKILL.md + references/ -> dsh-plugin/skills/project-blueprint/
+  ```
+  校验：全仓 `grep -E "app_db|dbname"` → 0 匹配（根 `references/` 与 `dsh-plugin/skills/` 同步副本均已生效）
+
+### BREAKING
+- **SKILL.md 流程结构变更**：新增 Step 5.5「门禁装配」，Step 2 / 3 / 4 / 5 / 6.5 / 7 均有调整。既有用户重新初始化时，AGENTS.md 与 `docs/` 会多出章节与文件（**增量补充，不覆盖已有内容**）
+
+### 验证
+- **DSH 插件包技能内容同步**（真实执行）：
+  ```bash
+  node dsh-plugin/scripts/sync-skill.mjs
+  [sync-skill] synced SKILL.md + references/ -> dsh-plugin/skills/project-blueprint/ (<repo>/dsh-plugin/skills/project-blueprint)
+  ```
+- **同步结果校验**（真实执行）：`dsh-plugin/skills/project-blueprint/references/` 文件数 = 12（含新增的 `ai-work-protocol.md` / `gates-templates.md` / `docs-check.mjs`）；根 `SKILL.md` 与 `dsh-plugin/skills/project-blueprint/SKILL.md` 均为 **50203 字节 / 1012 行**（内容行数，`newlines` 计数），SHA256 一致（`D0705F09…2B1482`）
+- **SKILL.md 校验修复**（Task 7）：① 一处示例的硬编码年份改为 `{currentYear}` 占位符（符合「禁止硬编码年份」规范）；② 删除「注入 A」代码块中与协议/模板重复的一行，使元规则正文**三方（协议 / AGENTS 模板 / SKILL.md 注入块）逐字一致**；最终 50203 字节 / 1012 行
+- **门禁脚本实跑**（真实执行）：`node --check references/docs-check.mjs` → exit 0；`node references/docs-check.mjs` → `结果：0 error / 0 warning / 5 info` + exit 0（本仓库无 `docs/B` 等目录时输出 info 并正常退出，不崩溃）
+- **规格校验**（独立只读校验，分两轮）：发现的问题（元规则文本三方一致性、CHANGELOG 字节数过时、生长流程单边缺失、`references/` 硬编码年份残留、文件树口径遗漏）**已全部修复并复核通过**（详见 `.trae/specs/implement-gate-constitution/` 三件套；该目录为本地目录，受 `.gitignore` 约束，不随仓库发布）
+- **发布前一致性审查**（2026-09-14，真实执行）：版本号三处一致（根 `package.json` / `dsh-plugin/package.json` / `dsh-plugin/plugin.json` 均为 1.8.0）；`SKILL.md` 与 `dsh-plugin/skills/` 副本逐字节一致（SHA256 `D0705F09…2B1482`）；`references/` 两侧各 12 个文件一致；全仓 Markdown 代码块闭合校验通过（无未闭合围栏）；相对链接可解析校验通过；`node references/docs-check.mjs` → `0 error / 0 warning / 5 info` + exit 0。**本轮修复 3 项**：① `docs/D/D-03` 状态头由"方案定案（尚未动手）"更正为"已实施"并补 §六「实施结果」实际范围；② `docs/D/D-03` §9.4 `gates.json` 示例由 `{version, gates}` 对象结构更正为**顶层数组**（与 `references/gates-templates.md` §一 实现口径一致）；③ 本文件「验证」段 `sync-skill` 输出中的本机绝对路径改为 `<repo>/` 占位符
+
+### 未闭环
+- 本次改动未执行 `git commit` / `git push` / `git tag`，未发布到 GitHub / Gitee 双远程
+
 ## [1.7.1] - 2026-08-26
 
 ### Added

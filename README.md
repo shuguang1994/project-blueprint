@@ -59,6 +59,7 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 |------------|-------------|
 | **Autonomous File Discovery** | Scan and classify 30+ file patterns — no preset file checklist |
 | **Project Structure Detection** | Auto-identify monorepo, 2/3-tier frontend-backend, or single project |
+| **Monorepo Nested AGENTS.md** | Root `AGENTS.md` (global constraints + sub-project index) + per-package `AGENTS.md` (closest-file-wins) when ≥2 build/manifest files |
 | **Intelligent Dep Classification** | 3-tier: knowledge base exact match → 29 heuristic patterns → web search |
 | **Business Type Inference** | 2-tier heuristic (structure + config features), 13 business types |
 | **Dynamic AGENTS.md** | Assembled from 70+ component knowledge base, not a template |
@@ -66,26 +67,43 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 | **Documentation System** | A/B/C/D/E 5-tier classification, generated per business type |
 | **Testing Policy** | Phase-appropriate layered strategy, not forced example files |
 | **Multi-IDE Support** | Auto-generates CLAUDE.md, .cursor/rules, copilot-instructions, and more |
+| **Vendor Private Enhancement Layer** | Beyond breadcrumbs: Cursor `.mdc` glob activation, Claude Code hooks/subagents skeleton, Copilot instructions layering |
 | **Incremental Mode** | Only fills gaps on existing projects, never overwrites |
 | **MCP Tool Recommendation** | Recommends MCP tool list + combinations from detected stack, generates `docs/B/B-05-MCP工具清单.md` with install commands (MD only, minimal intrusion) |
 | **Self-Evolving** | Generated AGENTS.md includes auto-maintenance rules — updates module table, tech stack, and decisions as the project grows |
+| **Progressive Step Loading** | `SKILL.md` slimmed to a ≤200-line index; Step details load on demand from `references/step-*.md` |
 | **Real Coding Conventions** | Writes base coding conventions at init (naming/structure/error handling/logging/security/performance 6 categories), B-01 as real 8-chapter doc, not a placeholder |
 | **AI Mistake Prevention** | Built-in 7-category 27-item AI common-mistakes KB, injected into core rules at init, iterated via BUG feedback loop |
+| **Constitution & Gate Growth** | Writes meta-rules + a 6-step growth loop into AGENTS.md, so the project's AI grows domain gates from the constitution while it works |
+| **Gate Registry & Unified Entry** | `scripts/gates.json` as single source of truth + `verify.*` unified entry + `check-constitution` self-check |
+| **Doc Contract & Validation** | Doc state headers / numbering / index contract + `docs-check` script (error blocks, warning does not) |
+| **AI Work Protocol** | 7-step task lifecycle + evidence standards + DoD + defect retrospective template |
+| **Spec-Driven Development (6 phases)** | specify → plan → tasks → checklist → implement → verify; a spec checklist can register directly as a gate (`source: spec#<change-id>`) |
+| **Spec-Code Drift Gate** | Seed gate checks deps ↔ AGENTS.md tech-stack row, module table ↔ actual dirs, and gate validity (`drift-check.*`) |
 
 ## What It Generates
 
 | Output | Description |
 |--------|-------------|
-| `AGENTS.md` | Project conventions (governed by architecture principles) |
+| `AGENTS.md` | Project conventions (governed by architecture principles); in a monorepo: global constraints + sub-project index |
+| `<sub-project>/AGENTS.md` | Per-package conventions when ≥2 build/manifest files (monorepo: root = global + index, package = local, closest-file-wins) |
 | `docs/` | A/B/C/D/E classified documentation skeleton + README maintenance guides (incl. B-01-开发规范, real 8-chapter conventions) |
 | `.github/workflows/ci.yml` | CI pipeline (auto-adapts to language + platform) |
 | `.gitignore` | Curated rules per language |
 | `CHANGELOG.md` | Version log ([Unreleased] init placeholder, updated per AGENTS.md release policy) |
 | `.husky/pre-commit` | Pre-commit lint hook (JS/TS only) |
-| `CLAUDE.md` | Claude Code vendor breadcrumb |
-| `.cursor/rules/project.mdc` | Cursor vendor breadcrumb |
+| `CLAUDE.md` | Claude Code vendor breadcrumb (baseline) |
+| `.cursor/rules/project.mdc` | Cursor vendor breadcrumb (baseline + private enhancement layer) |
 | `docs/B/B-03-测试指南.md` | Testing policy (layers, timing, framework-specific patterns) |
 | `docs/B/B-05-MCP工具清单.md` | MCP tool list + combination suggestions + install commands (on demand) |
+| `scripts/gates.json` | Gate registry (single source of truth: source / level / stage / command; seeds 2 seed gates by default) |
+| `scripts/verify.*` | Unified gate entry (host auto-selected: Node / Python / make / shell) |
+| `scripts/check-constitution.*` | Constitution self-check (AGENTS.md red lines ↔ gate registry, two-way) |
+| `scripts/docs-check.*` | Doc consistency check (numbering / state headers / index / archive conflicts + size; **scan range adaptive**: iterates the `docs/` sub-dirs that actually exist; error blocks) |
+| `scripts/drift-check.*` | Spec-code drift check (deps ↔ tech-stack row / module table ↔ actual dirs / gate validity) — the 2nd seed gate `spec-drift` |
+| `docs/B/B-06-门禁与工作协议.md` | Gate growth loop + evidence standards + DoD (on demand for mid/large projects) |
+
+> **On demand**: small projects only get a single gate + unified entry — no full gate layer or protocol doc (stays lean, avoids over-engineering).
 
 ## Autonomous Discovery Engine
 
@@ -120,7 +138,12 @@ Tier 3: Web Search
 | **Linting** (5) | ESLint, Prettier, Biome, Ruff, golangci-lint |
 | **Deployment** (5) | PM2, Docker, Vercel, Docker Compose, GitHub Pages |
 | **Databases** (2) | MySQL, PostgreSQL |
-| + State(3) + Package Mgmt(5) + Conventions(4) + Doc Patterns(12) = **70+** |
+| **AI/LLM** (4) | LangChain / LangGraph, LlamaIndex, pgvector, Ollama / vLLM |
+| **IaC & Cloud-Native** (3) | Terraform, Helm, Kubernetes manifest (kubectl / kustomize) |
+| **Observability** (3) | OpenTelemetry, Sentry, Prometheus + Grafana |
+| **Data Engineering** (2) | dbt, Airflow |
+| **Native Mobile** (3) | Flutter, SwiftUI (Swift), Jetpack Compose (Kotlin) |
+| **Totals** | **18 secondary sections / 16 tech-stack dimensions, 95 component entries** (+ State 3, Package Mgmt 5, generic conventions, 12 business-type doc patterns) |
 
 ## Web Search Fallback
 
@@ -158,9 +181,14 @@ Unknown dep: @shadcn/ui not in knowledge base
 - **3-tier classification** — exact match → pattern heuristic → web search
 - **Full-stack coverage** — AGENTS.md + docs + CI + testing policy + Git, one sentence
 - **Incremental-friendly** — auto-detects existing projects, adds only what's missing
+- **Monorepo closest-file-wins** — multi sub-project repos get a root + per-package `AGENTS.md`, matching the official AGENTS.md semantics
 - **Self-evolving** — generated AGENTS.md is not a dead file; it teaches the AI to maintain itself as the project grows
 - **MCP-ready tooling** — auto-recommends MCP tools + combos from your stack, with an installable doc that never ships outdated commands
 - **AI mistake prevention + BUG→conventions feedback loop** — built-in 7-category 27-item AI common-mistakes KB injected at init; conventions-deficiency bugs auto-feed back into AGENTS.md and B-01, so conventions evolve with real practice
+- **Conventions that don't rot** — not just static docs: every blocking red line ships with an executable check, the gate registry has a single source of truth and a constitution self-check, so conventions grow with the project instead of drifting
+- **Growable gates** — init only seeds generic gates; the project's AI turns real pitfalls into domain gates per the meta-rules (no rule without a gate / every defect closes the loop)
+- **Conventions that don't drift** — a seed gate (`drift-check`) checks dependencies ↔ tech-stack row, module table ↔ actual dirs, and gate validity, so spec and code can't silently diverge (quality-gates / spec-code drift)
+- **Progressive disclosure** — the skill body is a slim ≤200-line index; Step details load on demand, keeping always-loaded context small without losing depth
 - **Chinese-first** — 7 languages, 15 frameworks, 70+ components natively in Chinese
 
 ## How It Works
@@ -169,9 +197,10 @@ Unknown dep: @shadcn/ui not in knowledge base
 User says: "Initialize this project"
     ↓
 Step 1: Autonomous scan → file classification → dep inference (3-tier)
-    ↓
+    ↓ (Step details load on demand from references/step-*.md)
 Step 2: Rule engine assembles AGENTS.md from 70+ component KB
     ↓ (unknown stack → WebSearch fallback)
+    ↓ (multi sub-project → root AGENTS.md + per-package AGENTS.md)
 Step 3: Dynamic docs skeleton by business type (13 types) + MCP tool recommendation (B-05)
     ↓
 Step 4: Configure Git (.gitignore + branch strategy)
@@ -182,7 +211,7 @@ Step 6: Establish testing policy (phase-appropriate, not forced)
     ↓
 Step 7: Inject continuous self-maintenance instructions
     ↓
-Done: 15+ files generated, project is AI-ready
+Done: 15+ files generated (multi sub-project adds per-package AGENTS.md), project is AI-ready
 ```
 
 ## Requirements
@@ -198,6 +227,7 @@ Contributions welcome! Areas to help:
 - **MCP tools**: Add MCP tool entries (usage/install/combination) to `references/mcp-tools.md`, expanding dimension coverage
 - **Code conventions**: Add/refine base coding convention rules (naming/directory/error handling/logging/security/performance, with search templates) in `references/code-conventions.md`
 - **AI mistakes**: Add AI common-mistake entries (mistake/consequence/❌example/✅fix/KB link/search template) to `references/ai-common-mistakes.md`, expanding anti-pattern coverage
+- **Gate scripts**: write a check script for a common pitfall in some stack (single file, zero external deps) — reusable by any project
 - **Heuristic rules**: Expand Step 1.2 name pattern classification, covering more dependency keywords
 - **File discovery**: Extend Step 1.1 file pattern mapping for more build tools and language ecosystems
 - **Business types**: Expand Step 3.0 config feature inference for more project types
