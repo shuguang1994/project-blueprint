@@ -38,9 +38,9 @@
 | **v1.7.1** | **初始化流程生成 CHANGELOG.md（2026-08-26）：SKILL.md Step 4 新增生成 CHANGELOG.md 步骤 + 输出验收清单补充；修复「发布规范要求发版更新 CHANGELOG 但 skill 初始化不生成该文件」缺口** |
 | **v1.7.1 发布记录** | **（2026-08-26）commit c83a1ae，双远程均已推送 ✅（GitHub origin + Gitee gitee：main 同步至 c83a1ae，tag v1.7.1 双远程同步；GitHub 首次推送因本机代理未运行失败，代理恢复后重试成功）** |
 | **v1.8.0** | **宪法层与门禁生长机制（2026-09-13）：把门禁从"初始化一次性产物"升级为"宪法驱动的生长物"——AGENTS.md 写入 3 条元规则 + 6 步生长流程 + `scripts/gates.json` 唯一事实源 + `check-constitution` 宪法自校验；新增跨语言门禁配方表（10 条）+ 组件 `Gate` 第 4 段（12 个高频组件）+ 门禁装配 Step 5.5 + 文档契约与 `docs-check` 校验脚本 + AI 编程工作协议（7 步/证据标准/DoD）；新增 `references/ai-work-protocol.md`、`references/gates-templates.md`、`references/docs-check.mjs`；仓库首次启用 `.trae/specs/` spec 驱动开发** |
-| **v1.8.0 发布记录** | **（2026-09-14 说明）v1.8.0 未单独发版、未打 tag**——其内容在开发完成后一直未提交，最终随 v1.9.0 一次性发布（同一 commit）。如需按 v1.8.0 快照分发，需另行确认是否补打 tag（补打会指向同一 commit，与「v1.8.0 内容已含在 v1.9.0 中」的事实相符） |
+| **v1.8.0 发布记录** | **（2026-09-14）已补打 tag `v1.8.0`（`23525ae`）**——v1.8.0 开发完成后未单独提交，其内容随 v1.9.0 一并发布，故该 tag 与 `v1.9.0` 指向**同一 commit `d90ded9`**（首个包含 v1.8.0 内容的提交）；仓库内附 tag 说明消息 |
 | **v1.9.0** | **跨栈通用性与规范不漂移（2026-09-14）：三大主线——① SKILL.md 按 Step 拆分瘦身（1012 → 113 行索引层，7 个 `references/step-*.md` 按需加载）；② 跨栈与 Monorepo 通用性（知识库 +5 域 15 条目、Monorepo 嵌套 AGENTS.md、spec 驱动六阶段、工具私有增强层）；③ 规范漂移门与自吃狗粮（新增 `references/drift-check.mjs` + 第二条种子门禁 `spec-drift` + 本仓库 `scripts/` 门禁层 `gates.json`/`verify.mjs`/`check-constitution.mjs`）** |
-| **v1.9.0 发布记录** | **（2026-09-14）commit `d90ded9`（64 files changed, 8914 insertions(+), 1611 deletions(-)）+ tag `v1.9.0`（`d655187`）；Gitee 已推送 ✅（main + tag 双同步）；GitHub `main` 已推送 ✅（`f227ce5..d90ded9` 直连成功）、**GitHub tag `v1.9.0` 待补推**（本机代理 `127.0.0.1:9674` 未运行、直连两次 21s 超时；补推命令见 CHANGELOG「未闭环」）** |
+| **v1.9.0 发布记录** | **（2026-09-14）commit `d90ded9`（64 files changed, 8914 insertions(+), 1611 deletions(-)）+ 发版记录 `8a9a819` + tag `v1.9.0`（`d655187`）；双远程均已推送 ✅（GitHub origin + Gitee gitee：`main` 同步至 `8a9a819`，tag `v1.9.0` / `v1.8.0` 双远程同步）。注：本机 GitHub 直连不稳定，偶发 21s 超时，改用 `git -c http.https://github.com.proxy= push …` 绕过失效的本机代理后成功** |
 
 ### 本地 DSH 运行环境记录（2026-08-14）
 
