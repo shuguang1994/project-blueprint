@@ -30,7 +30,9 @@ All notable changes to this project will be documented in this file.
 - **口径残留检查**（真实执行）：对外文档（README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json`）中 `70+` 与 `13 种业务类型` 已 0 残留；`docs/D/D-01`、`D-03`、`D-04`、`D-05` 与 CHANGELOG 历史条目按「历史快照不追改」原则保留原数字
 
 ### 未闭环
-- GitHub 仓库 description 仍为 v1.2.0 口径 `7 languages × 14 frameworks × 61 components`，需在 GitHub 侧更新（本机无 GitHub API 凭据时由维护者手动改）
+- ~~GitHub 落后 Gitee 2 个 commit（`origin/main` = `8a9a819`，滞后的提交含 v1.9.0 中英发布说明与文档索引登记）~~ → **已闭环（2026-09-18）**：本轮 commit `6bee93a` 已推送双远程（Gitee `329dcca..6bee93a`、GitHub `8a9a819..6bee93a`），`HEAD` = `gitee/main` = `origin/main` = `6bee93a`
+- GitHub 仓库 description 仍为 v1.2.0 口径 `7 languages × 14 frameworks × 61 components`，需在 GitHub 侧更新（本机未安装 `gh` CLI、无 API 凭据，由维护者手动改）
+- `references/docs-check.mjs` 的索引链接校验仅覆盖 `.md` 链接（正则 `/\]\(\.\/([^)]+\.md)\)/g`），`.html` 等非 `.md` 链接属门禁盲区，建议后续补门禁（详见 D-08 §5.6）
 
 ## [1.9.0] - 2026-09-14
 

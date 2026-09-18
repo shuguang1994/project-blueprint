@@ -1,6 +1,6 @@
 # Project Blueprint — 项目开发状态与独立抽离指南
 
-> 生成日期: 2026-08-14 | 更新: 2026-09-14 | 版本: v1.9.0 | 作者: 曙光 (shuguang1994)
+> 生成日期: 2026-08-14 | 更新: 2026-09-18 | 版本: v1.9.0（+ [Unreleased] 口径收敛与复核） | 作者: 曙光 (shuguang1994)
 
 ---
 
@@ -41,6 +41,8 @@
 | **v1.8.0 发布记录** | **（2026-09-14）已补打 tag `v1.8.0`（`23525ae`）**——v1.8.0 开发完成后未单独提交，其内容随 v1.9.0 一并发布，故该 tag 与 `v1.9.0` 指向**同一 commit `d90ded9`**（首个包含 v1.8.0 内容的提交）；仓库内附 tag 说明消息 |
 | **v1.9.0** | **跨栈通用性与规范不漂移（2026-09-14）：三大主线——① SKILL.md 按 Step 拆分瘦身（1012 → 113 行索引层，7 个 `references/step-*.md` 按需加载）；② 跨栈与 Monorepo 通用性（知识库 +5 域 15 条目、Monorepo 嵌套 AGENTS.md、spec 驱动六阶段、工具私有增强层）；③ 规范漂移门与自吃狗粮（新增 `references/drift-check.mjs` + 第二条种子门禁 `spec-drift` + 本仓库 `scripts/` 门禁层 `gates.json`/`verify.mjs`/`check-constitution.mjs`）** |
 | **v1.9.0 发布记录** | **（2026-09-14）commit `d90ded9`（64 files changed, 8914 insertions(+), 1611 deletions(-)）+ 发版记录 `8a9a819` + tag `v1.9.0`（`d655187`）；双远程均已推送 ✅（GitHub origin + Gitee gitee：`main` 同步至 `8a9a819`，tag `v1.9.0` / `v1.8.0` 双远程同步）。注：本机 GitHub 直连不稳定，偶发 21s 超时，改用 `git -c http.https://github.com.proxy= push …` 绕过失效的本机代理后成功** |
+| **[Unreleased] 口径收敛与复核** | **（2026-09-18）① 外部评估复核：新增 [D-08](docs/D/D-08-外部评估复核报告.md)——对一份外部 AI 项目价值评估逐项复核（实跑 4 门禁 / 核对 20+ 项数字 / 独立复核 4 篇 arXiv 与 3 个站点），判定评估侧 6 项失实、仓库侧 5 项待闭环；② 对外数字口径收敛：组件 `70+` → **95 个组件条目**、业务类型 `13 种` → **12 种**（口径 = knowledge-base「业务类型文档模式」12 条），覆盖 README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json` 及 dsh 副本；③ 修复 `docs/README.md` 索引失效链接（速览 HTML 重命名为 `D-06-` 前缀）+ 补登记 D-07 与速览单页；④ CHANGELOG v1.8.0「未闭环」勾销 + 新增 `[Unreleased]` 段** |
+| **[Unreleased] 发布记录** | **（2026-09-18）commit `6bee93a`（14 files changed, 997 insertions(+), 37 deletions(-)）——本轮同时补齐此前 GitHub 落后的 2 个 commit（`041b7f7` / `329dcca`），双远程 `main` 均已同步至 `6bee93a` ✅（GitHub 用 `git -c http.https://github.com.proxy= push` 直连成功）。遗留：GitHub 仓库 description 仍为 v1.2.0 口径，见「下一步计划」末条** |
 
 ### 本地 DSH 运行环境记录（2026-08-14）
 
@@ -70,11 +72,11 @@
 
 ```
 project-blueprint/
-├── AGENTS.md                         # 项目开发规范 (AI Agent 强制规范，v1.0，2026-08-01 建立；当前 193 行)
+├── AGENTS.md                         # 项目开发规范 (AI Agent 强制规范，v1.0，2026-08-01 建立；当前 211 行)
 ├── SKILL.md                          # 核心逻辑索引层 (113 行：触发条件/执行原则/Step 索引与按需加载表/输出验收清单/参考文件索引；Step 细节见 references/step-*.md)
 ├── README.md                         # 英文文档 (247 行)
 ├── README_CN.md                      # 中文文档 (247 行，与 README.md 逐条对应)
-├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.9.0)
+├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.9.0 + [Unreleased])
 ├── LICENSE                           # MIT 协议
 ├── .gitignore
 ├── PROJECT_STATUS.md                 # 本文件
@@ -150,7 +152,7 @@ project-blueprint/
 
 ## 三点五、AGENTS.md 建立记录（2026-08-01）
 
-- 依据本 Skill 自身的规范体系（SKILL.md 7 Step 流程）为本仓库建立 `AGENTS.md`（v1.0，**建立时 163 行；v1.9.0 当前 193 行**，仍在 ≤ 300 行上限内）
+- 依据本 Skill 自身的规范体系（SKILL.md 7 Step 流程）为本仓库建立 `AGENTS.md`（v1.0，**建立时 163 行；当前 211 行（2026-09-18）**，仍在 ≤ 300 行上限内）
 - 内容覆盖：项目身份、常用命令、Boundaries、强制规范（文档/SKILL.md 编写/知识库条目/版本发布/架构原则）、模块速查表、关键架构决策、Git 规范（双远程）、代码审查清单、上下文管理
 - 后续对项目文件的任何变更需同步维护 AGENTS.md（见其「上下文管理」章节）
 
@@ -202,6 +204,7 @@ Step 7: 持续自适应机制
 - [x] **P2-8 自身门禁空转修复（v1.9.0 已实施）** — `references/docs-check.mjs` 校验范围改为自适应（遍历 `docs/` 实际存在的子目录），本仓库 `docs/D` 已被真实校验（编号连续性 / 状态头 / 体积均实际执行）；新增 `scripts/` 门禁层（2 条种子门禁）；**并新建 `docs/README.md` 索引**，使 `docs-consistency` 的存量 warning 由 5 条 → 1 条 → **0 条**（`0 error / 0 warning / 4 info` exit 0）
 - [x] **P2-9 口径漂移修正（v1.9.0 已实施）** — MCP 口径统一为「§一 匹配表 14 行 / §二 18 个工具条目」；行数快照更新为实测值（`SKILL.md` 113 行、`AGENTS.md` 211 行）；README 技术栈汇总行更新为「18 个二级章节（16 个技术栈维度）+ 95 个组件条目」
 - [x] **P2-10 质量评估基准（v1.9.0 已实施）** — 新增 `references/eval-baseline.md`（规模指标 / 闭环指标 / 3 类 golden case 期望产物 / 已知不覆盖项）
+- [x] **P2-12 外部评估复核与对外口径收敛（[Unreleased]，2026-09-18 已实施）** — 新增 [D-08](docs/D/D-08-外部评估复核报告.md)（实跑 4 门禁 / 核对 20+ 项数字 / 独立复核 4 篇 arXiv 与 3 个外部站点；判定评估侧 6 项失实）；组件 `70+` → **95 个组件条目**、业务类型 `13 种` → **12 种**全仓收敛（含 dsh 副本同步）；修复 `docs/README.md` 索引失效链接 + 补登记 D-07 / 速览单页；CHANGELOG v1.8.0「未闭环」勾销。**未闭环**：① GitHub description 仍为 v1.2.0 口径（见末条）；② `docs-check` 索引链接校验仅覆盖 `.md`，`.html` 等非 `.md` 链接属门禁盲区（D-08 §5.6，建议后续补门禁）
 - [ ] **P3-11 DSH 监察插件（设计已闭环，未实施）** — 见 [D-07](docs/D/D-07-DSH监察插件可行性评估与设计报告.md)。定位：**旁挂只读监察员**（零配置可跑 + 一键初始化 + 递条子永不写项目）；最小可信版本 = 3 条检查（超大文件 / 重复造轮子 / 门禁有效性）+ 画像 + 豁免 + 误报闭环；差异化在**过程合规**（监控 AI 正在新增的代码）与**规范体系自身健康度**（皆为生态真空）。**前置约束**：引入真实代码将改变本仓库「纯 Markdown、无代码、无构建、无测试」的性质，须先同步修订 `AGENTS.md` 首节身份描述并补测试制度；待定项：插件命名 / 阈值口径 / 重复造轮子相似度算法
 - [ ] 收集开源社区反馈和使用案例
 - [ ] 扩展知识库覆盖更多框架和组件
