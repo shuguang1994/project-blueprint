@@ -4,6 +4,10 @@
   "version": "1.9.0",
   "license": "MIT",
   "type": "module",
+  "scripts": {
+    "verify": "node scripts/verify.mjs",
+    "verify:ci": "node scripts/verify.mjs --stage=ci"
+  },
   "main": "./dsh-plugin/lib/index.js",
   "exports": {
     ".": "./dsh-plugin/lib/index.js",

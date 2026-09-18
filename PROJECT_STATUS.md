@@ -43,6 +43,8 @@
 | **v1.9.0 发布记录** | **（2026-09-14）commit `d90ded9`（64 files changed, 8914 insertions(+), 1611 deletions(-)）+ 发版记录 `8a9a819` + tag `v1.9.0`（`d655187`）；双远程均已推送 ✅（GitHub origin + Gitee gitee：`main` 同步至 `8a9a819`，tag `v1.9.0` / `v1.8.0` 双远程同步）。注：本机 GitHub 直连不稳定，偶发 21s 超时，改用 `git -c http.https://github.com.proxy= push …` 绕过失效的本机代理后成功** |
 | **[Unreleased] 口径收敛与复核** | **（2026-09-18）① 外部评估复核：新增 [D-08](docs/D/D-08-外部评估复核报告.md)——对一份外部 AI 项目价值评估逐项复核（实跑 4 门禁 / 核对 20+ 项数字 / 独立复核 4 篇 arXiv 与 3 个站点），判定评估侧 6 项失实、仓库侧 5 项待闭环；② 对外数字口径收敛：组件 `70+` → **95 个组件条目**、业务类型 `13 种` → **12 种**（口径 = knowledge-base「业务类型文档模式」12 条），覆盖 README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json` 及 dsh 副本；③ 修复 `docs/README.md` 索引失效链接（速览 HTML 重命名为 `D-06-` 前缀）+ 补登记 D-07 与速览单页；④ CHANGELOG v1.8.0「未闭环」勾销 + 新增 `[Unreleased]` 段** |
 | **[Unreleased] 发布记录** | **（2026-09-18）本轮共 3 个 commit（`6bee93a` 口径收敛 + 复核落档 / `bb6b398` 状态记录 / 收尾记录）——同时补齐此前 GitHub 落后的 2 个 commit（`041b7f7` / `329dcca`）。Gitee 与 GitHub 的 `main` 已一致 ✅（`HEAD` = `gitee/main` = `origin/main`；GitHub 用 `git -c http.https://github.com.proxy= push` 直连，偶发 21s 超时需重试）。遗留：GitHub 仓库 description 仍为 v1.2.0 口径，见「下一步计划」末条** |
+| **[Unreleased] 机制可发表性复核与门禁装配** | **（2026-09-18）① [D-09](docs/D/D-09-机制可发表性交叉验证报告.md) 交叉验证：核心机制（门禁生长棘轮 / 规范即可执行检查 / 宪法层 / 规范漂移门）对撞 5 篇公开文献，判定「概念层不新颖（Osmani ratchet principle + arXiv 2604.25850 / 2607.13091 / 2608.08311 / 2606.27045）、评估层是致命缺口」；给出可发表窄口子（准入门槛四问 + 1/4 固化率 + 宪法↔门禁双向自校验）与 D-05 漏引的 3 篇必补文献；② **门禁装配落地（首次真正接线）**：新增 `.github/workflows/verify.yml`（push / PR 跑 `--stage=ci`）+ 根 `package.json` `scripts.verify` / `verify:ci`；AGENTS.md 4.6 显式标注「CI 已装配 / pre-push 未装配」，消除 `gates.json` stage 的误导性声明** |
+| **[Unreleased] 发布记录②** | **（2026-09-18）commit `待补`（D-09 + CI 装配 + 口径同步）已推送双远程。遗留：Gitee 侧无 CI（`.gitee-ci.yml` 未建）、pre-push 钩子未装配（需本地 `git config core.hooksPath .githooks`，未由 agent 代改）** |
 
 ### 本地 DSH 运行环境记录（2026-08-14）
 
@@ -80,10 +82,12 @@ project-blueprint/
 ├── LICENSE                           # MIT 协议
 ├── .gitignore
 ├── PROJECT_STATUS.md                 # 本文件
-├── package.json                      # DSH 插件 GitHub 安装入口 (dsh.bundle 指向 dsh-plugin/cordis.patch.yml)
+├── package.json                      # DSH 插件 GitHub 安装入口 (dsh.bundle 指向 dsh-plugin/cordis.patch.yml) + scripts.verify / verify:ci
+├── .github/
+│   └── workflows/verify.yml          # 门禁装配点（push / PR 自动跑 scripts/verify.mjs --stage=ci）
 ├── docs/                             # 项目文档（A/B/C/D/E 五级分类，当前 D 级）
-│   ├── README.md                     # 文档索引（A~E 分类约定 + 维护规则 + D 级 8 条编号 / 11 篇登记；docs-check 索引覆盖校验依赖它）
-│   └── D/                            # D 级：方案 / 报告 / 发布说明（11 篇 .md 均含状态头 + 1 个分享 HTML）
+│   ├── README.md                     # 文档索引（A~E 分类约定 + 维护规则 + D 级 9 条编号 / 12 篇登记；docs-check 索引覆盖校验依赖它）
+│   └── D/                            # D 级：方案 / 报告 / 发布说明（12 篇 .md 均含状态头 + 1 个分享 HTML）
 │       ├── D-01-代码规范闭环增强方案.md
 │       ├── D-02-v1.7.0-功能发布说明.md
 │       ├── D-02-v1.7.0-Release-Notes-EN.md
@@ -95,7 +99,8 @@ project-blueprint/
 │       ├── D-06-v1.9.0-Release-Notes-EN.md
 │       ├── D-06-v1.9.0-更新速览.html      # v1.8/v1.9 群分享版单页（单文件、离线可开；不进 docs-check 校验）
 │       ├── D-07-DSH监察插件可行性评估与设计报告.md
-│       └── D-08-外部评估复核报告.md        # 对一份外部 AI 项目价值评估的逐项复核（评估侧 6 项失实 + 仓库侧 5 项待闭环）
+│       ├── D-08-外部评估复核报告.md        # 对一份外部 AI 项目价值评估的逐项复核（评估侧 6 项失实 + 仓库侧 5 项待闭环）
+│       └── D-09-机制可发表性交叉验证报告.md  # 核心机制 vs 5 篇公开文献对撞（概念层不新颖 + 评估层缺口 + 窄口子）
 ├── scripts/                          # 本仓库自吃狗粮：门禁层（3 个文件）
 │   ├── gates.json                    # 门禁清单（唯一事实源，2 条：docs-consistency[blocking] + spec-drift[warn]）
 │   ├── verify.mjs                    # 门禁统一入口（支持 --stage=）
@@ -139,9 +144,10 @@ project-blueprint/
     └── step-7-adaptive.md            # Step 7 持续自适应机制完整实现细节 (89 行)
 ```
 
-**总计**: **81 个文件**（不含 `.trae/`，该目录受 `.gitignore` 约束，不随仓库发布），无外部依赖。口径构成：
+**总计**: **83 个文件**（不含 `.trae/`，该目录受 `.gitignore` 约束，不随仓库发布），无外部依赖。口径构成：
 - 根目录 **9** 个（AGENTS.md / SKILL.md / README.md / README_CN.md / CHANGELOG.md / LICENSE / .gitignore / PROJECT_STATUS.md / package.json）
-- `docs/` **13** 个（`README.md` 文档索引 + D 级 11 篇 .md + 1 个分享 HTML）
+- `.github/` **1** 个（`workflows/verify.yml`，门禁装配点）
+- `docs/` **14** 个（`README.md` 文档索引 + D 级 12 篇 .md + 1 个分享 HTML）
 - `references/` **24** 个（含 7 个 step 文件 + 4 个 v1.9.0 新增参考文件 monorepo-agents / vendor-breadcrumbs / spec-driven / eval-baseline，以及 docs-check.mjs / drift-check.mjs 两个门禁参考实现）
 - `scripts/` **3** 个（gates.json / verify.mjs / check-constitution.mjs，本仓库门禁层）
 - `dsh-plugin/` **32** 个（插件包 7 个 + `skills/project-blueprint/` 下 **25** 个同步副本：SKILL.md ×1 + references/ ×24，由 `sync-skill.mjs` 从根目录生成，非手改）

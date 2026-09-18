@@ -4,17 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-> 主题：外部评估复核 + 对外数字口径收敛 + 文档索引修复
+> 主题：外部评估复核 + 对外数字口径收敛 + 文档索引修复 + 机制可发表性交叉验证 + 门禁装配落地
 > 复核报告见 [D-08-外部评估复核报告.md](docs/D/D-08-外部评估复核报告.md)
 
 ### Added
 - **外部评估复核**：新增 `docs/D/D-08-外部评估复核报告.md` —— 对一份外部 AI 生成的项目价值评估逐项复核（实跑 4 个门禁脚本 / 核对 20+ 项数字口径 / 独立复核 4 篇 arXiv 论文与 3 个外部站点），记录评估侧 6 项失实与仓库侧 5 项待闭环问题
 - 补登记 `docs/D/D-07-DSH监察插件可行性评估与设计报告.md` 与 `docs/D/D-06-v1.9.0-更新速览.html` 入库（此前仅为本地未跟踪文件，索引与实际文件不一致）
+- **机制可发表性交叉验证**：新增 `docs/D/D-09-机制可发表性交叉验证报告.md` —— 将核心机制（门禁生长棘轮 / 规范即可执行检查 / 宪法层 / 规范漂移门）拆为可命名命题，逐条对撞 5 篇公开文献，判定「概念层不新颖、评估层是致命缺口」，并给出可发表的窄口子（准入门槛四问 + 1/4 固化率 + 宪法↔门禁双向自校验）与 D-05 漏引的 3 篇必补文献
+- **门禁装配落地（本仓库首次真正接线）**：新增 `.github/workflows/verify.yml`（push / PR / 手动触发，复用同一入口 `--stage=ci`）；根 `package.json` 新增 `scripts.verify` / `scripts.verify:ci`（对齐宿主优先级「复用既有入口」）
 
 ### Fixed
 - **对外数字口径统一**（AGENTS.md「对外数字口径唯一源」）：组件数 `70+` 全部收敛为知识库实测口径 `95 个组件条目`（`README.md` / `README_CN.md` / `SKILL.md` / `AGENTS.md` / `PROJECT_STATUS.md` / 根 `package.json` / `dsh-plugin/package.json` / `dsh-plugin/plugin.json`）；业务类型数 `13 种` 收敛为知识库实测 `12 种`（口径 = `references/knowledge-base.md`「业务类型文档模式」章节 12 条）
 - `docs/README.md` 索引中「更新速览 HTML」链接指向不存在的 `D-06-v1.9.0-更新速览.html`（实际文件名为 `v1.9.0-更新速览.html`）；已按索引口径重命名实际文件，链接恢复有效
 - CHANGELOG v1.8.0「未闭环」条目勾销：v1.8.0 tag 已补打并双远程推送，见 [1.9.0] 段「发版」
+- **门禁「声明与装配」不一致修复**（与 v1.9.0 修的 docs-check 假绿同族）：`scripts/gates.json` 声明 `stage: ["pre-push","ci"]`，但本仓库此前**无任何触发点**（无 `.github/workflows`、无 `.husky`/`.githooks`、无生效钩子、`package.json` 无 `scripts`），门禁只在手动敲命令时执行，`✅ 无 blocking 失败` 易被误读为「体系在守护」；已补 CI 装配点（`--stage=ci`），并在 AGENTS.md 4.6 显式标注「CI 已装配 / pre-push 未装配」
 
 ### 验证
 - **门禁实跑**（真实执行，四脚本全绿）：
@@ -28,11 +31,14 @@ All notable changes to this project will be documented in this file.
 
 - **同步副本校验**（真实执行）：`node dsh-plugin/scripts/sync-skill.mjs` 后根 `SKILL.md` 与插件副本 SHA256 一致（`41c6d6cf…`）
 - **口径残留检查**（真实执行）：对外文档（README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json`）中 `70+` 与 `13 种业务类型` 已 0 残留；`docs/D/D-01`、`D-03`、`D-04`、`D-05` 与 CHANGELOG 历史条目按「历史快照不追改」原则保留原数字
+- **门禁装配验证**（真实执行）：`npm run verify` 与 `npm run verify:ci` 本地均通过（与 `node scripts/verify.mjs` 同语义）；`.github/workflows/verify.yml` 语法解析通过；装配点落地后由 GitHub Actions 在 push / PR 时自动执行
 
 ### 未闭环
 - ~~GitHub 落后 Gitee 2 个 commit（`origin/main` = `8a9a819`，滞后的提交含 v1.9.0 中英发布说明与文档索引登记）~~ → **已闭环（2026-09-18）**：本轮全部变更已推送双远程，Gitee 与 GitHub 的 `main` 一致（`HEAD` = `gitee/main` = `origin/main`）；GitHub 直连偶发 21s 超时，重试后成功（命令：`git -c http.https://github.com.proxy= push origin main`）
 - GitHub 仓库 description 仍为 v1.2.0 口径 `7 languages × 14 frameworks × 61 components`，需在 GitHub 侧更新（本机未安装 `gh` CLI、无 API 凭据，由维护者手动改）
 - `references/docs-check.mjs` 的索引链接校验仅覆盖 `.md` 链接（正则 `/\]\(\.\/([^)]+\.md)\)/g`），`.html` 等非 `.md` 链接属门禁盲区，建议后续补门禁（详见 D-08 §5.6）
+- **Gitee 远程无 CI**：`.gitee-ci.yml` 未创建（Gitee Go 语法与 GitHub Actions 不同，需按其文档另写），当前装配点只覆盖 GitHub 远程
+- **pre-push 钩子未装配**：启用需本地执行 `git config core.hooksPath .githooks` 并落 `.githooks/pre-push`；本机 git 配置未由 agent 代改，按需由维护者启用
 
 ## [1.9.0] - 2026-09-14
 

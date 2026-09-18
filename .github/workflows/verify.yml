@@ -1,0 +1,27 @@
+name: verify
+
+# 门禁统一入口（本仓库自吃狗粮的装配点）
+# 本地与 CI 复用同一入口 scripts/verify.mjs，保证语义一致。
+# 门禁清单唯一事实源：scripts/gates.json（当前 2 条：docs-consistency[blocking] + spec-drift[warn]）
+# 说明：verify.mjs 已按 level 分级——blocking 失败即阻断本 job，warn 失败只提示。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 门禁统一入口（--stage=ci）
+        run: node scripts/verify.mjs --stage=ci

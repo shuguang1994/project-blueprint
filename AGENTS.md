@@ -27,8 +27,14 @@ git fetch origin && git fetch gitee            # 同步双远程
 git revert <commit>                            # 线上问题回滚
 
 # 本仓库门禁层（scripts/）实跑：
-node scripts/verify.mjs                        # 统一入口（支持 --stage=pre-push|ci）
+npm run verify                                 # 统一入口（= node scripts/verify.mjs）
+npm run verify:ci                              # 全量（= --stage=ci，CI 用同一入口）
+node scripts/verify.mjs --stage=pre-push       # 按阶段过滤
 node scripts/check-constitution.mjs            # 宪法自校验（AGENTS.md 红线 ↔ 门禁清单）
+
+# 门禁装配点（见 4.6）：
+#   CI      → .github/workflows/verify.yml（push / PR 自动跑 --stage=ci）✅ 已装配
+#   pre-push → 未装配（单行启用：git config core.hooksPath .githooks，见 4.6）⚠️
 
 # 技能安装/更新（验证对外文档描述一致性时参考）：
 npx skills update project-blueprint
@@ -39,7 +45,7 @@ node dsh-plugin/scripts/sync-skill.mjs
 
 ## 三、Boundaries
 
-**Allowed**: `SKILL.md`、`references/`、`README.md`、`README_CN.md`、`CHANGELOG.md`、`PROJECT_STATUS.md`、`AGENTS.md`、`docs/`、`scripts/`、`.trae/specs/`（spec 驱动开发三件套）、`.gitignore`、`dsh-plugin/`（不含 `dsh-plugin/skills/`，由同步脚本生成）
+**Allowed**: `SKILL.md`、`references/`、`README.md`、`README_CN.md`、`CHANGELOG.md`、`PROJECT_STATUS.md`、`AGENTS.md`、`docs/`、`scripts/`、`.github/workflows/`（门禁装配点）、`.trae/specs/`（spec 驱动开发三件套）、`.gitignore`、`dsh-plugin/`（不含 `dsh-plugin/skills/`，由同步脚本生成）
 
 **Ask First**:
 - 版本号升级（vX.Y.Z）或破坏性变更（如 Step 流程重构、文件重命名）
@@ -112,6 +118,10 @@ node dsh-plugin/scripts/sync-skill.mjs
 ✅ 本仓库虽为纯 Markdown 项目，仍适用元规则：新增/修改阻断级规范时必须同步可执行检查
    （本仓库门禁层为 scripts/gates.json + verify.mjs + check-constitution.mjs；
      skill 侧校验参考实现保留在 references/docs-check.mjs 与 references/drift-check.mjs，不复制到 scripts/）
+✅ 门禁装配点（本仓库实况——声明必须与装配一致，不得只写不接）：
+   CI = .github/workflows/verify.yml（push / PR 自动跑 --stage=ci）已装配；
+   pre-push = 未装配（无生效钩子配置），本地按需：git config core.hooksPath .githooks
+✅ gates.json 的 stage 是分类字段（供 --stage= 过滤），不等同于「已接线」；未接线的阶段须显式标注
 ✅ 无法机检的规则须标注 [无门禁] 并写明原因
 ✅ 三条元规则（无门禁不立规 / 缺陷必闭环 / 契约唯一源）完整原文见 references/ai-work-protocol.md 第八章
 ✅ 文档契约：docs/ 下文档须有 > 版本: … | 更新: … | 状态: … 状态头
@@ -125,10 +135,11 @@ node dsh-plugin/scripts/sync-skill.mjs
 | `SKILL.md` | 核心逻辑索引层（113 行）：触发条件 / 执行原则 / Step 索引与按需加载表 / 输出验收清单 / 参考文件索引 |
 | `references/step-1-discovery.md` ~ `step-7-adaptive.md` | 7 个 Step 实现细节（按需加载；Step 5.5 门禁装配并入 step-5；均 ≤ 500 行） |
 | `README.md` / `README_CN.md` | 中英文项目文档：安装、能力、工作流程、贡献指南 |
-| `CHANGELOG.md` | 版本记录（v1.0 ~ v1.9.0） |
+| `CHANGELOG.md` | 版本记录（v1.0 ~ v1.9.0 + [Unreleased]） |
 | `PROJECT_STATUS.md` | 项目状态、版本演进、独立抽离指南、已知局限、下一步计划 |
 | `package.json` | DSH 插件 GitHub 安装入口（根目录，声明 dsh.bundle 指向 dsh-plugin/cordis.patch.yml，v1.6.1 新增） |
 | `scripts/gates.json` / `verify.mjs` / `check-constitution.mjs` | 本仓库门禁层：门禁清单唯一事实源（2 条种子门禁）+ 统一入口 + 宪法自校验 |
+| `.github/workflows/verify.yml` | 门禁装配点：push / PR 自动跑 `scripts/verify.mjs --stage=ci`（与本地同入口同语义） |
 | `dsh-plugin/` | DSH (DeepSeek Harness) 插件包：package.json + cordis.patch.yml + lib/ 零构建插件 + skills/（同步生成）+ sync-skill.mjs 同步脚本 |
 | `references/knowledge-base.md` | 组件知识库（18 个二级章节 = 16 个技术栈维度 + 通用段落 + 业务类型文档模式；95 个组件条目） |
 | `references/mcp-tools.md` | MCP 工具知识库（§一 匹配表 14 行 + §二 18 个工具条目 + 组合矩阵，Step 3.4 参考） |
