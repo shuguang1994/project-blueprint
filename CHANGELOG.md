@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+> 主题：外部评估复核 + 对外数字口径收敛 + 文档索引修复
+> 复核报告见 [D-08-外部评估复核报告.md](docs/D/D-08-外部评估复核报告.md)
+
+### Added
+- **外部评估复核**：新增 `docs/D/D-08-外部评估复核报告.md` —— 对一份外部 AI 生成的项目价值评估逐项复核（实跑 4 个门禁脚本 / 核对 20+ 项数字口径 / 独立复核 4 篇 arXiv 论文与 3 个外部站点），记录评估侧 6 项失实与仓库侧 5 项待闭环问题
+- 补登记 `docs/D/D-07-DSH监察插件可行性评估与设计报告.md` 与 `docs/D/D-06-v1.9.0-更新速览.html` 入库（此前仅为本地未跟踪文件，索引与实际文件不一致）
+
+### Fixed
+- **对外数字口径统一**（AGENTS.md「对外数字口径唯一源」）：组件数 `70+` 全部收敛为知识库实测口径 `95 个组件条目`（`README.md` / `README_CN.md` / `SKILL.md` / `AGENTS.md` / `PROJECT_STATUS.md` / 根 `package.json` / `dsh-plugin/package.json` / `dsh-plugin/plugin.json`）；业务类型数 `13 种` 收敛为知识库实测 `12 种`（口径 = `references/knowledge-base.md`「业务类型文档模式」章节 12 条）
+- `docs/README.md` 索引中「更新速览 HTML」链接指向不存在的 `D-06-v1.9.0-更新速览.html`（实际文件名为 `v1.9.0-更新速览.html`）；已按索引口径重命名实际文件，链接恢复有效
+- CHANGELOG v1.8.0「未闭环」条目勾销：v1.8.0 tag 已补打并双远程推送，见 [1.9.0] 段「发版」
+
+### 验证
+- **门禁实跑**（真实执行，四脚本全绿）：
+
+  ```bash
+  node scripts/verify.mjs             # 共 2 条门禁，blocking 失败 0 / warn 失败 0
+  node references/docs-check.mjs      # 0 error / 0 warning / 4 info
+  node references/drift-check.mjs     # 0 error / 0 warning / 2 info
+  node scripts/check-constitution.mjs # 0 error / 0 warning / 3 info
+  ```
+
+- **同步副本校验**（真实执行）：`node dsh-plugin/scripts/sync-skill.mjs` 后根 `SKILL.md` 与插件副本 SHA256 一致（`41c6d6cf…`）
+- **口径残留检查**（真实执行）：对外文档（README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json`）中 `70+` 与 `13 种业务类型` 已 0 残留；`docs/D/D-01`、`D-03`、`D-04`、`D-05` 与 CHANGELOG 历史条目按「历史快照不追改」原则保留原数字
+
+### 未闭环
+- GitHub 仓库 description 仍为 v1.2.0 口径 `7 languages × 14 frameworks × 61 components`，需在 GitHub 侧更新（本机无 GitHub API 凭据时由维护者手动改）
+
 ## [1.9.0] - 2026-09-14
 
 > 主题：跨栈通用性与规范不漂移 —— SKILL.md 按 Step 拆分瘦身、Monorepo 嵌套 AGENTS.md、规范漂移门（第二条种子门禁）+ 仓库自吃狗粮
@@ -126,7 +156,7 @@ All notable changes to this project will be documented in this file.
 - **发布前一致性审查**（2026-09-14，真实执行）：版本号三处一致（根 `package.json` / `dsh-plugin/package.json` / `dsh-plugin/plugin.json` 均为 1.8.0）；`SKILL.md` 与 `dsh-plugin/skills/` 副本逐字节一致（SHA256 `D0705F09…2B1482`）；`references/` 两侧各 12 个文件一致；全仓 Markdown 代码块闭合校验通过（无未闭合围栏）；相对链接可解析校验通过；`node references/docs-check.mjs` → `0 error / 0 warning / 5 info` + exit 0。**本轮修复 3 项**：① `docs/D/D-03` 状态头由"方案定案（尚未动手）"更正为"已实施"并补 §六「实施结果」实际范围；② `docs/D/D-03` §9.4 `gates.json` 示例由 `{version, gates}` 对象结构更正为**顶层数组**（与 `references/gates-templates.md` §一 实现口径一致）；③ 本文件「验证」段 `sync-skill` 输出中的本机绝对路径改为 `<repo>/` 占位符
 
 ### 未闭环
-- 本次改动未执行 `git commit` / `git push` / `git tag`，未发布到 GitHub / Gitee 双远程
+- ~~本次改动未执行 `git commit` / `git push` / `git tag`，未发布到 GitHub / Gitee 双远程~~ → **已闭环（2026-09-14）**：见 [1.9.0] 段「发版」——commit `d90ded9`；tag `v1.8.0`（`23525ae`，与 v1.9.0 指向同一 commit）双远程均已推送
 
 ## [1.7.1] - 2026-08-26
 

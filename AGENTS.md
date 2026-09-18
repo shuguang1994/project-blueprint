@@ -9,7 +9,7 @@
 
 - **项目**: Project Blueprint — 为新项目一键建立完整 AI 编程规范体系（AGENTS.md + 文档骨架 + CI/CD + 测试制度 + Git 规范）的开源 AI Agent 技能包。
 - **形态**: 纯 Markdown 项目，无代码、无构建、无测试、无运行依赖。核心逻辑为 `SKILL.md`（113 行索引层 + `references/step-*.md` 7 个 Step 细节），配套 `references/` 知识库与 `scripts/` 门禁层。
-- **技术栈**: Markdown (SKILL.md 格式) + 70+ 组件知识库（18 个二级章节 / 95 个组件条目） + MCP 工具知识库 + 门禁配方库 + 宪法层生长机制 + WebSearch 联网回退
+- **技术栈**: Markdown (SKILL.md 格式) + 95 组件条目知识库（18 个二级章节 / 16 个技术栈维度） + MCP 工具知识库 + 门禁配方库 + 宪法层生长机制 + WebSearch 联网回退
 - **版本**: v1.9.0（语义化版本，tag 发布）
 - **仓库**: GitHub `origin` = https://github.com/shuguang1994/project-blueprint / Gitee `gitee` = https://gitee.com/shuguang1994/project-blueprint
 - **作者**: 曙光 (shuguang1994) | License: MIT

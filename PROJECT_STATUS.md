@@ -6,7 +6,7 @@
 
 ## 一、项目简介
 
-**Project Blueprint** 是一个开源的 AI Agent 技能包，用于为新项目一键建立完整的 AI 编程规范体系。它不是静态模板——是**自主发现引擎**：扫描项目文件，智能推断技术栈，从 70+ 组件知识库动态拼装定制化的 AGENTS.md、文档骨架、CI/CD 流水线和测试制度。
+**Project Blueprint** 是一个开源的 AI Agent 技能包，用于为新项目一键建立完整的 AI 编程规范体系。它不是静态模板——是**自主发现引擎**：扫描项目文件，智能推断技术栈，从 95 个组件条目的知识库动态拼装定制化的 AGENTS.md、文档骨架、CI/CD 流水线和测试制度。
 
 ## 二、当前状态
 
@@ -80,8 +80,8 @@ project-blueprint/
 ├── PROJECT_STATUS.md                 # 本文件
 ├── package.json                      # DSH 插件 GitHub 安装入口 (dsh.bundle 指向 dsh-plugin/cordis.patch.yml)
 ├── docs/                             # 项目文档（A/B/C/D/E 五级分类，当前 D 级）
-│   ├── README.md                     # 文档索引（A~E 分类约定 + 维护规则 + D 级 6 条编号 / 9 篇登记；docs-check 索引覆盖校验依赖它）
-│   └── D/                            # D 级：方案 / 报告 / 发布说明（9 篇，均已含状态头）
+│   ├── README.md                     # 文档索引（A~E 分类约定 + 维护规则 + D 级 8 条编号 / 11 篇登记；docs-check 索引覆盖校验依赖它）
+│   └── D/                            # D 级：方案 / 报告 / 发布说明（11 篇 .md 均含状态头 + 1 个分享 HTML）
 │       ├── D-01-代码规范闭环增强方案.md
 │       ├── D-02-v1.7.0-功能发布说明.md
 │       ├── D-02-v1.7.0-Release-Notes-EN.md
@@ -90,7 +90,10 @@ project-blueprint/
 │       ├── D-04-v1.8.0-Release-Notes-EN.md
 │       ├── D-05-行业对标与体系完备性评估报告.md
 │       ├── D-06-v1.9.0-功能发布说明.md
-│       └── D-06-v1.9.0-Release-Notes-EN.md
+│       ├── D-06-v1.9.0-Release-Notes-EN.md
+│       ├── D-06-v1.9.0-更新速览.html      # v1.8/v1.9 群分享版单页（单文件、离线可开；不进 docs-check 校验）
+│       ├── D-07-DSH监察插件可行性评估与设计报告.md
+│       └── D-08-外部评估复核报告.md        # 对一份外部 AI 项目价值评估的逐项复核（评估侧 6 项失实 + 仓库侧 5 项待闭环）
 ├── scripts/                          # 本仓库自吃狗粮：门禁层（3 个文件）
 │   ├── gates.json                    # 门禁清单（唯一事实源，2 条：docs-consistency[blocking] + spec-drift[warn]）
 │   ├── verify.mjs                    # 门禁统一入口（支持 --stage=）
@@ -134,9 +137,9 @@ project-blueprint/
     └── step-7-adaptive.md            # Step 7 持续自适应机制完整实现细节 (89 行)
 ```
 
-**总计**: **78 个文件**（不含 `.trae/`，该目录受 `.gitignore` 约束，不随仓库发布），无外部依赖。口径构成：
+**总计**: **81 个文件**（不含 `.trae/`，该目录受 `.gitignore` 约束，不随仓库发布），无外部依赖。口径构成：
 - 根目录 **9** 个（AGENTS.md / SKILL.md / README.md / README_CN.md / CHANGELOG.md / LICENSE / .gitignore / PROJECT_STATUS.md / package.json）
-- `docs/` **10** 个（`README.md` 文档索引 + D 级 9 篇）
+- `docs/` **13** 个（`README.md` 文档索引 + D 级 11 篇 .md + 1 个分享 HTML）
 - `references/` **24** 个（含 7 个 step 文件 + 4 个 v1.9.0 新增参考文件 monorepo-agents / vendor-breadcrumbs / spec-driven / eval-baseline，以及 docs-check.mjs / drift-check.mjs 两个门禁参考实现）
 - `scripts/` **3** 个（gates.json / verify.mjs / check-constitution.mjs，本仓库门禁层）
 - `dsh-plugin/` **32** 个（插件包 7 个 + `skills/project-blueprint/` 下 **25** 个同步副本：SKILL.md ×1 + references/ ×24，由 `sync-skill.mjs` 从根目录生成，非手改）
@@ -157,8 +160,8 @@ project-blueprint/
 
 ```
 Step 1: 自主发现引擎 (扫描→分类→推断)
-Step 2: 规则引擎拼接 (70+ 知识库 + 联网回退)
-Step 3: 自适应文档体系 (13 种业务类型动态生成 + 3.4 MCP 工具推荐 B-05)
+Step 2: 规则引擎拼接 (95 组件条目知识库 + 联网回退)
+Step 3: 自适应文档体系 (12 种业务类型动态生成 + 3.4 MCP 工具推荐 B-05)
 Step 4: Git 规范配置
 Step 5: CI/CD 配置 (+ 5.5 门禁装配)
 Step 6: 测试制度建立
@@ -199,6 +202,7 @@ Step 7: 持续自适应机制
 - [x] **P2-8 自身门禁空转修复（v1.9.0 已实施）** — `references/docs-check.mjs` 校验范围改为自适应（遍历 `docs/` 实际存在的子目录），本仓库 `docs/D` 已被真实校验（编号连续性 / 状态头 / 体积均实际执行）；新增 `scripts/` 门禁层（2 条种子门禁）；**并新建 `docs/README.md` 索引**，使 `docs-consistency` 的存量 warning 由 5 条 → 1 条 → **0 条**（`0 error / 0 warning / 4 info` exit 0）
 - [x] **P2-9 口径漂移修正（v1.9.0 已实施）** — MCP 口径统一为「§一 匹配表 14 行 / §二 18 个工具条目」；行数快照更新为实测值（`SKILL.md` 113 行、`AGENTS.md` 211 行）；README 技术栈汇总行更新为「18 个二级章节（16 个技术栈维度）+ 95 个组件条目」
 - [x] **P2-10 质量评估基准（v1.9.0 已实施）** — 新增 `references/eval-baseline.md`（规模指标 / 闭环指标 / 3 类 golden case 期望产物 / 已知不覆盖项）
+- [ ] **P3-11 DSH 监察插件（设计已闭环，未实施）** — 见 [D-07](docs/D/D-07-DSH监察插件可行性评估与设计报告.md)。定位：**旁挂只读监察员**（零配置可跑 + 一键初始化 + 递条子永不写项目）；最小可信版本 = 3 条检查（超大文件 / 重复造轮子 / 门禁有效性）+ 画像 + 豁免 + 误报闭环；差异化在**过程合规**（监控 AI 正在新增的代码）与**规范体系自身健康度**（皆为生态真空）。**前置约束**：引入真实代码将改变本仓库「纯 Markdown、无代码、无构建、无测试」的性质，须先同步修订 `AGENTS.md` 首节身份描述并补测试制度；待定项：插件命名 / 阈值口径 / 重复造轮子相似度算法
 - [ ] 收集开源社区反馈和使用案例
 - [ ] 扩展知识库覆盖更多框架和组件
 - [ ] 提交到 skills.sh 官方目录

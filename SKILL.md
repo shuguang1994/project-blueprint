@@ -1,6 +1,6 @@
 ---
 name: project-blueprint
-description: 为新项目快速建立完整 AI 编程规范体系（AGENTS.md、文档目录、CI/CD、Git规范、测试制度）。自主发现引擎：扫描项目→分类文件→推断技术栈，覆盖 7 语言 15 框架 70+ 组件，未知栈三层递进联网回退。Establish AI coding conventions for new projects — autonomous discovery engine with heuristic dep classification, 7 languages 15 frameworks 70+ components, web search fallback for unknowns.
+description: 为新项目快速建立完整 AI 编程规范体系（AGENTS.md、文档目录、CI/CD、Git规范、测试制度）。自主发现引擎：扫描项目→分类文件→推断技术栈，覆盖 7 语言 15 框架 95 个组件条目，未知栈三层递进联网回退。Establish AI coding conventions for new projects — autonomous discovery engine with heuristic dep classification, 7 languages 15 frameworks 95 component entries, web search fallback for unknowns.
 author: 曙光 (shuguang1994)
 license: MIT
 ---
@@ -86,7 +86,7 @@ license: MIT
 
 | 文件 | 职责 |
 |------|------|
-| `references/knowledge-base.md` | 70+ 组件知识库（16 个维度章节：语言/框架/ORM/CSS/UI/测试/Lint/包管理/部署/状态管理/数据库/AI/IaC/可观测性/数据/移动 + 通用段落），Step 2 拼接来源 |
+| `references/knowledge-base.md` | 95 组件条目知识库（16 个维度章节：语言/框架/ORM/CSS/UI/测试/Lint/包管理/部署/状态管理/数据库/AI/IaC/可观测性/数据/移动 + 通用段落），Step 2 拼接来源 |
 | `references/code-conventions.md` | 基础代码规范种子知识库（命名/目录/错误处理/日志/安全/性能 6 大类 + 搜索模板），Step 2 参考 |
 | `references/ai-common-mistakes.md` | AI 高频错误知识库（7 大类 27 条，六段式），Step 2 优先注入 + B-04 反哺迭代 |
 | `references/mcp-tools.md` | MCP 工具知识库（维度匹配表 14 行 + 18 个工具条目 + 推荐组合矩阵，含适用场景/安装方式/推荐组合），Step 3.4 参考 |

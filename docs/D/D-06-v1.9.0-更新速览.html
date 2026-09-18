@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Blueprint v1.8.0 + v1.9.0 更新速览</title>
+<style>
+  :root{
+    --bg:#f5f6f8;
+    --card:#fff;
+    --text:#15171c;
+    --muted:#5b616e;
+    --line:#e4e7ed;
+    --blue:#1e4fd8;
+    --blue-soft:#eef2ff;
+    --teal:#0c7a6e;
+    --teal-soft:#e7f6f3;
+    --ink:#0e1726;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:840px;margin:0 auto;padding:0 18px 64px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    background:
+      radial-gradient(700px 260px at 12% -10%, rgba(30,79,216,.10), transparent 70%),
+      repeating-linear-gradient(0deg, rgba(30,79,216,.055) 0 1px, transparent 1px 26px),
+      repeating-linear-gradient(90deg, rgba(30,79,216,.055) 0 1px, transparent 1px 26px),
+      #fff;
+    border-bottom:1px solid var(--line);
+    padding:52px 18px 44px;
+    margin-bottom:34px;
+  }
+  .hero-inner{max-width:840px;margin:0 auto}
+  .eyebrow{
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--blue);font-weight:700;margin-bottom:14px;
+  }
+  h1{
+    font-size:clamp(26px,5.2vw,38px);
+    line-height:1.28;margin:0 0 14px;letter-spacing:-.01em;font-weight:800;
+  }
+  .sub{color:var(--muted);font-size:clamp(15px,3.4vw,17px);margin:0 0 22px;max-width:60ch}
+  .badges{display:flex;flex-wrap:wrap;gap:8px}
+  .badge{
+    display:inline-block;padding:5px 12px;border-radius:999px;
+    font-size:13px;font-weight:600;border:1px solid transparent;
+  }
+  .badge.blue{background:var(--blue-soft);color:var(--blue);border-color:#d5defb}
+  .badge.teal{background:var(--teal-soft);color:var(--teal);border-color:#cbeae5}
+  .badge.plain{background:#f1f2f5;color:var(--muted);border-color:var(--line)}
+
+  /* ---------- sections ---------- */
+  section{margin:0 0 40px}
+  h2{
+    font-size:clamp(19px,4vw,23px);font-weight:800;letter-spacing:-.01em;
+    margin:0 0 6px;padding-top:6px;display:flex;align-items:center;gap:10px;
+  }
+  h2 .dot{width:9px;height:9px;border-radius:50%;background:var(--blue);flex:none}
+  h2.t .dot{background:var(--teal)}
+  .h2sub{color:var(--muted);font-size:14px;margin:0 0 18px 19px}
+  h3{font-size:16px;font-weight:700;margin:26px 0 10px}
+  p{margin:0 0 14px}
+  .lead{font-size:17px;font-weight:600;margin-bottom:18px}
+  strong{font-weight:700}
+  .hl{color:var(--blue);font-weight:700}
+  .hl-t{color:var(--teal);font-weight:700}
+
+  /* ---------- cards ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 22px;margin:0 0 16px;
+  }
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+  .grid3.two{grid-template-columns:repeat(2,1fr)}
+  .stat{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 16px 18px;
+  }
+  .stat .k{font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:600}
+  .stat .big{
+    font-size:clamp(24px,6vw,32px);font-weight:800;letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;line-height:1.15;color:var(--ink);
+  }
+  .stat .big .acc{color:var(--blue)}
+  .stat .big .acc-t{color:var(--teal)}
+  .stat .d{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.6}
+  .stat .src{font-size:11.5px;color:#8b909c;margin-top:8px}
+
+  /* ---------- rules ---------- */
+  .rule{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);
+    border-radius:10px;padding:14px 18px;margin-bottom:10px;
+  }
+  .rule .t{font-weight:700;margin-bottom:3px}
+  .rule .x{font-size:14px;color:var(--muted);line-height:1.65}
+
+  /* ---------- intro output grid ---------- */
+  .out-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px;margin:0 0 18px}
+  .out{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:11px 14px;font-size:14.5px;line-height:1.6;
+    display:flex;gap:9px;align-items:flex-start;
+  }
+  .out::before{
+    content:"";width:6px;height:6px;border-radius:2px;background:var(--blue);
+    flex:none;margin-top:8px;
+  }
+  .out code{font-size:13px}
+
+  /* ---------- steps ---------- */
+  ol.steps{list-style:none;counter-reset:s;margin:0;padding:0}
+  ol.steps li{
+    counter-increment:s;position:relative;padding:0 0 16px 44px;
+    border-left:1.5px dashed var(--line);margin-left:14px;
+  }
+  ol.steps li:last-child{border-left-color:transparent;padding-bottom:0}
+  ol.steps li::before{
+    content:counter(s);position:absolute;left:-15px;top:0;
+    width:28px;height:28px;border-radius:50%;
+    background:var(--blue);color:#fff;font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  ol.steps .st{font-weight:700}
+  ol.steps .sx{font-size:14px;color:var(--muted);line-height:1.65}
+
+  /* ---------- table ---------- */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 18px}
+  table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:460px}
+  th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:#fafbfc;font-weight:700;font-size:13.5px;color:#3c424e;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  table code{font-size:13px}
+  .card table{margin:0}
+  .card .tbl-wrap{margin:0}
+
+  /* ---------- code ---------- */
+  .code{
+    background:var(--ink);color:#e6edf7;border-radius:12px;
+    padding:16px 18px;margin:0 0 18px;overflow-x:auto;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    font-size:13.5px;line-height:1.85;white-space:pre;
+  }
+  .code .c{color:#8b9ab1}
+  .code .g{color:#5ee0b0}
+  .code .y{color:#ffd479}
+  code{
+    background:#f1f3f7;border:1px solid var(--line);border-radius:5px;
+    padding:1.5px 6px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:13.5px;white-space:nowrap;
+  }
+  .card code{background:#f7f8fa}
+
+  /* ---------- note ---------- */
+  .note{
+    background:#fffdf3;border:1px solid #f2e6c2;border-radius:12px;
+    padding:14px 18px;font-size:14.5px;color:#6b5a24;line-height:1.7;
+  }
+  .note b{color:#8a6d1f}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line);margin-top:44px;padding-top:24px;
+    color:var(--muted);font-size:14px;
+  }
+  footer a{color:var(--blue);text-decoration:none;font-weight:600}
+  footer a:hover{text-decoration:underline}
+  .flinks{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:10px}
+  .fgrid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:10px;margin:16px 0 0;
+  }
+  .fitem{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .fitem .n{font-weight:700;color:var(--text);font-size:14px}
+  .fitem .e{font-size:12.5px;color:var(--muted);margin-top:2px;word-break:break-all}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:680px){
+    .grid3,.grid3.two{grid-template-columns:1fr}
+    .hero{padding:38px 18px 34px}
+    .card,.stat{padding:16px}
+    body{font-size:15.5px}
+  }
+  @media print{
+    body{background:#fff}
+    .hero{background:#fff}
+    .code{background:#f3f5f9;color:#1b2331}
+    .code .c{color:#66748c}.code .g{color:#0a7a55}.code .y{color:#8a6d1f}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Project Blueprint · Release Notes</div>
+    <h1>v1.8.0 + v1.9.0 更新速览</h1>
+    <p class="sub">从「规范生成器」到「规范执行器 / 生长器」——让 AI 编程的规范真正管得住、活得下去、铺得开、不跑偏。</p>
+    <div class="badges">
+      <span class="badge blue">v1.8.0 · 2026-09-13</span>
+      <span class="badge teal">v1.9.0 · 2026-09-14</span>
+      <span class="badge plain">MIT 开源 · 纯 Markdown · 零依赖</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ========== 前置：这是什么 ========== -->
+  <section>
+    <h2><span class="dot"></span>这是什么</h2>
+    <p class="h2sub">给第一次听说这个项目的朋友，30 秒背景</p>
+
+    <p class="lead">Project Blueprint 是一个开源的 AI Agent 技能包 —— <strong>一句话让任何项目具备 AI 开发能力</strong>。</p>
+
+    <p>它不是静态模板，而是一个<strong>自主发现引擎</strong>：扫描你的项目文件 → 智能推断技术栈 → 从 70+ 组件知识库实时拼装。所以你拿到的 <code>AGENTS.md</code> 源自项目的真实技术栈，不是换了个名字的通用模板。</p>
+
+    <p>解决的问题也很具体：AGENTS.md 已是行业标准（60,000+ 开源仓库在用），Anthropic 内部基准显示<strong>有它的项目可减少 40–60% 的「错误模式重写」</strong>；但手写一份高质量的通常要花半天到一天，而且每个新项目都得重来一遍。</p>
+
+    <p>你只需说一句「<strong>初始化这个项目的开发规范体系</strong>」，它会把下面这些一次性交给你的项目：</p>
+
+    <div class="out-grid">
+      <div class="out"><span><code>AGENTS.md</code> 开发规范 · 按真实技术栈生成</span></div>
+      <div class="out"><span><code>docs/</code> 文档骨架 · A/B/C/D/E 五级分类</span></div>
+      <div class="out"><span>多 IDE 适配 · CLAUDE.md / .cursor/rules / Copilot 指令</span></div>
+      <div class="out"><span>CI/CD 流水线 · GitHub Actions / Gitee Go</span></div>
+      <div class="out"><span>Git 规范 + CHANGELOG · 分支策略与提交格式</span></div>
+      <div class="out"><span>测试制度 · 按项目阶段分层，不硬塞示例</span></div>
+      <div class="out"><span>基础代码规范 + AI 高频错误清单 · 6 类 + 27 条</span></div>
+      <div class="out"><span>门禁层 · 清单唯一源 + 统一入口 + 宪法自校验</span></div>
+      <div class="out"><span>MCP 工具推荐清单 · 按探测到的技术栈匹配</span></div>
+    </div>
+
+    <p>支持 Claude Code、Cursor、GitHub Copilot、Codex、Windsurf、OpenCode、DeepSeek Harness 等 <strong>28+ 工具</strong>；已有项目<strong>只补缺失、不覆盖已有配置</strong>。安装见文末。</p>
+  </section>
+
+  <!-- ========== 一 ========== -->
+  <section>
+    <h2><span class="dot"></span>为什么做这两个版本</h2>
+    <p class="h2sub">AI 编程真正的短板不是「写不出代码」，而是「写的代码没人守规矩」</p>
+
+    <p class="lead">而「把规矩写进 AGENTS.md 就完事」这条路，已经被研究证明效果有限：</p>
+
+    <div class="grid3">
+      <div class="stat">
+        <div class="k">规则根本没人读</div>
+        <div class="big">不主动<span class="acc">读规则</span></div>
+        <div class="d">coding agent 极少主动去读仓库里的贡献规则；提醒与验证器反馈能救回「披露」和「验证」，但「禁止类」规则在任何条件下都测不通。</div>
+        <div class="src">北大 RepoComplianceBench · 49 仓库 / 106 任务 / 四个前沿模型</div>
+      </div>
+      <div class="stat">
+        <div class="k">自动生成的规范反而拖后腿</div>
+        <div class="big"><span class="acc">-3%</span> 成功率<br><span class="acc">+20%</span> 成本</div>
+        <div class="d">LLM 自动生成的 context file 平均降低任务成功率、增加推理成本；判据是「agent 自己读代码能发现的，就不该写」。</div>
+        <div class="src">ETH SRI · SWE-bench Lite 实证</div>
+      </div>
+      <div class="stat">
+        <div class="k">规范写完就烂在那里</div>
+        <div class="big"><span class="acc">58%</span> 只有一次提交</div>
+        <div class="d">agent 配置文件的修订率仅 0.4 commits/月 —— 说明规范一旦不可机检，就没有人会去维护它。</div>
+        <div class="src">10,008 仓库实证</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <b>结论</b>：规范必须<strong>可机检、能拦住动作</strong>，否则它就只是一份参考文档。这两个版本就是沿这条线走的——v1.8.0 让规范<strong>管得住</strong>，v1.9.0 让规范<strong>铺得开、不跑偏</strong>。
+    </div>
+  </section>
+
+  <!-- ========== 二 ========== -->
+  <section>
+    <h2><span class="dot"></span>v1.8.0 — 宪法层与门禁生长机制</h2>
+    <p class="h2sub">把门禁从「初始化一次性产物」升级为「宪法驱动的生长物」</p>
+
+    <h3>三条元规则（写入生成的 AGENTS.md）</h3>
+    <div class="rule">
+      <div class="t">无门禁不立规</div>
+      <div class="x">新增阻断级红线，必须同时提交可执行检查并登记入 <code>gates.json</code>；确实无法机检的标注 <code>[无门禁]</code> 并写明原因。</div>
+    </div>
+    <div class="rule">
+      <div class="t">缺陷必闭环</div>
+      <div class="x">每修一个缺陷必须判定「是否可机检」：可机检 → 新建 / 扩展门禁；不可机检 → 归入 BUG 知识库模式。<strong>禁止只改代码不沉淀</strong>。</div>
+    </div>
+    <div class="rule">
+      <div class="t">契约唯一源</div>
+      <div class="x">跨端字段以 DTO / schema 导出物为唯一事实源，导出物变更须随代码一同提交。</div>
+    </div>
+
+    <h3>门禁生长 6 步</h3>
+    <ol class="steps">
+      <li><div class="st">触发</div><div class="sx">修完缺陷 / AI 重复被纠正 / 新增阻断级红线</div></li>
+      <li><div class="st">判定 — 准入门槛四问，缺一不进</div><div class="sx">可机检？零新依赖？真发生过？误报可控？</div></li>
+      <li><div class="st">生成 — 三层递进取配方</div><div class="sx">跨语言门禁配方表 → 组件 Gate 段 → 联网搜索</div></li>
+      <li><div class="st">注册</div><div class="sx">写具体检查 + <code>gates.json</code> 追加一条</div></li>
+      <li><div class="st">验证 — 负向验证</div><div class="sx">故意制造一次违规，确认门禁能拦住；拦不住不得登记为 blocking</div></li>
+      <li><div class="st">登记</div><div class="sx">BUG 知识库 + 协议文档 + CHANGELOG</div></li>
+    </ol>
+
+    <p style="margin-top:18px">四问的用意：<strong>可机检</strong>（靠主观判断的红线强做只会假绿）、<strong>零新依赖</strong>（要新装工具用户就会绕过）、<strong>真发生过</strong>（凭想象设防会堆出死门禁）、<strong>误报可控</strong>（高频误报会被 <code>--no-verify</code> 绕过去，宁可降 <code>warn</code>）。</p>
+
+    <h3>配套三件套</h3>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>生成物</th><th>作用</th></tr>
+          <tr><td><code>scripts/gates.json</code></td><td>门禁清单<strong>唯一事实源</strong>（<code>id / source / level / stage / run / cwd / why</code>）</td></tr>
+          <tr><td><code>scripts/verify.*</code></td><td>统一入口，支持 <code>--stage=pre-commit|pre-push|ci</code>，blocking 失败退出非&nbsp;0</td></tr>
+          <tr><td><code>scripts/check-constitution.*</code></td><td>宪法自校验：AGENTS.md 红线 ↔ 门禁清单<strong>双向比对</strong>，红线缺门禁 = error，僵尸门禁 = warning</td></tr>
+        </table>
+      </div>
+    </div>
+    <p>关键收益：新增门禁 = 「写检查 + 清单追加一行」，本地与 CI 走同一入口，<strong>不会再出现「脚本写了但没挂上」</strong>。</p>
+
+    <h3>一个真实数据</h3>
+    <div class="grid3 two">
+      <div class="stat">
+        <div class="k">真实缺陷模式</div>
+        <div class="big"><span class="acc">89</span> 个</div>
+        <div class="d">来自一个真实项目的生产实践沉淀</div>
+      </div>
+      <div class="stat">
+        <div class="k">最终固化为门禁</div>
+        <div class="big"><span class="acc">21</span> 条</div>
+        <div class="d">约 <strong>1/4 固化率</strong>——不是每个坑都要门禁，这符合现实预期</div>
+      </div>
+    </div>
+    <p>其中「字段枚举一致」「重量单位统一」「数值型 DTO」这几条红线，<strong>全部是踩坑之后才出现的</strong>。这就是「门禁是生长物，不是初始化产物」的实证。</p>
+  </section>
+
+  <!-- ========== 三 ========== -->
+  <section>
+    <h2 class="t"><span class="dot"></span>v1.9.0 — 跨栈通用性与规范不漂移</h2>
+    <p class="h2sub">技能正文瘦身为按需加载，多子项目按官方就近原则生成，漂移变成可机检事件</p>
+
+    <div class="grid3 two">
+      <div class="stat">
+        <div class="k">技能正文瘦身 · 常驻上下文直降</div>
+        <div class="big"><span class="acc-t">1012</span> → <span class="acc-t">113</span> 行</div>
+        <div class="d">7 个 Step 细节迁出为按需加载文件；78 个标题 100% 可定位，<strong>内容零丢失</strong></div>
+      </div>
+      <div class="stat">
+        <div class="k">知识库覆盖面</div>
+        <div class="big"><span class="acc-t">16</span> 维度 · <span class="acc-t">95</span> 组件</div>
+        <div class="d">新增 AI/LLM 栈、IaC 与云原生、可观测性、数据工程、原生移动 5 个域</div>
+      </div>
+    </div>
+
+    <h3>另外三件关键更新</h3>
+    <div class="rule" style="border-left-color:var(--teal)">
+      <div class="t">Monorepo 嵌套 AGENTS.md</div>
+      <div class="x">多子项目（≥2 个构建/清单文件）不再把各包规范塞进根单文件，改为「根文件 = 全局约束 + 子项目索引」+「各子项目目录下的包级 AGENTS.md」，对齐官方<strong>就近原则（closest-file-wins）</strong>。单项目场景行为零变化。</div>
+    </div>
+    <div class="rule" style="border-left-color:var(--teal)">
+      <div class="t">规范漂移门 · 第二条种子门禁</div>
+      <div class="x">把「代码/依赖 ↔ 规范」的不一致做成可机检事件：依赖清单变了但技术栈行没更新 → warning；模块速查表与实际目录对不上 → warning；<code>gates.json</code> 引用的脚本已删除（僵尸门禁）→ <strong>error</strong>。</div>
+    </div>
+    <div class="rule" style="border-left-color:var(--teal)">
+      <div class="t">顺手自吃狗粮</div>
+      <div class="x">本仓库此前门禁是「假绿」——检查因目录不存在被整块跳过。<strong>现已修复校验范围自适应，并为自己建起 scripts/ 门禁层。</strong></div>
+    </div>
+
+    <p style="margin-top:16px">另附：规范驱动开发六阶段（specify → plan → tasks → checklist → implement → verify，checklist 的可机检项可直接注册为门禁）、工具私有增强层（Cursor glob 分层 / Claude Code hooks·subagents / Copilot 分层，并附防漂移条款）、量化评估基准。</p>
+  </section>
+
+  <!-- ========== 四 ========== -->
+  <section>
+    <h2><span class="dot"></span>验证留证</h2>
+    <p class="h2sub">以下为仓库内真实执行输出，不是「应该没问题」</p>
+    <div class="code"><span class="c">$</span> node scripts/verify.mjs
+<span class="g">✅</span> docs-consistency   <span class="c">0 error / 0 warning / 4 info</span>   [blocking]
+<span class="g">✅</span> spec-drift         <span class="c">0 error / 0 warning / 2 info</span>   [warn]
+结果：共 2 条门禁（blocking 失败 0 条 / warn 失败 0 条），耗时合计 285ms</div>
+  </section>
+
+  <!-- ========== 五 ========== -->
+  <section>
+    <h2><span class="dot"></span>怎么用</h2>
+    <div class="code"><span class="c"># 升级</span>
+npx skills update project-blueprint
+
+<span class="c"># 首次安装（国际）</span>
+npx skills add shuguang1994/project-blueprint
+
+<span class="c"># 首次安装（国内镜像）</span>
+npx skills add https://gitee.com/shuguang1994/project-blueprint.git
+
+<span class="c"># DeepSeek Harness 用户</span>
+dsh plugin --profile web add <span class="y">'github:shuguang1994/project-blueprint#v1.9.0'</span></div>
+
+    <p><strong>兼容性</strong>：两项变更均为<strong>增量补充、不覆盖已有内容</strong>；单项目场景行为与 v1.8.0 完全一致；存量项目的门禁默认全部为 <code>warn</code>，不会突然阻断提交。</p>
+
+    <p><strong>谁适合用</strong>：新项目初始化、老项目补规范体系，以及被「AI 写完就跑、规范没人守」反复折磨的团队。</p>
+  </section>
+
+  <footer>
+    <div class="flinks">
+      <a href="https://github.com/shuguang1994/project-blueprint">GitHub 仓库</a>
+      <a href="https://gitee.com/shuguang1994/project-blueprint">Gitee 镜像</a>
+      <a href="https://github.com/shuguang1994/project-blueprint/releases">版本发布记录</a>
+    </div>
+    <div class="fgrid">
+      <div class="fitem"><div class="n">v1.8.0</div><div class="e">宪法层与门禁生长机制 · 2026-09-13</div></div>
+      <div class="fitem"><div class="n">v1.9.0</div><div class="e">跨栈通用性与规范不漂移 · 2026-09-14</div></div>
+      <div class="fitem"><div class="n">License</div><div class="e">MIT · 纯 Markdown · 零外部依赖</div></div>
+    </div>
+    <p style="margin-top:18px">Project Blueprint — 为新项目一键建立完整的 AI 编程规范体系，并让它随项目生长。</p>
+  </footer>
+
+</div>
+</body>
+</html>

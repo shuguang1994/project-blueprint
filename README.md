@@ -20,7 +20,7 @@
 
 ## What is this?
 
-Project Blueprint is a reusable AI agent skill that transforms any new project into an AI-ready codebase in one sentence. It's not a static template — it's an **autonomous discovery engine**: scan your project files, intelligently classify dependencies, and dynamically assemble a customized AGENTS.md, documentation skeleton, CI/CD pipeline, and testing policy from a 70+ component knowledge base.
+Project Blueprint is a reusable AI agent skill that transforms any new project into an AI-ready codebase in one sentence. It's not a static template — it's an **autonomous discovery engine**: scan your project files, intelligently classify dependencies, and dynamically assemble a customized AGENTS.md, documentation skeleton, CI/CD pipeline, and testing policy from a 95-entry component knowledge base.
 
 Just say: **"Initialize this project's development standards"** and the agent does the rest.
 
@@ -61,8 +61,8 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 | **Project Structure Detection** | Auto-identify monorepo, 2/3-tier frontend-backend, or single project |
 | **Monorepo Nested AGENTS.md** | Root `AGENTS.md` (global constraints + sub-project index) + per-package `AGENTS.md` (closest-file-wins) when ≥2 build/manifest files |
 | **Intelligent Dep Classification** | 3-tier: knowledge base exact match → 29 heuristic patterns → web search |
-| **Business Type Inference** | 2-tier heuristic (structure + config features), 13 business types |
-| **Dynamic AGENTS.md** | Assembled from 70+ component knowledge base, not a template |
+| **Business Type Inference** | 2-tier heuristic (structure + config features), 12 business types |
+| **Dynamic AGENTS.md** | Assembled from a 95-entry component knowledge base, not a template |
 | **Module Table Generation** | Reads actual source dirs, infers responsibilities via file patterns, web search fallback |
 | **Documentation System** | A/B/C/D/E 5-tier classification, generated per business type |
 | **Testing Policy** | Phase-appropriate layered strategy, not forced example files |
@@ -115,7 +115,7 @@ Project Blueprint doesn't check a fixed list of files. It scans your project and
 All detected dependencies
     ↓
 Tier 1: Knowledge Base Exact Match
-  Hit in 70+ component KB → instant
+  Hit in 95-entry component KB → instant
     ↓
 Tier 2: Name Pattern Heuristic
   29 patterns covering 100+ keywords → auto-classify
@@ -168,12 +168,12 @@ Unknown dep: @shadcn/ui not in knowledge base
 | **Full-Lifecycle Generation** | One sentence → AGENTS.md + docs + CI/CD + testing policy + Git conventions | Competitors only generate AGENTS.md |
 | **Autonomous Discovery Engine** | 3-tier classification (exact→heuristic→web search), not just reading package.json | Competitors use fixed templates or basic scanning |
 | **Self-Evolving Mechanism** | Generated AGENTS.md includes auto-maintenance rules, grows with the project | Competitors produce static files |
-| **Business Type Awareness** | 13 business type inferences drive different documentation structures | No competitor infers project type |
+| **Business Type Awareness** | 12 business type inferences drive different documentation structures | No competitor infers project type |
 | **Incremental Quality Detection** | Auto-evaluates existing AGENTS.md quality, tiered handling (complete→skip / partial→supplement / none→full) | Competitors overwrite or start fresh |
 | **Multi-IDE Ecosystem** | Auto-generates CLAUDE.md, .cursor/rules, copilot-instructions, and more | No competitor provides this |
 | **Module Table Auto-Generation** | Reads actual source directories, infers responsibilities via file patterns, web search fallback | No competitor provides this |
 | **MCP Tool Auto-Recommendation** | Auto-matches MCP tools from detected stack via 3-tier matching, outputs combo suggestions (must/recommended/optional) + an installable MD doc; dual-layer web search keeps commands fresh | Competitors (e.g. Project Genesis Phase 9) only wire preset MCP config — no autonomous recommendation from tech stack |
-| **7-Language 15-Framework KB** | 70+ components with Commands + Conventions + CI, Chinese-first | Competitors cover JS/TS ecosystem at most |
+| **7-Language 15-Framework KB** | 95 component entries with Commands + Conventions + CI, Chinese-first | Competitors cover JS/TS ecosystem at most |
 
 ## What Makes It Different
 
@@ -189,7 +189,7 @@ Unknown dep: @shadcn/ui not in knowledge base
 - **Growable gates** — init only seeds generic gates; the project's AI turns real pitfalls into domain gates per the meta-rules (no rule without a gate / every defect closes the loop)
 - **Conventions that don't drift** — a seed gate (`drift-check`) checks dependencies ↔ tech-stack row, module table ↔ actual dirs, and gate validity, so spec and code can't silently diverge (quality-gates / spec-code drift)
 - **Progressive disclosure** — the skill body is a slim ≤200-line index; Step details load on demand, keeping always-loaded context small without losing depth
-- **Chinese-first** — 7 languages, 15 frameworks, 70+ components natively in Chinese
+- **Chinese-first** — 7 languages, 15 frameworks, 95 component entries natively in Chinese
 
 ## How It Works
 
@@ -198,10 +198,10 @@ User says: "Initialize this project"
     ↓
 Step 1: Autonomous scan → file classification → dep inference (3-tier)
     ↓ (Step details load on demand from references/step-*.md)
-Step 2: Rule engine assembles AGENTS.md from 70+ component KB
+Step 2: Rule engine assembles AGENTS.md from 95-entry component KB
     ↓ (unknown stack → WebSearch fallback)
     ↓ (multi sub-project → root AGENTS.md + per-package AGENTS.md)
-Step 3: Dynamic docs skeleton by business type (13 types) + MCP tool recommendation (B-05)
+Step 3: Dynamic docs skeleton by business type (12 types) + MCP tool recommendation (B-05)
     ↓
 Step 4: Configure Git (.gitignore + branch strategy)
     ↓
