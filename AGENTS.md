@@ -142,6 +142,7 @@ node dsh-plugin/scripts/sync-skill.mjs
 | `internal-docs/` | **不发布**的内部文档（自审 / 竞品对标 / 评估复核类），受 `.gitignore` 约束 |
 | `package.json` | DSH 插件 GitHub 安装入口（根目录，声明 dsh.bundle 指向 dsh-plugin/cordis.patch.yml，v1.6.1 新增） |
 | `scripts/gates.json` / `verify.mjs` / `check-constitution.mjs` | 本仓库门禁层：门禁清单唯一事实源（2 条种子门禁）+ 统一入口 + 宪法自校验 |
+| `scripts/gate-audit.mjs` | 门禁效果审计工具（**非门禁**，不登记进 gates.json）：① 装配体检（落盘率 / 生效率 / 被引用却未落盘）② 效果回溯（ITS：门禁成立前后复发）。支持 `--repo=` 审计任意仓库、`--json` |
 | `.github/workflows/verify.yml` | 门禁装配点：push / PR 自动跑 `scripts/verify.mjs --stage=ci`（与本地同入口同语义） |
 | `dsh-plugin/` | DSH (DeepSeek Harness) 插件包：package.json + cordis.patch.yml + lib/ 零构建插件 + skills/（同步生成）+ sync-skill.mjs 同步脚本 |
 | `references/knowledge-base.md` | 组件知识库（18 个二级章节 = 16 个技术栈维度 + 通用段落 + 业务类型文档模式；95 个组件条目） |

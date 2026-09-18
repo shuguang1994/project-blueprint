@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - 补登记 DSH 监察插件可行性评估与设计报告、v1.9.0 更新速览 HTML（内部文档 `internal-docs/`，此前仅为本地未跟踪文件，索引与实际文件不一致）
 - **机制可发表性交叉验证**：新增机制可发表性交叉验证报告（内部文档 `internal-docs/D-09`）—— 将核心机制（门禁生长棘轮 / 规范即可执行检查 / 宪法层 / 规范漂移门）拆为可命名命题，逐条对撞 5 篇公开文献，判定「概念层不新颖、评估层是致命缺口」，并给出可发表的窄口子（准入门槛四问 + 1/4 固化率 + 宪法↔门禁双向自校验）与 3 篇必补文献
 - **门禁装配落地（本仓库首次真正接线）**：新增 `.github/workflows/verify.yml`（push / PR / 手动触发，复用同一入口 `--stage=ci`）；根 `package.json` 新增 `scripts.verify` / `scripts.verify:ci`（对齐宿主优先级「复用既有入口」）
+- **门禁效果审计工具 `scripts/gate-audit.mjs`**（零依赖、只读、支持 `--repo=` / `--json`）：产出两份报告 —— ① **装配体检**：门禁脚本三态（磁盘存在 / git 落盘 / 入口接线），输出**落盘率**与**生效率**，并单列「被入口引用但未落盘」（这类脚本在 CI 与其他克隆上必然失效）；② **效果回溯（ITS 口径）**：以门禁首次提交日为干预点 T0，比对 BUG 知识库中含「复发」的记录日期，把每个缺陷模式判定为「门禁前复发」（门禁补对位置）/「门禁后复发」（**门禁有效性反例**）/ 未落盘无法判定 / 仅建议未实现
 
 ### Fixed
 - **对外数字口径统一**（AGENTS.md「对外数字口径唯一源」）：组件数 `70+` 全部收敛为知识库实测口径 `95 个组件条目`（`README.md` / `README_CN.md` / `SKILL.md` / `AGENTS.md` / `PROJECT_STATUS.md` / 根 `package.json` / `dsh-plugin/package.json` / `dsh-plugin/plugin.json`）；业务类型数 `13 种` 收敛为知识库实测 `12 种`（口径 = `references/knowledge-base.md`「业务类型文档模式」章节 12 条）
@@ -33,6 +34,7 @@ All notable changes to this project will be documented in this file.
 - **同步副本校验**（真实执行）：`node dsh-plugin/scripts/sync-skill.mjs` 后根 `SKILL.md` 与插件副本 SHA256 一致（`41c6d6cf…`）
 - **口径残留检查**（真实执行）：对外文档（README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json`）中 `70+` 与 `13 种业务类型` 已 0 残留；历史快照文档（D-01 / D-03 / D-04 / D-05，其中 D-01 / D-03 / D-05 现位于 `internal-docs/`）与 CHANGELOG 历史条目按「历史快照不追改」原则保留原数字
 - **门禁装配验证**（真实执行）：`npm run verify` 与 `npm run verify:ci` 本地均通过（与 `node scripts/verify.mjs` 同语义）；`.github/workflows/verify.yml` 语法解析通过；**GitHub Actions 首跑 success**（run #1 / commit `ef45df0` / 14s / `--stage=ci`），装配点已生效
+- **门禁审计实跑（3 个真实仓库）**：生效率 66.7% / 62.5% / 0%，落盘率 100% / 68.8% / 0%。在一处存量项目上实测出两类此前未被发现的问题 —— **5 个门禁已被 CI 入口（`scripts/ci/verify.ps1`，24 步）引用但未入库**（在其他克隆与 CI 上必然失效）；**2 个门禁成立后同类缺陷仍复发**（BUG 知识库原文自述"第 N 次复发"）。BUG 知识库解析覆盖率 112/124 标题，定量明细与口径定义见内部文档
 
 ### 未闭环
 - ~~GitHub 落后 Gitee 2 个 commit（`origin/main` = `8a9a819`，滞后的提交含 v1.9.0 中英发布说明与文档索引登记）~~ → **已闭环（2026-09-18）**：本轮全部变更已推送双远程，Gitee 与 GitHub 的 `main` 一致（`HEAD` = `gitee/main` = `origin/main`）；GitHub 直连偶发 21s 超时，重试后成功（命令：`git -c http.https://github.com.proxy= push origin main`）
