@@ -31,7 +31,7 @@ All notable changes to this project will be documented in this file.
 
 - **同步副本校验**（真实执行）：`node dsh-plugin/scripts/sync-skill.mjs` 后根 `SKILL.md` 与插件副本 SHA256 一致（`41c6d6cf…`）
 - **口径残留检查**（真实执行）：对外文档（README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json`）中 `70+` 与 `13 种业务类型` 已 0 残留；`docs/D/D-01`、`D-03`、`D-04`、`D-05` 与 CHANGELOG 历史条目按「历史快照不追改」原则保留原数字
-- **门禁装配验证**（真实执行）：`npm run verify` 与 `npm run verify:ci` 本地均通过（与 `node scripts/verify.mjs` 同语义）；`.github/workflows/verify.yml` 语法解析通过；装配点落地后由 GitHub Actions 在 push / PR 时自动执行
+- **门禁装配验证**（真实执行）：`npm run verify` 与 `npm run verify:ci` 本地均通过（与 `node scripts/verify.mjs` 同语义）；`.github/workflows/verify.yml` 语法解析通过；**GitHub Actions 首跑 success**（run #1 / commit `ef45df0` / 14s / `--stage=ci`），装配点已生效
 
 ### 未闭环
 - ~~GitHub 落后 Gitee 2 个 commit（`origin/main` = `8a9a819`，滞后的提交含 v1.9.0 中英发布说明与文档索引登记）~~ → **已闭环（2026-09-18）**：本轮全部变更已推送双远程，Gitee 与 GitHub 的 `main` 一致（`HEAD` = `gitee/main` = `origin/main`）；GitHub 直连偶发 21s 超时，重试后成功（命令：`git -c http.https://github.com.proxy= push origin main`）
