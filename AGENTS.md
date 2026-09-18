@@ -45,7 +45,7 @@ node dsh-plugin/scripts/sync-skill.mjs
 
 ## 三、Boundaries
 
-**Allowed**: `SKILL.md`、`references/`、`README.md`、`README_CN.md`、`CHANGELOG.md`、`PROJECT_STATUS.md`、`AGENTS.md`、`docs/`、`scripts/`、`.github/workflows/`（门禁装配点）、`.trae/specs/`（spec 驱动开发三件套）、`.gitignore`、`dsh-plugin/`（不含 `dsh-plugin/skills/`，由同步脚本生成）
+**Allowed**: `SKILL.md`、`references/`、`README.md`、`README_CN.md`、`CHANGELOG.md`、`PROJECT_STATUS.md`、`AGENTS.md`、`docs/`（仅对外内容）、`internal-docs/`（本地内部文档，受 `.gitignore` 约束不发布）、`scripts/`、`.github/workflows/`（门禁装配点）、`.trae/specs/`（spec 驱动开发三件套）、`.gitignore`、`dsh-plugin/`（不含 `dsh-plugin/skills/`，由同步脚本生成）
 
 **Ask First**:
 - 版本号升级（vX.Y.Z）或破坏性变更（如 Step 流程重构、文件重命名）
@@ -66,6 +66,7 @@ node dsh-plugin/scripts/sync-skill.mjs
 ✅ 文件名中英双语标注，按 A/B/C/D/E 五级分类存放
 ✅ 代码块必须闭合（开闭围栏语言标记一致），防止后续章节被误渲染
 ✅ 对外数字口径唯一源：同一指标全仓一致，以知识库实际条目数为准（如组件条目 95 / 技术栈维度 16）
+✅ 公开边界：`docs/` 只放面向社区的内容（发布说明）；自审 / 竞品对标 / 评估复核类放 `internal-docs/`（受 `.gitignore` 约束，不随公开仓发布），并在 `docs/README.md` 的「编号预留」表登记编号（否则 `docs-consistency` 报缺号 error）
 ✅ 新增知识库条目后同步更新 README 技术栈覆盖表
 ```
 
@@ -137,6 +138,8 @@ node dsh-plugin/scripts/sync-skill.mjs
 | `README.md` / `README_CN.md` | 中英文项目文档：安装、能力、工作流程、贡献指南 |
 | `CHANGELOG.md` | 版本记录（v1.0 ~ v1.9.0 + [Unreleased]） |
 | `PROJECT_STATUS.md` | 项目状态、版本演进、独立抽离指南、已知局限、下一步计划 |
+| `docs/` | **公开**文档：`README.md` 索引（A~E 分类 + 公开边界 + 编号预留登记）+ D 级发布说明 |
+| `internal-docs/` | **不发布**的内部文档（自审 / 竞品对标 / 评估复核类），受 `.gitignore` 约束 |
 | `package.json` | DSH 插件 GitHub 安装入口（根目录，声明 dsh.bundle 指向 dsh-plugin/cordis.patch.yml，v1.6.1 新增） |
 | `scripts/gates.json` / `verify.mjs` / `check-constitution.mjs` | 本仓库门禁层：门禁清单唯一事实源（2 条种子门禁）+ 统一入口 + 宪法自校验 |
 | `.github/workflows/verify.yml` | 门禁装配点：push / PR 自动跑 `scripts/verify.mjs --stage=ci`（与本地同入口同语义） |

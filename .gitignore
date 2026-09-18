@@ -9,5 +9,8 @@ Thumbs.db
 .idea/
 .trae/
 
+# 内部文档（自审 / 竞品对标 / 评估复核类，不随公开仓发布）
+internal-docs/
+
 # macOS
 *.icloud

@@ -5,12 +5,12 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 > 主题：外部评估复核 + 对外数字口径收敛 + 文档索引修复 + 机制可发表性交叉验证 + 门禁装配落地
-> 复核报告见 [D-08-外部评估复核报告.md](docs/D/D-08-外部评估复核报告.md)
+> 复核报告与交叉验证见 `internal-docs/`（内部文档，不随公开仓发布）
 
 ### Added
-- **外部评估复核**：新增 `docs/D/D-08-外部评估复核报告.md` —— 对一份外部 AI 生成的项目价值评估逐项复核（实跑 4 个门禁脚本 / 核对 20+ 项数字口径 / 独立复核 4 篇 arXiv 论文与 3 个外部站点），记录评估侧 6 项失实与仓库侧 5 项待闭环问题
-- 补登记 `docs/D/D-07-DSH监察插件可行性评估与设计报告.md` 与 `docs/D/D-06-v1.9.0-更新速览.html` 入库（此前仅为本地未跟踪文件，索引与实际文件不一致）
-- **机制可发表性交叉验证**：新增 `docs/D/D-09-机制可发表性交叉验证报告.md` —— 将核心机制（门禁生长棘轮 / 规范即可执行检查 / 宪法层 / 规范漂移门）拆为可命名命题，逐条对撞 5 篇公开文献，判定「概念层不新颖、评估层是致命缺口」，并给出可发表的窄口子（准入门槛四问 + 1/4 固化率 + 宪法↔门禁双向自校验）与 D-05 漏引的 3 篇必补文献
+- **外部评估复核**：新增外部评估复核报告（内部文档 `internal-docs/D-08`）—— 对一份外部 AI 生成的项目价值评估逐项复核（实跑 4 个门禁脚本 / 核对 20+ 项数字口径 / 独立复核 4 篇 arXiv 论文与 3 个外部站点），记录评估侧 6 项失实与仓库侧 5 项待闭环问题
+- 补登记 DSH 监察插件可行性评估与设计报告、v1.9.0 更新速览 HTML（内部文档 `internal-docs/`，此前仅为本地未跟踪文件，索引与实际文件不一致）
+- **机制可发表性交叉验证**：新增机制可发表性交叉验证报告（内部文档 `internal-docs/D-09`）—— 将核心机制（门禁生长棘轮 / 规范即可执行检查 / 宪法层 / 规范漂移门）拆为可命名命题，逐条对撞 5 篇公开文献，判定「概念层不新颖、评估层是致命缺口」，并给出可发表的窄口子（准入门槛四问 + 1/4 固化率 + 宪法↔门禁双向自校验）与 3 篇必补文献
 - **门禁装配落地（本仓库首次真正接线）**：新增 `.github/workflows/verify.yml`（push / PR / 手动触发，复用同一入口 `--stage=ci`）；根 `package.json` 新增 `scripts.verify` / `scripts.verify:ci`（对齐宿主优先级「复用既有入口」）
 
 ### Fixed
@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - `docs/README.md` 索引中「更新速览 HTML」链接指向不存在的 `D-06-v1.9.0-更新速览.html`（实际文件名为 `v1.9.0-更新速览.html`）；已按索引口径重命名实际文件，链接恢复有效
 - CHANGELOG v1.8.0「未闭环」条目勾销：v1.8.0 tag 已补打并双远程推送，见 [1.9.0] 段「发版」
 - **门禁「声明与装配」不一致修复**（与 v1.9.0 修的 docs-check 假绿同族）：`scripts/gates.json` 声明 `stage: ["pre-push","ci"]`，但本仓库此前**无任何触发点**（无 `.github/workflows`、无 `.husky`/`.githooks`、无生效钩子、`package.json` 无 `scripts`），门禁只在手动敲命令时执行，`✅ 无 blocking 失败` 易被误读为「体系在守护」；已补 CI 装配点（`--stage=ci`），并在 AGENTS.md 4.6 显式标注「CI 已装配 / pre-push 未装配」
+- **公开范围收敛（`docs/` 只保留对外内容）**：7 份内部文档（D-01 / D-03 / D-05 / D-07 / D-08 / D-09 + v1.9.0 更新速览 HTML）迁至受 `.gitignore` 约束的 `internal-docs/`，公开仓不再推送；`docs/README.md` 保留「编号预留」登记（满足 `docs-consistency` 编号连续性检查，避免门禁在 CI 上空转）；公开文件中指向被移出文档的链接改为纯文本。**注意**：迁移只切断未来推送，D-01~D-09 已存在于此前 commit 历史中，公开渠道仍可查阅
 
 ### 验证
 - **门禁实跑**（真实执行，四脚本全绿）：
@@ -30,7 +31,7 @@ All notable changes to this project will be documented in this file.
   ```
 
 - **同步副本校验**（真实执行）：`node dsh-plugin/scripts/sync-skill.mjs` 后根 `SKILL.md` 与插件副本 SHA256 一致（`41c6d6cf…`）
-- **口径残留检查**（真实执行）：对外文档（README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json`）中 `70+` 与 `13 种业务类型` 已 0 残留；`docs/D/D-01`、`D-03`、`D-04`、`D-05` 与 CHANGELOG 历史条目按「历史快照不追改」原则保留原数字
+- **口径残留检查**（真实执行）：对外文档（README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json`）中 `70+` 与 `13 种业务类型` 已 0 残留；历史快照文档（D-01 / D-03 / D-04 / D-05，其中 D-01 / D-03 / D-05 现位于 `internal-docs/`）与 CHANGELOG 历史条目按「历史快照不追改」原则保留原数字
 - **门禁装配验证**（真实执行）：`npm run verify` 与 `npm run verify:ci` 本地均通过（与 `node scripts/verify.mjs` 同语义）；`.github/workflows/verify.yml` 语法解析通过；**GitHub Actions 首跑 success**（run #1 / commit `ef45df0` / 14s / `--stage=ci`），装配点已生效
 
 ### 未闭环
@@ -44,7 +45,7 @@ All notable changes to this project will be documented in this file.
 
 > 主题：跨栈通用性与规范不漂移 —— SKILL.md 按 Step 拆分瘦身、Monorepo 嵌套 AGENTS.md、规范漂移门（第二条种子门禁）+ 仓库自吃狗粮
 > 详细发布说明见 [D-06-v1.9.0-功能发布说明.md](docs/D/D-06-v1.9.0-功能发布说明.md)（中文）/ [D-06-v1.9.0-Release-Notes-EN.md](docs/D/D-06-v1.9.0-Release-Notes-EN.md)（English）
-> 差距来源见 [D-05-行业对标与体系完备性评估报告.md](docs/D/D-05-行业对标与体系完备性评估报告.md)（P0-1 / P0-2 / P0-3 / P1-4 / P1-5 / P1-6 / P2-8 / P2-9 / P2-10）
+> 差距来源见 D-05 行业对标与体系完备性评估报告（内部文档，不随公开仓发布）（P0-1 / P0-2 / P0-3 / P1-4 / P1-5 / P1-6 / P2-8 / P2-9 / P2-10）
 
 ### Added
 - **Monorepo 嵌套 AGENTS.md**：多子项目（≥2 个构建/清单文件）由「根单文件分块写入」升级为「根 `AGENTS.md`（全局约束 + 子项目索引表）+ 各子项目包级 `AGENTS.md`（包级规范）」，对齐 AGENTS.md 官方「就近原则 closest-file-wins」；单项目行为与 v1.8.0 一致（零变化）。新增参考文件 `references/monorepo-agents.md`
@@ -117,7 +118,7 @@ All notable changes to this project will be documented in this file.
 ## [1.8.0] - 2026-09-13
 
 > 主题：宪法层与门禁生长机制 —— 把门禁从"初始化一次性产物"升级为"宪法驱动的生长物"
-> 详细发布说明见 [D-04-v1.8.0-功能发布说明.md](docs/D/D-04-v1.8.0-功能发布说明.md)（中文）/ [D-04-v1.8.0-Release-Notes-EN.md](docs/D/D-04-v1.8.0-Release-Notes-EN.md)（English） | 评估报告见 [D-03-真实项目文档体系优化引入评估报告.md](docs/D/D-03-真实项目文档体系优化引入评估报告.md)
+> 详细发布说明见 [D-04-v1.8.0-功能发布说明.md](docs/D/D-04-v1.8.0-功能发布说明.md)（中文）/ [D-04-v1.8.0-Release-Notes-EN.md](docs/D/D-04-v1.8.0-Release-Notes-EN.md)（English） | 评估报告见 D-03 真实项目文档体系优化引入评估报告（内部文档，不随公开仓发布）
 
 ### Added
 - **宪法层元规则（写入 AGENTS.md）**：3 条元规则（无门禁不立规 / 缺陷必闭环 / 契约唯一源）+ 开工前置（读取 `scripts/gates.json`，新会话先了解本仓库现有门禁）；并配套三件套：门禁清单唯一事实源 `scripts/gates.json`、统一入口 `scripts/verify.*`、宪法自校验 `scripts/check-constitution.*`。元规则章节控制在 ≤ 15 行，细则一律外链，防宪法膨胀
@@ -179,7 +180,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.7.0] - 2026-08-14
 
-> 详细发布说明见 [D-02-v1.7.0-功能发布说明.md](docs/D/D-02-v1.7.0-功能发布说明.md) | 方案见 [D-01-代码规范闭环增强方案.md](docs/D/D-01-代码规范闭环增强方案.md)
+> 详细发布说明见 [D-02-v1.7.0-功能发布说明.md](docs/D/D-02-v1.7.0-功能发布说明.md) | 方案见 D-01 代码规范闭环增强方案（内部文档，不随公开仓发布）
 
 ### Added
 - **代码规范闭环增强**：初始化即实际写入基础代码规范（B-01 从占位符改为实写 8 章），AGENTS.md 强制规范含基础规范核心规则（≤20 条）
