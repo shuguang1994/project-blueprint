@@ -1,6 +1,13 @@
 # GitHub Actions / Gitee Go CI 模板
 
 > Skill `project-blueprint` Step 5 参考。根据 Step 1 探测结果选择对应模板。
+> 版本: v2.0 | 更新: 2026-10-14
+
+**生成前必读（三条硬性规则，违反即视为生成失败）**：
+
+1. **门禁 job 已内联**：每种语言的完整 workflow **已包含** `constitution` job（调用 `scripts/verify.*`）。**不再需要"追加片段"**——直接整份写入即可。若项目已有 CI 文件（跳过、不覆盖），**必须**确认其中存在对 `scripts/verify.*` 的调用；没有则在报告中显式标注「门禁未接线 + 风险」。
+2. **test 步骤条件生成**：探测到测试框架**或**存在测试文件才生成 test 步骤。**禁止**使用 `--passWithNoTests`（该参数让"零测试"判绿，属假绿开关）。未生成 test 步骤时，必须在 `docs/B/B-03-测试指南.md` 写入「建立测试后由 Agent 补 CI test 步骤」契约（含具体插入位置），由 `scripts/drift-check.mjs` 的**检查 D** 机检。
+3. **运行时自证**：每个 job 的**首条命令**必须以 `command -v <runtime> || <自装>` 自证运行时可用，再打印版本。理由：`xiangmuces` 实测 Gitee Go 插件未提供 `node`/`npm`，导致该 stage 5 条命令**全部** `command not found` 秒退（exit 255），流水线表面"已运行"实则从未执行过任何门禁。自证让"缺运行时"出现在**第一行**，而不是散成若干 `command not found` 被误读为门禁失败。
 
 ---
 
@@ -20,14 +27,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # 运行时自证：PATH 无 node/npm 时分层自装，失败原因直指"运行时不可用"
+      - name: 运行时自证
+        run: |
+          command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1 \
+            || (echo "[runtime] node/npm missing, installing" \
+                && (apt-get update -y && apt-get install -y nodejs npm \
+                    || (curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+                        && apt-get install -y nodejs)))
+          node -v && npm -v
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
       - run: npm ci
       - run: npx tsc --noEmit
-      - run: npm run test -- --passWithNoTests
+      # ↓ test 步骤：仅在 Step 1 探测到测试框架或测试文件时生成（见文首规则 2）
+      - run: npm test
+
+  constitution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 运行时自证
+        run: |
+          command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1 \
+            || (echo "[runtime] node/npm missing, installing" \
+                && (apt-get update -y && apt-get install -y nodejs npm \
+                    || (curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+                        && apt-get install -y nodejs)))
+          node -v && npm -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: node scripts/verify.mjs                # 统一门禁入口（本地与 CI 同语义）
+      - run: node scripts/check-constitution.mjs    # 宪法一致性校验（仅 error 阻断）
 ```
+
+> **`npm test` 为何不加任何 `--pass*` 兜底**：vitest / jest / mocha 在**零用例**时默认即以非 0 退出（`No test files found`），pytest 零用例退出码 5——**"零测试判红"是这些运行器的默认行为**，加开关反而把它变成假绿。因此 G1 的修法是"删开关"，不是"换开关"。
+> **TypeScript 项目注意**：本模板的 `npx tsc --noEmit` 要求项目**已装 typescript**。纯 JS（无 `tsconfig.json` / 无 `typescript` 依赖）项目应删掉该行。
+> **`make verify` 之类宿主入口不再需要**：门禁 job 直调 `scripts/verify.*`，避免依赖"宿主是否真被生成"。
 
 ---
 
@@ -47,6 +88,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: 运行时自证
+        run: |
+          command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1 \
+            || (echo "[runtime] node/npm missing, installing" \
+                && (apt-get update -y && apt-get install -y nodejs npm \
+                    || (curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+                        && apt-get install -y nodejs)))
+          node -v && npm -v
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -56,7 +105,30 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
-      - run: pnpm test -- --passWithNoTests
+      # ↓ test 步骤：仅在 Step 1 探测到测试框架或测试文件时生成（见文首规则 2）
+      - run: pnpm test
+
+  constitution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 运行时自证
+        run: |
+          command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1 \
+            || (echo "[runtime] node/npm missing, installing" \
+                && (apt-get update -y && apt-get install -y nodejs npm \
+                    || (curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+                        && apt-get install -y nodejs)))
+          node -v && npm -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - run: node scripts/verify.mjs                # 统一门禁入口（本地与 CI 同语义）
+      - run: node scripts/check-constitution.mjs
 ```
 
 ---
@@ -77,12 +149,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: 运行时自证
+        run: |
+          command -v go >/dev/null 2>&1 || (echo "[runtime] go missing, installing" \
+            && curl -fsSL https://go.dev/dl/go1.21.13.linux-amd64.tar.gz | tar -C /usr/local -xz \
+            && export PATH=$PATH:/usr/local/go/bin)
+          go version
       - uses: actions/setup-go@v5
         with:
           go-version: '1.21'
       - run: go build ./...
-      - run: go test ./...
+      - run: go test ./...          # Go 内置测试，无测试包即 0 退出，语义与 --passWithNoTests 不同，不做条件生成
+
+  constitution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 运行时自证
+        run: |
+          command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1 \
+            || (echo "[runtime] node/npm missing, installing" \
+                && (apt-get update -y && apt-get install -y nodejs npm \
+                    || (curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+                        && apt-get install -y nodejs)))
+          node -v && npm -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/verify.mjs                # 统一门禁入口（本地与 CI 同语义）
+      - run: node scripts/check-constitution.mjs
 ```
+
+> **Go 不再用 `make verify`**：本仓不生成 Makefile 模板，`make verify` 会指向一个不存在的目标。门禁 job 改用 `scripts/verify.mjs` —— Go 项目里 `verify.mjs` 是**零外部依赖**的（只读 `gates.json` 并执行 `run`），因此**不需要 `npm ci`、不需要 `setup-go`**，只要 `node` 存在即可；宿主若确实选了 Makefile，按项目实际路径替换 `run` 即可——**但必须确认该目标已被生成**。
 
 ---
 
@@ -102,75 +200,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: 运行时自证
+        run: |
+          command -v python3 >/dev/null 2>&1 || (echo "[runtime] python3 missing, installing" \
+            && apt-get update -y && apt-get install -y python3 python3-pip)
+          python3 -V && python3 -m pip --version
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install pytest ruff
       - run: ruff check .
-      - run: pytest --passWithNoTests
-```
+      # ↓ test 步骤：仅在探测到 pytest 依赖或测试文件时生成（见文首规则 2）
+      - run: pytest
 
----
-
-## 门禁统一入口 job（各语言 workflow 追加片段）
-
-> 目的：CI 复用与本地**同一个** `scripts/verify.*` 入口（**本地与 CI 同语义**），避免"本地能过、CI 跑的却是另一套命令"。
-> 用法：把下列片段追加到对应 workflow 的 `jobs:` 下。该 job 失败即阻断合入；`level: warn` 的门禁可拆为独立非阻断 job 或仅输出报告。
-
-### Node / TypeScript（完整 job 示例）
-
-```yaml
   constitution:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-      - run: npm ci
-      - run: node scripts/verify.mjs                # 统一门禁入口（本地与 CI 同语义）
-      - run: node scripts/check-constitution.mjs    # 宪法一致性校验（仅 error 阻断）
-```
-
-### Vue / React 前端（pnpm 项目等价写法）
-
-```yaml
-  constitution:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 9
-      - run: pnpm install --frozen-lockfile
-      - run: node scripts/verify.mjs                # 统一门禁入口（本地与 CI 同语义）
-      - run: node scripts/check-constitution.mjs
-```
-
-### Go（编译型语言，复用 make 目标等价写法）
-
-```yaml
-  constitution:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '1.21'
-      - run: make verify                            # 复用同一 verify 入口（本地与 CI 同语义）
-```
-
-### Python（无 Node 时 `verify.py` 宿主等价写法）
-
-```yaml
-  constitution:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      - name: 运行时自证
+        run: |
+          command -v python3 >/dev/null 2>&1 || (echo "[runtime] python3 missing, installing" \
+            && apt-get update -y && apt-get install -y python3 python3-pip)
+          python3 -V && python3 -m pip --version
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -178,12 +229,55 @@ jobs:
       - run: python scripts/check-constitution.py
 ```
 
-> 不想阻断的 `level: warn` 门禁，可另起一个带 `continue-on-error: true` 的 job，或在 `verify` 中按 `--stage` 过滤后仅在报告步骤输出。
+> **`scripts/verify.py` 是生成物，不是假设**。本模板选用 Python 宿主时，`references/gates-templates.md` §五 必须同步产出 `scripts/verify.py` 与 `scripts/check-constitution.py`（按 §二/§三 的 Node 版**等价移植**）。**宿主未被生成时不得引用它**——这是 G2 的"模板假设不存在的东西"缺陷，已在生成侧改为硬性要求。
+> **`pytest` 零用例退出码 5**（非 0），故不需要也不允许 `--passWithNoTests`。
+
+---
+
+## 未探测到测试时的处理（**唯一需要手工判断的一步**）
+
+四种语言的 workflow 中，test 步骤都已被**显式标记**：
+
+```yaml
+      # ↓ test 步骤：仅在 Step 1 探测到测试框架或测试文件时生成（见文首规则 2）
+      - run: npm test        # Vue/React 为 pnpm test；Python 为 pytest；Go 见下
+```
+
+**按 Step 1 探测结果二选一**：
+
+| 探测结果 | 动作 |
+|----------|------|
+| 探测到测试框架（`jest` / `vitest` / `mocha` / `pytest` …）**或**存在测试文件（`test/` `tests/` `__tests__/` `*.test.*` `*.spec.*` `test_*.py`） | **保留**这两行（含注释行） |
+| 未探测到 | **删除**这两行（含注释行），并在 `docs/B/B-03-测试指南.md` 写入「建立测试后由 Agent 补 CI test 步骤」契约（含具体插入位置） |
+| Go 项目 | `go test ./...` **无条件保留**（Go 内置测试，"无测试包"即 0 退出且不假装有测试，语义与 `--passWithNoTests` 不同） |
+
+**为什么不预置 `--pass*` 开关**：那会让"零测试"判绿。**"零测试判红"本就是 vitest / jest / mocha（`No test files found`）与 pytest（退出码 5）的默认行为**，加开关反而把它变成假绿。删两行的成本远低于在 CI 里养一个假绿开关；而"该删没删 / 该补没补"由 `scripts/drift-check.mjs` 的**检查 D** 兜住（探测到测试资产但 CI 无 test 步骤 → `warning`）。
+
+---
+
+## 门禁统一入口 job 的设计依据（已内联，此处只说明为什么）
+
+> 目的：CI 复用与本地**同一个** `scripts/verify.*` 入口（**本地与 CI 同语义**），避免"本地能过、CI 跑的却是另一套命令"。该 job 失败即阻断合入；`level: warn` 的门禁可拆为独立非阻断 job 或仅输出报告。
+
+- **内联而非追加**：v1.9.0 之前本模板只在文末给"追加片段"，依赖 Agent"记得追加"。实测后果是 `xiangmuces` 的 40 条门禁只有 5 条进 CI，且 CI 自建立起从未执行过任何一条门禁。**内联后不存在"忘了追加"这个失败模式。**
+- **不再依赖宿主**：`make verify` / `verify.py` 这类宿主入口，只有在生成侧**确实产出**该宿主时才可使用；否则直调 `scripts/verify.*`。
+- **`level: warn` 的处理**：可另起一个带 `continue-on-error: true` 的 job，或在 `verify` 中按 `--stage` 过滤后仅在报告步骤输出。
 
 ---
 
 ## 选择规则
 
-1. 如果项目远程仓库在 **Gitee**（`git remote -v` 包含 gitee.com）→ 文件名改为 `.gitee-ci.yml`
+1. 如果项目远程仓库在 **Gitee**（`git remote -v` 包含 gitee.com）→ 文件名改为 `.gitee-ci.yml`（**注意**：Gitee Go 语法与 GitHub Actions 不同，§文首规则 3 的运行时自证在 Gitee Go 上尤其必要——实测其 `build@nodejs` 插件可能不提供运行时）
 2. 如果项目远程仓库在 **GitHub** → 文件放在 `.github/workflows/ci.yml`
-3. 如果 CI 目录/文件已存在 → 跳过，不覆盖
+3. 如果 CI 目录/文件已存在 → 跳过，不覆盖；但**必须**核验其中含 `scripts/verify.*` 调用，缺失则在报告中显式标注「门禁未接线 + 风险」
+
+---
+
+## 生成后自检（4 条，缺一视为生成失败）
+
+| # | 检查项 | 机检方式 |
+|---|--------|----------|
+| 1 | 无假绿开关 | 生成物全文检索 `passWithNoTests` **命中数 = 0** |
+| 2 | 门禁已接线 | 生成的 workflow 含 `scripts/verify.` 调用 |
+| 3 | 运行时自证 | 每个 job 首条命令含 `command -v` + 版本打印 |
+| 4 | test 步骤与探测一致 | 探测到框架/测试文件 → 有 test 步骤；未探测到 → 无 test 步骤**且** `docs/B/B-03-测试指南.md` 含补步骤契约 |

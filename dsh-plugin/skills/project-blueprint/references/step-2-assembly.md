@@ -1,5 +1,6 @@
 # Step 2：规则引擎拼接
 
+> 版本: v2.0 | 更新: 2026-10-14
 > `SKILL.md` Step 2 的完整实现细节，由 SKILL.md 的「Step 索引与按需加载」表按需加载。
 > 关联：references/knowledge-base.md、references/code-conventions.md、references/ai-common-mistakes.md、references/agents-md-template.md、references/ai-work-protocol.md
 

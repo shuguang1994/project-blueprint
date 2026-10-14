@@ -48,15 +48,16 @@ license: MIT
 ```
 ✅ 项目规范体系搭建完成，生成文件：
 - AGENTS.md (xxx 行)
-- docs/ (A/B/C/D/E 5 个分类目录 + archive + dev)，含 B-01-开发规范（实写 8 章，非占位符）、B-03-测试指南（测试制度）、B-04-BUG知识库（缺陷模式库）
+- docs/ (A/B/C/D/E 5 个分类目录 + archive + dev)，含 B-01-开发规范（实写 8 章，非占位符）、B-04-BUG知识库（`## BUG-NNN` 编号唯一 + 症状速查表 + 六段式）
+- docs/B/B-00-红线与门禁映射.md (红线权威表：RL-NN 稳定 ID + 档位 + 对应门禁；与 gates.json 同时生成)
 - docs/B/B-05-MCP工具清单.md (MCP 工具推荐，含安装命令与组合建议，按需生成)
-- docs/B/B-06-门禁与工作协议.md (AI 编程工作协议 + 门禁生长细则，中大型项目)
+- docs/B/B-07-门禁与工作协议.md (AI 编程工作协议 + 门禁生长细则，中大型项目)
 - scripts/gates.json (门禁清单，唯一事实源)
 - scripts/verify.* (门禁统一入口)
-- scripts/check-constitution.* (宪法自校验)
-- scripts/docs-check.* / scripts/drift-check.* (两条种子门禁：docs-consistency + spec-drift)
+- scripts/check-constitution.* (宪法自校验，规则 A~E：含「有红线无门禁」方向)
+- scripts/docs-check.* / scripts/drift-check.* (两条种子门禁：docs-consistency + spec-drift；drift-check 含检查 D「测试框架 ↔ CI test 步骤」)
 - .trae/specs/ (spec-driven 开发基础设施)
-- .github/workflows/ci.yml (或 .gitee-ci.yml，含门禁统一入口 job)
+- .github/workflows/ci.yml (或 .gitee-ci.yml，门禁 job 已内联 + 运行时自证；test 步骤按探测结果生成)
 - .gitignore (如果之前没有)
 - CHANGELOG.md (版本记录，[Unreleased] 初始化占位，发版按 AGENTS.md 发布规范更新)
 - CLAUDE.md / .cursor/rules/project.mdc (vendor breadcrumbs)
@@ -65,16 +66,24 @@ license: MIT
 下一步建议：
 1. 填写 docs/A/A-01-PRD.md 项目需求
 2. 根据实际项目完善 AGENTS.md 中的项目身份信息
-3. 阅读 docs/B/B-03-测试指南.md，核心功能稳定后按制度编写首批测试
+3. 阅读 docs/B/B-03-测试指南.md，核心功能稳定后按制度编写首批测试（若 CI 未生成 test 步骤，按该文件的契约补上）
 4. git push origin <主分支> 推送初始框架（按分支策略：main 或 develop）
 ```
 
 **门禁验收**（与上表并列的报告项）：
 
 - [ ] `scripts/verify.*` 本地实跑通过（或全部为 warn 级）
-- [ ] `scripts/check-constitution.*` 输出 0 error
-- [ ] `scripts/gates.json` 条目 ≥ 2
+- [ ] `scripts/check-constitution.*` 输出 0 error，**且未处于降级态**（权威表已生成 → 规则 A/E 生效；报告中不得出现「无权威表，已降级」）
+- [ ] `scripts/gates.json` 条目 ≥ 2，且每条 `source` 为 `AGENTS#<RL-ID>@<章节名>` 形态
+- [ ] `docs/B/B-00-红线与门禁映射.md` 中每条 `blocking` 红线都有 ≥1 条门禁引用（规则 E 报 0 error）
 - [ ] 新登记的 blocking 门禁已完成负向验证（留证）
+
+**CI 验收**（4 条，见 `references/step-5-ci-and-gates.md` 的自检表）：
+
+- [ ] 生成物中 `passWithNoTests` 命中数 = 0
+- [ ] 生成的 workflow 含 `scripts/verify.` 调用（门禁已接线，不依赖"记得追加"）
+- [ ] 每个 job 首条命令含 `command -v` + 版本打印（运行时自证）
+- [ ] test 步骤与探测结果一致（有框架/测试文件才有 test 步骤；没有则 `B-03` 含补步骤契约）
 
 > 任一项不满足时，在报告中显式标注"未闭环 + 原因 + 风险"，不得静默跳过（见 `references/ai-work-protocol.md` 第四章证据标准）。
 
@@ -93,15 +102,17 @@ license: MIT
 | `references/agents-md-template.md` | AGENTS.md 兜底模板（全部探测+联网失败时使用） |
 | `references/monorepo-agents.md` | 多子项目 AGENTS.md 装配规则（判定条件/根与子职责边界/骨架模板/增量合并），Step 2.4 参考 |
 | `references/vendor-breadcrumbs.md` | AI 工具入口文件与私有增强层生成规则（CLAUDE.md / Cursor / Copilot / Gemini 等），Step 2.1 参考 |
-| `references/ci-template.yml` | CI 模板（TS/Go/Python/Vue 四种完整 workflow），Step 5 参考 |
-| `references/docs-skeleton.md` | docs/ 目录骨架指南（A/B/C/D/E 五级分类），Step 3 详细参考 |
+| `references/ci-template.yml` | CI 模板（TS / Vue / Go / Python 四种**完整 workflow**：门禁 job 已内联 + 运行时自证 + test 步骤条件生成），Step 5 参考 |
+| `references/docs-skeleton.md` | docs/ 目录骨架指南（A/B/C/D/E 五级分类 + `B-00-红线与门禁映射.md` 红线权威表 + BUG 库 schema 唯一源），Step 3 详细参考 |
 | `references/gitignore-template.md` | Git 忽略规则模板（按语言选择），Step 4 参考 |
 | `references/project-sync-guide.md` | Agent 文档同步操作指南（Step 7 参考） |
-| `references/ai-work-protocol.md` | AI 编程工作协议（任务生命周期/证据标准/DoD/缺陷复盘/门禁生长 6 步），Step 3.5 生成 B-06 |
+| `references/ai-work-protocol.md` | AI 编程工作协议（任务生命周期/证据标准/DoD/缺陷复盘模板=Bug 库条目内部结构/门禁生长 6 步），Step 3.5 生成 B-07 |
 | `references/spec-driven.md` | 规范驱动开发六阶段（准入门槛/三件套模板/checklist 转门禁），Step 3.3 参考 |
-| `references/gates-templates.md` | 门禁模板集（gates.json 唯一事实源 + verify.* + check-constitution.* + 宿主/装配点选择 + 漂移门与种子门禁清单），Step 3.5 / 5.5 参考 |
+| `references/gates-templates.md` | 门禁模板集（gates.json 唯一事实源 + 红线权威表 + verify.* + check-constitution.* 规则 A~E + 宿主/装配点选择 + 漂移门与种子门禁清单 + Python/Makefile 宿主），Step 3.5 / 5.5 参考 |
+| `references/verify-py-template.md` | `scripts/verify.py` 可运行参考实现（Python 宿主，与 `verify.mjs` 语义等价），Step 3.5 / 5.5 参考 |
+| `references/check-constitution-py-template.md` | `scripts/check-constitution.py` 可运行参考实现（规则 A / A' / B / C / D / E，与 Node 版语义等价），Step 3.5 参考 |
 | `references/docs-check.mjs` | 文档一致性校验脚本参考实现（**校验范围自适应**：遍历 docs/ 实际存在的子目录；校验编号连续性/状态头/索引覆盖/归档冲突 + 单文件体积） |
-| `references/drift-check.mjs` | 规范漂移校验脚本参考实现（依赖↔规范 / 模块速查表↔目录 / 门禁有效性），spec-drift 门禁参考 |
+| `references/drift-check.mjs` | 规范漂移校验脚本参考实现（依赖↔规范 / 模块速查表↔目录 / 门禁有效性 / **测试框架↔CI test 步骤**；**无源码根时回退到顶层目录比对，且不适用时输出适用性裁定**），spec-drift 门禁参考 |
 | `references/eval-baseline.md` | 体系质量评估基准（Skill 生成物 + Skill 自身：规模指标 / 闭环指标 / 发布前核对），Step 7 参考 |
 | `references/step-1-discovery.md` | Step 1 自主发现引擎完整实现细节 |
 | `references/step-2-assembly.md` | Step 2 规则引擎拼接完整实现细节 |

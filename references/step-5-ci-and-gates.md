@@ -1,5 +1,6 @@
 # Step 5：配置 CI/CD
 
+> 版本: v2.0 | 更新: 2026-10-14
 > `SKILL.md` Step 5（含 Step 5.5 门禁装配）的完整实现细节，由 SKILL.md 的「Step 索引与按需加载」表按需加载。
 > 关联：references/knowledge-base.md、references/ci-template.yml、references/gates-templates.md
 
@@ -7,18 +8,30 @@
 
 按探测到的语言，从 `references/knowledge-base.md` 中提取对应**语言层**和**测试层**的 CI job 片段，合并为完整 workflow 文件。
 
-参考模板见 `references/ci-template.yml`（含 TS/Go/Python/Vue 四种完整 workflow）。
+参考模板见 `references/ci-template.yml`（含 TS / Vue / Go / Python 四种**完整 workflow**，**门禁 job 已内联**）。
 
 ### 规则
 - 不依赖外部服务（DB/Redis/MQ）
 - 如果远程仓库是 Gitee → 创建 `.gitee-ci.yml`（语法与 GitHub Actions 不同，参考 [Gitee Go 文档](https://gitee.com/help/articles/4280)）
 - 如果远程仓库是 GitHub → 创建 `.github/workflows/ci.yml`
 - **其他平台**（GitLab/Bitbucket/Codeberg 等）→ WebSearch `"{platform}" CI pipeline {language} {framework} setup {currentYear}"` 获取对应配置格式
-- **门禁统一入口 job（必须）**：CI 须包含一个 job 复用 `scripts/verify.*`（本地与 CI 同语义），避免本地能过、CI 用的却是另一套命令；该 job 失败即阻断合入
-- **初始化种子门禁（两条）**：`docs-consistency`（文档一致性）+ `spec-drift`（规范漂移）；小项目只播种这两条，**不生成 `scripts/checks/` 目录**（详见 `references/gates-templates.md` §八）
-- **漂移门独立 job**：`spec-drift` 在 CI 中作为**独立 job**（`level: warn` 时非阻断，只输出报告），不与 blocking 门禁混跑，便于单独观察漂移趋势
+- **门禁统一入口 job（必须，硬性）**：CI 须包含一个 job 调用 `scripts/verify.*`（本地与 CI 同语义），该 job 失败即阻断合入。**该 job 已内联在模板的每种语言 workflow 中，整份写入即可——不存在"追加片段"这一步**。若项目已有 CI 文件（跳过、不覆盖），**必须**核验其中含 `scripts/verify.*` 调用；缺失则在报告中显式标注「门禁未接线 + 风险」，不得沉默。
+- **运行时自证（必须，硬性）**：每个 job 的**首条命令**必须以 `command -v <runtime> || <自装>` 自证运行时可用，随后打印版本。理由见 `references/ci-template.yml` 文首规则 3（实测 Gitee Go 插件不提供 `node`/`npm`，导致整个 stage 的 5 条命令全部 `command not found` 秒退，流水线表面"已运行"实则从未执行过任何门禁）。
+- **test 步骤条件生成（必须，硬性）**：探测到测试框架**或**存在测试文件才生成 test 步骤；**禁止** `--passWithNoTests`（让"零测试"判绿 = 假绿开关）。**未生成 test 步骤时**，必须在 `docs/B/B-03-测试指南.md` 写明「建立测试后由 Agent 补 CI test 步骤」契约并给出具体插入位置——由 `scripts/drift-check.mjs` 的**检查 D** 机检（探测到测试资产但 CI 无 test 步骤 → `warning`）。
+- **宿主必须真实产出（必须，硬性）**：CI 里引用了 `scripts/verify.py` / `make verify` / `verify.sh`，就必须真的生成对应宿主（可运行实现见 `references/gates-templates.md` §五 与 `references/verify-py-template.md`）。**未产出却引用 = 该 job 必然失败 = CI 从未跑过门禁**。无把握时统一用 `scripts/verify.mjs`（零外部依赖，只需 `node`）。
+- **初始化种子门禁（两条）+ 红线权威表**：`docs-consistency`（`source`: `AGENTS#RL-01@文档契约`）+ `spec-drift`（`source`: `AGENTS#RL-02@技术栈`），并在 `docs/B/B-00-红线与门禁映射.md` 登记 `RL-01` / `RL-02`；小项目只播种这两条，**不生成 `scripts/checks/` 目录**（详见 `references/gates-templates.md` §一之二 / §八）。
+- **`spec-drift` 的装配**：`level: warn` 时非阻断（只输出报告），存量债清理完再升 `blocking`；**与 `docs-consistency` 共用同一个门禁 job**（`verify` 会按 `gates.json` 逐条跑）——**不要为每条门禁单开 workflow**，否则会退化成"CI 里只有一部分门禁"（实测某项目 40 条门禁只有 5 条进 CI）。
 - **按门禁分级组织**：`level: blocking` 的门禁必跑；`level: warn` 的可作为独立非阻断 job 或仅输出报告
 - 如果 CI 目录/文件已存在 → 跳过，不覆盖
+
+### 生成后自检（4 条，缺一视为生成失败，须贴出命令 + 实际输出）
+
+| # | 检查项 | 机检方式 |
+|---|--------|----------|
+| 1 | 无假绿开关 | 生成物全文检索 `passWithNoTests` **命中数 = 0** |
+| 2 | 门禁已接线 | 生成的 workflow 含 `scripts/verify.` 调用 |
+| 3 | 运行时自证 | 每个 job 首条命令含 `command -v` + 版本打印 |
+| 4 | test 步骤与探测一致 | 探测到框架 / 测试文件 → 有 test 步骤；未探测到 → 无 test 步骤**且** `docs/B/B-03-测试指南.md` 含补步骤契约 |
 
 ---
 

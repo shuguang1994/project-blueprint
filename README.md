@@ -5,6 +5,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![skills.sh](https://img.shields.io/badge/skills.sh-project--blueprint-orange)](https://skills.sh)
+[![version](https://img.shields.io/badge/version-2.0.0-blue)](CHANGELOG.md)
+[![breaking change](https://img.shields.io/badge/upgrade%20guide-v2.0.0%20Breaking%20Change-informational)](CHANGELOG.md#200---2026-10-14)
 
 **Topics** ·
 [![dsh-plugin](https://img.shields.io/badge/dsh--plugin-blue)](https://github.com/topics/dsh-plugin)
@@ -75,11 +77,12 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 | **Real Coding Conventions** | Writes base coding conventions at init (naming/structure/error handling/logging/security/performance 6 categories), B-01 as real 8-chapter doc, not a placeholder |
 | **AI Mistake Prevention** | Built-in 7-category 27-item AI common-mistakes KB, injected into core rules at init, iterated via BUG feedback loop |
 | **Constitution & Gate Growth** | Writes meta-rules + a 6-step growth loop into AGENTS.md, so the project's AI grows domain gates from the constitution while it works |
-| **Gate Registry & Unified Entry** | `scripts/gates.json` as single source of truth + `verify.*` unified entry + `check-constitution` self-check |
+| **Gate Registry & Unified Entry** | `scripts/gates.json` as single source of truth + `verify.*` unified entry; the CI gate job is **inlined** (no "remember to append"), and every job **self-verifies its runtime** (`command -v` + version print) so a missing runtime fails on line one |
+| **Red-Line Authority Table + Two-Way Constitutional Review** | Stable IDs (`RL-NN`, append-only) + `docs/B/B-00-红线与门禁映射.md` as the single `source` reference; `check-constitution` rules A–E review **both directions** — zombie gates *and* (rule E) **red lines that have no gate**; when the table is absent it degrades **and states the uncovered risk** instead of silently going green |
 | **Doc Contract & Validation** | Doc state headers / numbering / index contract + `docs-check` script (error blocks, warning does not) |
 | **AI Work Protocol** | 7-step task lifecycle + evidence standards + DoD + defect retrospective template |
 | **Spec-Driven Development (6 phases)** | specify → plan → tasks → checklist → implement → verify; a spec checklist can register directly as a gate (`source: spec#<change-id>`) |
-| **Spec-Code Drift Gate** | Seed gate checks deps ↔ AGENTS.md tech-stack row, module table ↔ actual dirs, and gate validity (`drift-check.*`) |
+| **Spec-Code Drift Gate** | Seed gate checks deps ↔ AGENTS.md tech-stack row, module table ↔ actual dirs, gate validity, and **test framework ↔ CI test step** (`drift-check.*`); **falls back to top-level dirs** when no source root exists and prints an **applicability ruling** (reason/risk/verdict) instead of skipping silently |
 
 ## What It Generates
 
@@ -88,20 +91,21 @@ Supported agents: Claude Code, Cursor, GitHub Copilot, Codex, Windsurf, Trae, Op
 | `AGENTS.md` | Project conventions (governed by architecture principles); in a monorepo: global constraints + sub-project index |
 | `<sub-project>/AGENTS.md` | Per-package conventions when ≥2 build/manifest files (monorepo: root = global + index, package = local, closest-file-wins) |
 | `docs/` | A/B/C/D/E classified documentation skeleton + README maintenance guides (incl. B-01-开发规范, real 8-chapter conventions) |
-| `.github/workflows/ci.yml` | CI pipeline (auto-adapts to language + platform) |
+| `docs/B/B-00-红线与门禁映射.md` | **Red-line authority table** (single `source` reference): stable `RL-NN` IDs + tier + owning gates + no-gate reason; generated **together with** `gates.json` |
+| `.github/workflows/ci.yml` | CI pipeline (auto-adapts to language + platform); gate job **inlined** + runtime self-verification; the test step is kept/removed per detection (**no `--passWithNoTests` fake-green switch**) |
 | `.gitignore` | Curated rules per language |
 | `CHANGELOG.md` | Version log ([Unreleased] init placeholder, updated per AGENTS.md release policy) |
 | `.husky/pre-commit` | Pre-commit lint hook (JS/TS only) |
 | `CLAUDE.md` | Claude Code vendor breadcrumb (baseline) |
 | `.cursor/rules/project.mdc` | Cursor vendor breadcrumb (baseline + private enhancement layer) |
-| `docs/B/B-03-测试指南.md` | Testing policy (layers, timing, framework-specific patterns) |
+| `docs/B/B-03-测试指南.md` | Testing policy (layers, timing, framework-specific patterns); when no CI test step is generated it records the "add a CI test step once tests exist" contract |
 | `docs/B/B-05-MCP工具清单.md` | MCP tool list + combination suggestions + install commands (on demand) |
-| `scripts/gates.json` | Gate registry (single source of truth: source / level / stage / command; seeds 2 seed gates by default) |
-| `scripts/verify.*` | Unified gate entry (host auto-selected: Node / Python / make / shell) |
-| `scripts/check-constitution.*` | Constitution self-check (AGENTS.md red lines ↔ gate registry, two-way) |
+| `scripts/gates.json` | Gate registry (single source of truth: source / level / stage / command; seeds 2 seed gates by default; `source` looks like `AGENTS#RL-01@文档契约`) |
+| `scripts/verify.*` | Unified gate entry (host auto-selected: Node / Python / make / shell; **runnable Python and Makefile hosts are provided** — never reference a host you did not generate) |
+| `scripts/check-constitution.*` | Constitution self-check (red-line authority table ↔ gate registry, **two-way**; rules A / A' / B / C / D / E) |
 | `scripts/docs-check.*` | Doc consistency check (numbering / state headers / index / archive conflicts + size; **scan range adaptive**: iterates the `docs/` sub-dirs that actually exist; error blocks) |
-| `scripts/drift-check.*` | Spec-code drift check (deps ↔ tech-stack row / module table ↔ actual dirs / gate validity) — the 2nd seed gate `spec-drift` |
-| `docs/B/B-06-门禁与工作协议.md` | Gate growth loop + evidence standards + DoD (on demand for mid/large projects) |
+| `scripts/drift-check.*` | Drift check (deps ↔ tech-stack row / module table ↔ actual dirs / gate validity / **test framework ↔ CI test step**) — the 2nd seed gate `spec-drift` |
+| `docs/B/B-07-门禁与工作协议.md` | Gate growth loop + evidence standards + DoD (on demand for mid/large projects) |
 
 > **On demand**: small projects only get a single gate + unified entry — no full gate layer or protocol doc (stays lean, avoids over-engineering).
 
@@ -174,6 +178,8 @@ Unknown dep: @shadcn/ui not in knowledge base
 | **Module Table Auto-Generation** | Reads actual source directories, infers responsibilities via file patterns, web search fallback | No competitor provides this |
 | **MCP Tool Auto-Recommendation** | Auto-matches MCP tools from detected stack via 3-tier matching, outputs combo suggestions (must/recommended/optional) + an installable MD doc; dual-layer web search keeps commands fresh | Competitors (e.g. Project Genesis Phase 9) only wire preset MCP config — no autonomous recommendation from tech stack |
 | **7-Language 15-Framework KB** | 95 component entries with Commands + Conventions + CI, Chinese-first | Competitors cover JS/TS ecosystem at most |
+| **Red-Line Authority Table + Two-Way Review** | Red lines live in a table with stable IDs (`RL-NN`) referenced by each gate's `source`; the check runs **both ways** — zombie gates *and* **red lines with no gate** (rule E); when the table is missing it degrades **and states the uncovered risk** instead of going green | Competitors keep conventions as prose — renaming a section breaks the link silently, and no tool validates red-line ↔ gate coverage |
+| **Inlined CI Gate Job + Runtime Self-Verification** | The gate job is inlined into every language workflow (no "remember to append"); each job's first command runs `command -v` + a version print so a missing runtime fails on **line one** | Competitor templates ship fragments; wiring is manual and its failure mode is silent |
 
 ## What Makes It Different
 

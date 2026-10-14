@@ -3,7 +3,7 @@
 > Skill `project-blueprint` 参考。定义 `.trae/specs/`（Cursor 下为 `.cursor/specs/`）的落地规则：一次变更如何从想法走到可验收（六阶段）。
 > 引用方：`references/step-3-docs.md` 3.3（生成目录与三件套）
 > 关联：`references/ai-work-protocol.md`（7 步任务生命周期 / 门禁生长 6 步 / 证据标准）、`references/gates-templates.md`（`gates.json` 唯一事实源与统一入口）
-> 版本: v1.0
+> 版本: v2.0 | 更新: 2026-10-14
 
 ---
 

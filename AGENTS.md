@@ -1,6 +1,6 @@
 # Project Blueprint 项目开发规范 (AGENTS.md)
 
-> AI 编程助手的强制开发规范。v1.9.0 | 更新: 2026-09-14（建立 2026-08-01）
+> AI 编程助手的强制开发规范。v2.0.0 | 更新: 2026-10-14（建立 2026-08-01）
 > AI 工具: Trae | 加载: always_applied
 
 ***
@@ -10,7 +10,7 @@
 - **项目**: Project Blueprint — 为新项目一键建立完整 AI 编程规范体系（AGENTS.md + 文档骨架 + CI/CD + 测试制度 + Git 规范）的开源 AI Agent 技能包。
 - **形态**: 纯 Markdown 项目，无代码、无构建、无测试、无运行依赖。核心逻辑为 `SKILL.md`（113 行索引层 + `references/step-*.md` 7 个 Step 细节），配套 `references/` 知识库与 `scripts/` 门禁层。
 - **技术栈**: Markdown (SKILL.md 格式) + 95 组件条目知识库（18 个二级章节 / 16 个技术栈维度） + MCP 工具知识库 + 门禁配方库 + 宪法层生长机制 + WebSearch 联网回退
-- **版本**: v1.9.0（语义化版本，tag 发布）
+- **版本**: v2.0.0（语义化版本，tag 发布）
 - **仓库**: GitHub `origin` = https://github.com/shuguang1994/project-blueprint / Gitee `gitee` = https://gitee.com/shuguang1994/project-blueprint
 - **作者**: 曙光 (shuguang1994) | License: MIT
 - **安装**: `npx skills add shuguang1994/project-blueprint`（国际）/ `npx skills add https://gitee.com/shuguang1994/project-blueprint.git`（国内）/ `dsh plugin --profile web add 'github:shuguang1994/project-blueprint'`（DeepSeek Harness）
@@ -136,7 +136,7 @@ node dsh-plugin/scripts/sync-skill.mjs
 | `SKILL.md` | 核心逻辑索引层（113 行）：触发条件 / 执行原则 / Step 索引与按需加载表 / 输出验收清单 / 参考文件索引 |
 | `references/step-1-discovery.md` ~ `step-7-adaptive.md` | 7 个 Step 实现细节（按需加载；Step 5.5 门禁装配并入 step-5；均 ≤ 500 行） |
 | `README.md` / `README_CN.md` | 中英文项目文档：安装、能力、工作流程、贡献指南 |
-| `CHANGELOG.md` | 版本记录（v1.0 ~ v1.9.0 + [Unreleased]） |
+| `CHANGELOG.md` | 版本记录（v1.0 ~ v2.0.0） |
 | `PROJECT_STATUS.md` | 项目状态、版本演进、独立抽离指南、已知局限、下一步计划 |
 | `docs/` | **公开**文档：`README.md` 索引（A~E 分类 + 公开边界 + 编号预留登记）+ D 级发布说明 |
 | `internal-docs/` | **不发布**的内部文档（自审 / 竞品对标 / 评估复核类），受 `.gitignore` 约束 |
@@ -154,14 +154,16 @@ node dsh-plugin/scripts/sync-skill.mjs
 | `references/code-conventions.md` | 基础代码规范种子知识库（6 大类：命名/目录/错误处理/日志/安全/性能 × 语言适配，含搜索模板，Step 2 参考） |
 | `references/ai-common-mistakes.md` | AI 高频错误知识库（7 大类 27 条，六段式，Step 2 优先注入 + B-04 反哺迭代） |
 | `references/agents-md-template.md` | AGENTS.md 兜底模板（全部探测+联网失败时使用） |
-| `references/ci-template.yml` | CI 模板（TS/Go/Python/Vue 四种完整 workflow） |
-| `references/docs-skeleton.md` | docs/ 目录骨架指南（A/B/C/D/E 五级分类） |
+| `references/ci-template.yml` | CI 模板（TS / Vue / Go / Python 四种**完整 workflow**：门禁 job 已内联 + 运行时自证 + test 步骤条件生成，无假绿开关） |
+| `references/docs-skeleton.md` | docs/ 目录骨架指南（A/B/C/D/E 五级分类 + `B-00-红线与门禁映射.md` 红线权威表 + **BUG 库 schema 唯一源**） |
 | `references/gitignore-template.md` | Git 忽略规则模板（按语言选择） |
 | `references/project-sync-guide.md` | Agent 文档同步操作指南（Step 7 参考） |
-| `references/ai-work-protocol.md` | AI 编程工作协议（7 步任务生命周期 / 证据标准 / DoD / 违规处理 / 缺陷复盘 / 门禁生长 6 步） |
-| `references/gates-templates.md` | 门禁模板集（gates.json 唯一事实源 + verify.* + check-constitution.* + 宿主/装配点选择） |
+| `references/ai-work-protocol.md` | AI 编程工作协议（7 步任务生命周期 / 证据标准 / DoD / 违规处理 / **缺陷复盘模板=Bug 库条目内部结构** / 门禁生长 6 步） |
+| `references/gates-templates.md` | 门禁模板集（gates.json 唯一事实源 + **红线权威表** + verify.* + check-constitution.* **规则 A~E** + 宿主/装配点选择 + **Python / Makefile 宿主实现**） |
+| `references/verify-py-template.md` | `scripts/verify.py` 可运行参考实现（Python 宿主，与 `verify.mjs` 语义等价） |
+| `references/check-constitution-py-template.md` | `scripts/check-constitution.py` 可运行参考实现（规则 A / A' / B / C / D / E，与 Node 版语义等价） |
 | `references/docs-check.mjs` | 文档一致性校验参考实现（校验范围自适应：遍历 docs/ 实际存在的子目录；种子门禁之一 docs-consistency） |
-| `references/drift-check.mjs` | 规范漂移校验参考实现（依赖↔规范 / 模块速查表↔目录 / 门禁有效性；种子门禁 spec-drift，v1.9.0 新增） |
+| `references/drift-check.mjs` | 规范漂移校验参考实现（依赖↔规范 / 模块速查表↔目录 / 门禁有效性 / **测试框架↔CI test 步骤**；无源码根时回退顶层目录比对 + 输出适用性裁定；种子门禁 spec-drift） |
 | `LICENSE` | MIT 协议 |
 | `.gitignore` | 仓库忽略规则 |
 

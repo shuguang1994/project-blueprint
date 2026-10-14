@@ -2,9 +2,75 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [2.0.0] - 2026-10-14
 
-> 主题：外部评估复核 + 对外数字口径收敛 + 文档索引修复 + 机制可发表性交叉验证 + 门禁装配落地
+### Breaking Change（升级前必读）
+
+> 专题升级说明：[D-14-v2.0.0-功能发布说明.md](docs/D/D-14-v2.0.0-功能发布说明.md)（中文）/ [D-15-v2.0.0-Release-Notes-EN.md](docs/D/D-15-v2.0.0-Release-Notes-EN.md)（English）
+
+本次为 **major** 升级：**生成侧产物的结构与校验口径变了**。已初始化的老项目升级后需按下列 3 项迁移（**未迁移不会静默出错**，`check-constitution` / `drift-check` 会显式报出）：
+
+1. **门禁 `source` 形态变更**：由 `AGENTS#<章节名>` → `AGENTS#<红线 ID>[@<章节名>]`。旧形态仍可解析，但 `check-constitution` 规则 A' 记 `warning`（章节改名即静默断链）。
+2. **新增必生成产物**：`docs/B/B-00-红线与门禁映射.md`（红线权威表）。**缺失时规则 A/E 双双降级**，违宪审查只剩"查僵尸门禁"一半；`check-constitution` 会输出降级事实 + 未覆盖风险两条 info。
+3. **BUG 知识库 schema 收敛**：`### 模式 XX：` / `§2.NN 模式 XX` 两套写法**废止**，统一为 `## BUG-<NNN> | <标题>`。老项目未迁移时 `eval-baseline.md` 的「缺陷 → 门禁转化率」分母为 0（指标不可计算，不影响门禁）。
+
+> 另有 1 项**不阻断**的行为变化：`docs/B/` 编号顺移一位（`B-03`→`B-04`、`B-04`→`B-05`、`B-05`→`B-06`、`B-06`→`B-07`），红线权威表占用新号 `B-00`。老项目按自身索引为准，无需强制改名。
+
+### 生成侧缺陷清除（G1~G8：新项目初始化不再继承 PB 现有问题）
+
+> 判定口径：只看「这条缺陷会不会被写进交付给新项目的产物」（`AGENTS.md` / `docs/` 骨架 / `scripts/gates.json` / `verify.*` / `check-constitution.*` / `docs-check.*` / `drift-check.*` / CI 配置 / git hooks）。BP 仓库自身的运维问题不计入。
+> 复现方法：系统临时目录内建 3 个最小项目（① Node+测试框架 ② Node 无测试框架 ③ 纯文档）→ 按 `SKILL.md` → `references/step-1..7` 完整走一遍初始化 → 对产物逐条扫描。**未新建 test 框架**。
+
+#### Fixed（生成侧）
+- **G1｜CI 模板把「假绿开关」写进每个新项目**：`references/ci-template.yml` 三处 + `references/knowledge-base.md` 11 处 `--passWithNoTests` **全部清除**；test 步骤改造为**模板内带标记 + 按探测结果保留/删除**（标记 `# ↓ test 步骤：仅在 Step 1 探测到测试框架或测试文件时生成`），Go 的 `go test ./...` 无条件保留（语义不同）。实测根因：该参数让"零测试"判绿（`xiangmuces` 的 `.github/workflows/ci.yml` 即照此模板生成、且其审计结论原文即「因 spec 未入库，CI 实际空跑（假绿）」）。**"零测试判红"本就是 vitest / jest / mocha / pytest 的默认行为**，故修法是"删开关"而非"换开关"。
+- **G2｜workflow 骨架不含门禁 job，只在文末给「追加片段」**：四种语言的**完整 workflow 已内联** `constitution` job（调用 `scripts/verify.*`），**取消"追加片段"步骤**；`step-5` 把"必须生成门禁 job"写成硬性规则 + 4 条生成后自检表。顺带修掉「模板引用不存在宿主」：`make verify` / `python scripts/verify.py` 原先没有任何实现，现补 **可运行的 `scripts/verify.py` 与 `scripts/check-constitution.py` 参考实现**（`references/verify-py-template.md` / `references/check-constitution-py-template.md`）与 Makefile 目标，并规定**未产出宿主不得在 CI 引用**。
+- **G3｜种子门禁的 `source` 用章节名，改名即静默断链**：`source` 升级为 `AGENTS#<红线 ID>[@<章节名>]`（如 `AGENTS#RL-01@文档契约`），`<红线 ID>` 是权威引用、`@章节名` 仅供人读；旧形态仍可解析但记 `warning`（提示迁移）。新增**红线权威表** `docs/B/B-00-红线与门禁映射.md`（`RL-NN` append-only + 档位 + 对应门禁 + 无门禁原因），作为 `source` 的**唯一引用源**——AGENTS.md 只做索引，避免"AGENTS 一份清单 + gates.json 一份清单"的双份维护。
+- **G4｜BUG 知识库 schema 在生成路径上有 4 种写法**：收敛为**唯一一种** `## BUG-<NNN> | <标题>`（三位补零/唯一/不复用）+ 症状速查表 + 六段式；`references/docs-skeleton.md` 的 B-04 行为 schema 唯一源，`ai-work-protocol.md`（条目内部结构）/ `step-3-docs.md`（生成模板）/ `project-sync-guide.md` / `eval-baseline.md`（计数口径）四处统一引用它。实测两套旧写法在真实项目上使 `eval-baseline` 的转化率分母**恒为 0**（`xiangmuces` 142 条 / `huichuangdazi` 60 条，按 `### 模式 ` 计数均为 0）。
+- **G5｜「空转门禁」被播种给新项目**：`references/drift-check.mjs` ① 所有跳过分支改为输出**适用性裁定**（`检查 X 不适用｜原因：…｜风险：…｜裁定：本仓形态不适用`），不再裸"跳过"；② 无源码根时**回退到仓库顶层目录**比对（新增可编辑排除清单；"表里写了但路径不存在"→ warning，"目录存在但表里没有"→ info，避免对纯文档 / 小项目刷屏）。
+- **G6｜「违宪审查」只装一半**：`check-constitution` 换用本仓已验证实现并新增**规则 E**「权威表中 `blocking` 档红线必须有 ≥1 条门禁引用」（原实现只查得出僵尸门禁，查不出"有红线无门禁"）；规则 A 升级为「红线 ID ↔ 权威表」双向定位；**权威表缺失时规则 A 定位失败降级为 warning**（不因"尚未建表"让新项目第一天就红），但必须输出**已降级事实 + 未覆盖风险**两条 info，禁止静默给出 `0 error`。**附修 G6-b**：生成侧模板原为 87 行 v1.0（规则只认 `[门禁:<id>]` 注解，而生成侧从不产出该注解 ⇒ 恒空跑、输出 `0 error / 0 warning / 0 info`），现替换为 311 行的 **规则 A / A' / B / C / D / E** 实现。
+- **G7｜CI 模板没有「运行时自证」**：每个 job 的**首条命令**加 `command -v <runtime> || <分层自装>` + 版本打印。实测根因（`xiangmuces` `.workflow/ci.yml` 注释原文）：Gitee Go 插件未提供 `node`/`npm`，导致该 stage 5 条命令**全部** `command not found` 秒退、`CI 自建立起从未真正执行过任何一条门禁`。
+- **G1 配套（新增检查 D）**：`drift-check` 新增「测试框架 ↔ CI test 步骤」漂移检查（探测到测试资产但 CI 无 test 步骤 → `warning`），防止"为了不复现假绿而干脆删掉 test 步骤"演变成新的静默缺陷。**负向验证**：删掉 CI 的 test 步骤 → 报出 warning；恢复后 → 通过。
+- **G8 自查（用真实项目审计发现反查生成路径）**：另命中并处置 4 项 —— ① `eval-baseline.md` 引用已不存在的规则编号「规则 3」→ 改为规则 C；② 模板引用 `make verify` / `verify.py` 却无实现（并入 G2）；③ 文档引用的种子 `source` 与 AGENTS.md 生成模板不同源（并入 G3）；④ BUG 库编号语义漂移 `§2.NN`（并入 G4）。**未复现项**：对外数字口径（`95 组件 / 18 二级章节 / 16 维度` 全仓一致）、`40-60%`/`60,000+`/`76%` 在生成路径零命中 —— 均确认**不进生成物**，不处置。
+
+#### Added（防复发的机器锚点）
+- `references/eval-baseline.md` 新增 **§3.0 共同校验点（7 条，可机检）**：A1 生成物 `passWithNoTests` 命中数 = 0 / A2 CI 含 `scripts/verify.` 调用 / A3 每 job 首命令含 `command -v` + 版本打印 / A4 test 步骤与探测一致 / A5 权威表已生成且 `check-constitution` 0 error 且未降级 / A6 BUG 库 `^## BUG-` 计数口径一致 / A7 不静默跳过（禁裸"跳过"）。并明确 A1~A4 的**负向验证**要求。
+- `references/eval-baseline.md` 新增两个关键形态：**§3.4 Node 项目（无测试框架）**（A1/A4 的关键形态）、**§3.5 纯文档项目（无源码根、无依赖清单）**（A5/A7 的关键形态），各含负向验证项。
+- `references/verify-py-template.md` / `references/check-constitution-py-template.md`：Python 宿主可运行参考实现，**与 Node 版语义等价**（同一份 `gates.json` → 同一批门禁 → 同一退出码；实测 4 个场景输出一致）。
+
+#### Changed
+- `references/ci-template.yml` 重写为 v2.0：门禁 job 内联 + 运行时自证 + test 步骤带标记（无假绿开关）+ 4 条生成后自检表。
+- `references/gates-templates.md` → v2.0：新增 §一之二 红线权威表；§三 规则表升级（含规则 E 与降级策略）；§五 收敛为薄索引 + 新增 §5.2/5.3/5.4 指向可运行 Python 宿主与 Makefile 目标；§8.2 补检查 D 与适用性裁定约定；§8.3 种子 `source` 改用 `RL-01` / `RL-02`。
+- `references/drift-check.mjs`：新增检查 D、适用性裁定、顶层目录回退比对（+噪音排除清单）。
+- `references/step-3-docs.md` Step 3.5 生成物清单新增红线权威表（与 `gates.json` **同时生成**）；`references/step-5-ci-and-gates.md` 规则改硬性并补生成后自检表；`SKILL.md` 输出验收清单拆为「门禁验收 5 条 + CI 验收 4 条」。
+- `references/` 生成侧文件版本头统一标注为 **v2.0**（此前 6 个模板文件全部停在 `v1.0`，是 G6-b 代差的制度性成因）。
+- `README.md` / `README_CN.md`：新增版本徽章与升级说明入口；核心能力表补「红线权威表 + 双向违宪审查」「门禁清单与统一入口（CI 内联 + 运行时自证）」；生成物清单补 `docs/B/B-00-红线与门禁映射.md` 并同步 `B-07`；独创特性表补 2 行（红线权威表双向审查 / CI 门禁内联 + 运行时自证）；数字口径（95 / 18 / 16 / 7 语言 15 框架）复核后保持一致。
+- **文档编号**：红线权威表占用新号 `B-00`；`docs/B/` 原有编号顺移一位（`B-03`→`B-04`、`B-04`→`B-05`、`B-05`→`B-06`、`B-06`→`B-07`）；新增发布说明 `D-14`（中文）/ `D-15`（English）。
+
+#### 验证（生成演练留证）
+- 三个最小项目演练（临时目录，未入库）**修前 → 修后**：
+
+  | 形态 | `passWithNoTests` | 含 `scripts/verify.` | 含 `command -v` | test 步骤 |
+  |------|-------------------|----------------------|-----------------|-----------|
+  | ① Node + Vitest + 测试文件 | 1 → **0** | 0 → **1** | 0 → **2** | 0 → **1** |
+  | ② Node 无测试框架 | 1 → **0** | 0 → **1** | 0 → **2** | 0 → **0**（按标记删除） |
+  | ③ 纯文档（无源码根/无依赖） | 0（无 CI） | 0（无 CI，已显式标注） | — | — |
+
+- `drift-check` 在纯文档形态输出**适用性裁定**（`检查 A 不适用｜原因｜风险｜裁定`）、切回退模式并**确实在检**（报出"模块速查表写了 `src` 但路径不存在"）；对本仓自身 **0 warning**（无噪音刷屏）。
+- 检查 D 双向负向验证：p1 删掉 CI test 步骤 → 报 warning；p2 临时加入 `vitest` → 报 warning；恢复后均归零。
+- 规则 E 双向负向验证：权威表加一条无门禁的 `blocking` 红线 → 报 `存在红线却无门禁` error；`source` 引用不存在的 `RL-99` → 报 error；**Node / Python 两版输出一致**（4 场景逐一比对）。
+- `node scripts/verify.mjs` 0 blocking 失败；`check-constitution` / `docs-check` / `drift-check` 均 0 error；`node dsh-plugin/scripts/sync-skill.mjs` 后根与副本 26 个文件 + `SKILL.md` 完全一致。
+- 完整证据（含命令与输出）见 `internal-docs/D-13`（内部文档，不发布）。
+
+#### 未闭环（发版时如实标注）
+- 本仓库自身**尚未迁移到红线权威表**：`scripts/gates.json` 的 `source` 仍为旧形态 `AGENTS#<章节名>`，本仓的规则 A'/E 尚未真正生效（交付物已是新形态）。迁移排入下一步 `P3-14`。
+- **Go / Vue / Python 三形态的 CI 产物未端到端演练**：本轮只做 Node（有/无测试）+ 纯文档三形态，三条 CI 改动对这三种语言仅有模板级与语法级验证。排入 `P3-15`。
+- `references/gates-templates.md:305` 引用的行业数据（agent 配置文件 58% 单次提交 / 0.4 commits/月）**未标注来源**，属对外表述，另案处理。
+- `references/monorepo-agents.md` 未加文件级版本头（其"版本头"是生成物模板内的占位符 `[YYYY-MM-DD]`，避免重复）。
+
+---
+
+### 上一批（同一周期）：外部评估复核 + 对外数字口径收敛 + 文档索引修复 + 机制可发表性交叉验证 + 门禁装配落地
+
 > 复核报告与交叉验证见 `internal-docs/`（内部文档，不随公开仓发布）
 
 ### Added

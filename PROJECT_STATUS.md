@@ -1,6 +1,6 @@
 # Project Blueprint — 项目开发状态与独立抽离指南
 
-> 生成日期: 2026-08-14 | 更新: 2026-09-18 | 版本: v1.9.0（+ [Unreleased] 口径收敛与复核） | 作者: 曙光 (shuguang1994)
+> 生成日期: 2026-08-14 | 更新: 2026-10-14 | 版本: v2.0.0 | 作者: 曙光 (shuguang1994)
 
 ---
 
@@ -12,7 +12,7 @@
 
 | 维度 | 状态 |
 |------|:---:|
-| 版本 | v1.9.0 |
+| 版本 | v2.0.0 |
 | 开发完成度 | ✅ 核心功能完整，7 Step 流程闭环 |
 | 内部测试 | ✅ 已在真实全栈项目实战验证 |
 | 文档 | ✅ 中文 README 完善，英文 README 同步 |
@@ -41,10 +41,12 @@
 | **v1.8.0 发布记录** | **（2026-09-14）已补打 tag `v1.8.0`（`23525ae`）**——v1.8.0 开发完成后未单独提交，其内容随 v1.9.0 一并发布，故该 tag 与 `v1.9.0` 指向**同一 commit `d90ded9`**（首个包含 v1.8.0 内容的提交）；仓库内附 tag 说明消息 |
 | **v1.9.0** | **跨栈通用性与规范不漂移（2026-09-14）：三大主线——① SKILL.md 按 Step 拆分瘦身（1012 → 113 行索引层，7 个 `references/step-*.md` 按需加载）；② 跨栈与 Monorepo 通用性（知识库 +5 域 15 条目、Monorepo 嵌套 AGENTS.md、spec 驱动六阶段、工具私有增强层）；③ 规范漂移门与自吃狗粮（新增 `references/drift-check.mjs` + 第二条种子门禁 `spec-drift` + 本仓库 `scripts/` 门禁层 `gates.json`/`verify.mjs`/`check-constitution.mjs`）** |
 | **v1.9.0 发布记录** | **（2026-09-14）commit `d90ded9`（64 files changed, 8914 insertions(+), 1611 deletions(-)）+ 发版记录 `8a9a819` + tag `v1.9.0`（`d655187`）；双远程均已推送 ✅（GitHub origin + Gitee gitee：`main` 同步至 `8a9a819`，tag `v1.9.0` / `v1.8.0` 双远程同步）。注：本机 GitHub 直连不稳定，偶发 21s 超时，改用 `git -c http.https://github.com.proxy= push …` 绕过失效的本机代理后成功** |
-| **[Unreleased] 口径收敛与复核** | **（2026-09-18）① 外部评估复核：新增外部评估复核报告（内部文档 `internal-docs/D-08`）——对一份外部 AI 项目价值评估逐项复核（实跑 4 门禁 / 核对 20+ 项数字 / 独立复核 4 篇 arXiv 与 3 个站点），判定评估侧 6 项失实、仓库侧 5 项待闭环；② 对外数字口径收敛：组件 `70+` → **95 个组件条目**、业务类型 `13 种` → **12 种**（口径 = knowledge-base「业务类型文档模式」12 条），覆盖 README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json` 及 dsh 副本；③ 修复 `docs/README.md` 索引失效链接（速览 HTML 重命名为 `D-06-` 前缀）+ 补登记 D-07 与速览单页；④ CHANGELOG v1.8.0「未闭环」勾销 + 新增 `[Unreleased]` 段** |
-| **[Unreleased] 发布记录** | **（2026-09-18）本轮共 3 个 commit（`6bee93a` 口径收敛 + 复核落档 / `bb6b398` 状态记录 / 收尾记录）——同时补齐此前 GitHub 落后的 2 个 commit（`041b7f7` / `329dcca`）。Gitee 与 GitHub 的 `main` 已一致 ✅（`HEAD` = `gitee/main` = `origin/main`；GitHub 用 `git -c http.https://github.com.proxy= push` 直连，偶发 21s 超时需重试）。遗留：GitHub 仓库 description 仍为 v1.2.0 口径，见「下一步计划」末条** |
-| **[Unreleased] 机制可发表性复核与门禁装配** | **（2026-09-18）① D-09 机制可发表性交叉验证（内部文档，**v2.0**）：改按**集成层口径**对撞 8 环 × 6 个候选系统，纳入元规则层，并结合 `gate-audit` 首份实跑数据划定样本使用边界（区分提炼源与正向应用样本、排除循环论证）与论文方向；② **门禁装配落地（首次真正接线）**：新增 `.github/workflows/verify.yml`（push / PR 跑 `--stage=ci`）+ 根 `package.json` `scripts.verify` / `verify:ci`；AGENTS.md 4.6 显式标注「CI 已装配 / pre-push 未装配」，消除 `gates.json` stage 的误导性声明** |
-| **[Unreleased] 发布记录②** | **（2026-09-18）commit `ef45df0`（D-09 + CI 装配 + 口径同步）已推送双远程；**GitHub Actions 首跑 success**（run #1 / 14s），装配点已生效。遗留：Gitee 侧无 CI（`.gitee-ci.yml` 未建）、pre-push 钩子未装配（需本地 `git config core.hooksPath .githooks`，未由 agent 代改）** |
+| **v2.0.0（并入）口径收敛与复核** | **（2026-09-18）① 外部评估复核：新增外部评估复核报告（内部文档 `internal-docs/D-08`）——对一份外部 AI 项目价值评估逐项复核（实跑 4 门禁 / 核对 20+ 项数字 / 独立复核 4 篇 arXiv 与 3 个站点），判定评估侧 6 项失实、仓库侧 5 项待闭环；② 对外数字口径收敛：组件 `70+` → **95 个组件条目**、业务类型 `13 种` → **12 种**（口径 = knowledge-base「业务类型文档模式」12 条），覆盖 README / README_CN / SKILL / AGENTS / PROJECT_STATUS / `package.json` / `plugin.json` 及 dsh 副本；③ 修复 `docs/README.md` 索引失效链接（速览 HTML 重命名为 `D-06-` 前缀）+ 补登记 D-07 与速览单页；④ CHANGELOG v1.8.0「未闭环」勾销 + 新增 `[Unreleased]` 段** |
+| **v2.0.0（并入）发布记录** | **（2026-09-18）本轮共 3 个 commit（`6bee93a` 口径收敛 + 复核落档 / `bb6b398` 状态记录 / 收尾记录）——同时补齐此前 GitHub 落后的 2 个 commit（`041b7f7` / `329dcca`）。Gitee 与 GitHub 的 `main` 已一致 ✅（`HEAD` = `gitee/main` = `origin/main`；GitHub 用 `git -c http.https://github.com.proxy= push` 直连，偶发 21s 超时需重试）。遗留：GitHub 仓库 description 仍为 v1.2.0 口径，见「下一步计划」末条** |
+| **v2.0.0（并入）机制可发表性复核与门禁装配** | **（2026-09-18）① D-09 机制可发表性交叉验证（内部文档，**v2.0**）：改按**集成层口径**对撞 8 环 × 6 个候选系统，纳入元规则层，并结合 `gate-audit` 首份实跑数据划定样本使用边界（区分提炼源与正向应用样本、排除循环论证）与论文方向；② **门禁装配落地（首次真正接线）**：新增 `.github/workflows/verify.yml`（push / PR 跑 `--stage=ci`）+ 根 `package.json` `scripts.verify` / `verify:ci`；AGENTS.md 4.6 显式标注「CI 已装配 / pre-push 未装配」，消除 `gates.json` stage 的误导性声明** |
+| **v2.0.0（并入）发布记录②** | **（2026-09-18）commit `ef45df0`（D-09 + CI 装配 + 口径同步）已推送双远程；**GitHub Actions 首跑 success**（run #1 / 14s），装配点已生效。遗留：Gitee 侧无 CI（`.gitee-ci.yml` 未建）、pre-push 钩子未装配（需本地 `git config core.hooksPath .githooks`，未由 agent 代改）** |
+| **v2.0.0** | **生成物不再继承缺陷（2026-10-14）：按「只看缺陷会不会被写进交付给新项目的产物」口径，一次性清除 7 类传染源 + 1 项自查——G1 假绿开关（`--passWithNoTests` 14 处清零，test 步骤改带标记的保留/删除规则）；G2 CI 门禁 job 内联（取消"记得追加"）+ 补齐可运行的 Python / Makefile 宿主；G3 `source` 升级为 `AGENTS#RL-NN@章节名` + 新增红线权威表 `docs/B/B-00-红线与门禁映射.md`；G4 BUG 库 schema 收敛为唯一 `## BUG-NNN`；G5 `drift-check` 全部跳过分支改适用性裁定 + 无源码根回退顶层目录比对；G6 `check-constitution` 新增规则 E（红线无门禁）且权威表缺失时降级但声明风险；G7 每个 CI job 首条命令运行时自证；G8 自查另处置 4 项。防复发锚点写入 `eval-baseline.md` §3.0（7 条可机检）+ §3.4/§3.5 两个关键形态。**含 Breaking Change（source 形态 / 新增必生成产物 / BUG schema），迁移指引见 D-14 / D-15** |
+| **v2.0.0 发布记录** | **（2026-10-14）版本号三处同步为 `2.0.0`（`package.json` / `dsh-plugin/package.json` / `dsh-plugin/plugin.json`）+ AGENTS.md / PROJECT_STATUS 版本口径；新增发布说明 D-14（中文）/ D-15（English）并在 `docs/README.md` 登记；README / README_CN 同步（版本徽章 + 能力表 + 生成物清单 + 独创特性 2 行）。验证：`node scripts/verify.mjs` 0 blocking、`check-constitution` / `docs-check` / `drift-check` 均 0 error、`sync-skill.mjs` 后根与副本 26 文件 + SKILL.md 一致。**未 commit / 未 push / 未 tag（待确认）**** |
 
 ### 本地 DSH 运行环境记录（2026-08-14）
 
@@ -78,7 +80,7 @@ project-blueprint/
 ├── SKILL.md                          # 核心逻辑索引层 (113 行：触发条件/执行原则/Step 索引与按需加载表/输出验收清单/参考文件索引；Step 细节见 references/step-*.md)
 ├── README.md                         # 英文文档 (247 行)
 ├── README_CN.md                      # 中文文档 (247 行，与 README.md 逐条对应)
-├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v1.9.0 + [Unreleased])
+├── CHANGELOG.md                      # 版本记录 (v1.0 ~ v2.0.0)
 ├── LICENSE                           # MIT 协议
 ├── .gitignore
 ├── PROJECT_STATUS.md                 # 本文件
@@ -187,13 +189,16 @@ Step 7: 持续自适应机制
 
 ## 五、已知局限
 
-1. **`drift-check.mjs` 依赖清单解析仅覆盖 Node 系**：检查 A 只解析 `package.json`，未覆盖 `go.mod` / `requirements.txt` / `pom.xml` / `Cargo.toml` 等；非 Node 项目该检查输出 info 跳过（本次真实暴露）
-2. **Monorepo 嵌套模式尚未端到端实跑**：规则已在 `references/monorepo-agents.md` 与 `step-2-assembly.md` 落地，但本次未在真实多子项目仓库上端到端验证生成结果
-3. React 生态 UI 库（MUI / shadcn/ui）仍未列入知识库，依赖联网回退（v1.9.0 的 5 域扩展未覆盖此域）
-4. 知识库仍缺少 Fastify / Actix-web 框架条目（v1.9.0 未补）
-5. Gitee 项目已有 GitHub Actions 时不会主动建议 `.gitee-ci.yml`
-6. 3 层以上多子项目嵌套仍可能需手动再触发一次
-7. `npx skills add` 安装方式依赖 skills.sh 平台
+1. **`drift-check.mjs` 回退模式的方向一仅为 info**：无源码根时改用「仓库顶层目录 ↔ 模块速查表」比对，"表里写了但路径不存在"报 `warning`，但"目录存在但表里没有"只报 `info`（顶层目录含工具 / 文档目录，不必然属于「模块」，报 warning 会刷屏）。**未闭环**：纯文档 / 纯前端项目的"目录漏登记"方向仍无阻断级覆盖（见 `references/gates-templates.md` §8.2）
+2. **红线权威表尚未在本仓库自用**：`docs/B/B-00-红线与门禁映射.md` 已作为交付物写入生成路径（新项目必生成），但本仓库 `scripts/gates.json` 的 `source` 仍是旧形态 `AGENTS#<章节名>`（本仓 AGENTS.md 章节名恰好稳定）。**未闭环**：本仓迁移到权威表后，规则 A'/E 才会在本仓真正生效；迁移前 `check-constitution` 会输出 `warning` 提示
+3. **`scripts/check-constitution.py` 权威表候选路径为硬编码三项**：`docs/B/B-00-红线与门禁映射.md` / `docs/B/B-01-…` / `docs/REDLINES.md`；项目若把权威表放在别处需改脚本内 `REDLINE_FILE_CANDIDATES`（与 Node 版同源，改一处即可）
+4. **Monorepo 嵌套模式尚未端到端实跑**：规则已在 `references/monorepo-agents.md` 与 `step-2-assembly.md` 落地，但本次未在真实多子项目仓库上端到端验证生成结果
+5. React 生态 UI 库（MUI / shadcn/ui）仍未列入知识库，依赖联网回退（v1.9.0 的 5 域扩展未覆盖此域）
+6. 知识库仍缺少 Fastify / Actix-web 框架条目（v1.9.0 未补）
+7. Gitee 项目已有 GitHub Actions 时不会主动建议 `.gitee-ci.yml`
+8. 3 层以上多子项目嵌套仍可能需手动再触发一次
+9. `npx skills add` 安装方式依赖 skills.sh 平台
+10. **生成侧缺陷清除这一批未在真实新项目上端到端验证**：三形态演练在系统临时目录完成（纯文档 / Node 有测试 / Node 无测试），**未**覆盖 Go / Vue / Python 三形态的 CI 产物生成；其"运行时自证 / 门禁内联 / test 条件生成"三条只有模板级与语法级验证
 
 ## 六、下一步计划
 
@@ -208,7 +213,10 @@ Step 7: 持续自适应机制
 - [x] **P2-9 口径漂移修正（v1.9.0 已实施）** — MCP 口径统一为「§一 匹配表 14 行 / §二 18 个工具条目」；行数快照更新为实测值（`SKILL.md` 113 行、`AGENTS.md` 211 行）；README 技术栈汇总行更新为「18 个二级章节（16 个技术栈维度）+ 95 个组件条目」
 - [x] **P2-10 质量评估基准（v1.9.0 已实施）** — 新增 `references/eval-baseline.md`（规模指标 / 闭环指标 / 3 类 golden case 期望产物 / 已知不覆盖项）
 - [x] **P2-12 外部评估复核与对外口径收敛（[Unreleased]，2026-09-18 已实施）** — 新增外部评估复核报告（内部文档 `internal-docs/D-08`）（实跑 4 门禁 / 核对 20+ 项数字 / 独立复核 4 篇 arXiv 与 3 个外部站点；判定评估侧 6 项失实）；组件 `70+` → **95 个组件条目**、业务类型 `13 种` → **12 种**全仓收敛（含 dsh 副本同步）；修复 `docs/README.md` 索引失效链接 + 补登记 D-07 / 速览单页；CHANGELOG v1.8.0「未闭环」勾销。**未闭环**：① GitHub description 仍为 v1.2.0 口径（见末条）；② `docs-check` 索引链接校验仅覆盖 `.md`，`.html` 等非 `.md` 链接属门禁盲区（D-08 §5.6，建议后续补门禁）
+- [x] **P2-13 生成侧缺陷清除 G1~G8（v2.0.0 已实施，2026-10-14）** — 按「只看缺陷会不会被写进交付给新项目的产物」口径，清除 7 类传染源 + 1 项自查：**G1** CI 模板与知识库 14 处 `--passWithNoTests` 全清 + test 步骤带标记保留/删除；**G2** 四种语言 workflow 内联门禁 job（取消"追加片段"）+ 补可运行 Python 宿主与 Makefile 目标；**G3** `source` 升级为 `AGENTS#RL-NN@章节名` + 新增红线权威表 `docs/B/B-00-红线与门禁映射.md`；**G4** BUG 库 schema 收敛为唯一 `## BUG-NNN \| 标题` 并对齐计数口径；**G5** `drift-check` 全部跳过分支改输出适用性裁定 + 无源码根回退顶层目录比对；**G6** `check-constitution` 换用本仓 A/B/C/D 实现 + 新增规则 E（红线无门禁）+ 权威表缺失时降级但声明风险；**G7** 每个 CI job 首条命令运行时自证；**G8** 自查另处置 4 项（失效规则编号引用 / 幽灵宿主 / source 不同源 / 编号语义漂移）。防复发锚点写入 `references/eval-baseline.md` §3.0（7 条可机检）+ §3.4/§3.5（两个关键形态）。发版内容含 **Breaking Change**（见 CHANGELOG `[2.0.0]` 与 D-14 / D-15 迁移指引）。**未闭环**：见「已知局限」1~3 与 10
 - [ ] **P3-11 DSH 监察插件（设计已闭环，未实施）** — 见内部文档 `internal-docs/D-07`。定位：**旁挂只读监察员**（零配置可跑 + 一键初始化 + 递条子永不写项目）；最小可信版本 = 3 条检查（超大文件 / 重复造轮子 / 门禁有效性）+ 画像 + 豁免 + 误报闭环；差异化在**过程合规**（监控 AI 正在新增的代码）与**规范体系自身健康度**（皆为生态真空）。**前置约束**：引入真实代码将改变本仓库「纯 Markdown、无代码、无构建、无测试」的性质，须先同步修订 `AGENTS.md` 首节身份描述并补测试制度；待定项：插件命名 / 阈值口径 / 重复造轮子相似度算法
+- [ ] **P3-14 本仓库自身迁移到红线权威表** — 新建 `docs/B/B-00-红线与门禁映射.md`（登记本仓现有红线）+ 把 `scripts/gates.json` 两条门禁的 `source` 改为 `AGENTS#RL-01@文档规范` / `AGENTS#RL-02@模块速查表`，使规则 A'/E 在本仓真正生效（见「已知局限」2）
+- [ ] **P3-15 Go / Vue / Python 三形态 CI 产物端到端演练** — 补齐本批未覆盖的形态（见「已知局限」10）
 - [ ] 收集开源社区反馈和使用案例
 - [ ] 扩展知识库覆盖更多框架和组件
 - [ ] 提交到 skills.sh 官方目录

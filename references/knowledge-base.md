@@ -57,18 +57,18 @@
 ### Next.js (App Router)
 **Commands**: `pnpm dev` / `pnpm build` / `pnpm start` / `pnpm db:push` / `pnpm lint` / `npm run test -- path.spec.ts`
 **Conventions**: ✅ Server Components 优先 / ✅ 'use client' 仅交互组件 / ✅ loading.tsx + error.tsx 每路由段 / ❌ Pages Router / ❌ Client Component 中 import prisma
-**CI job**: `pnpm/action-setup@v2` + `setup-node@v4` + `pnpm install --frozen-lockfile` + `pnpm lint` + `pnpm test -- --passWithNoTests` + `pnpm build`
+**CI job**: `pnpm/action-setup@v2` + `setup-node@v4` + `pnpm install --frozen-lockfile` + `pnpm lint` + `pnpm test` + `pnpm build`
 
 ### Vue 3 + Vite
 **Commands**: `pnpm dev` / `pnpm build` / `pnpm preview` / `pnpm lint` / `pnpm test:unit` / `pnpm typecheck`
 **Conventions**: ✅ `<script setup lang="ts">` / ✅ defineProps + defineEmits 显式类型 / ✅ composables 放 composables/ / ❌ Options API / ❌ class 组件
-**CI job**: `pnpm/action-setup@v2` + `setup-node@v4` + `pnpm install --frozen-lockfile` + `pnpm typecheck` + `pnpm lint` + `pnpm test:unit -- --passWithNoTests`
+**CI job**: `pnpm/action-setup@v2` + `setup-node@v4` + `pnpm install --frozen-lockfile` + `pnpm typecheck` + `pnpm lint` + `pnpm test:unit`
 **Gate**: 类型错误 → pnpm typecheck (vue-tsc --noEmit) / lint 错误 → pnpm lint / 调试残留 → eslint no-console
 
 ### React + Vite
 **Commands**: `pnpm dev` / `pnpm build` / `pnpm preview` / `pnpm lint` / `pnpm test` / `pnpm typecheck`
 **Conventions**: ✅ 函数组件 + Hooks / ✅ Props interface（非 type） / ✅ Zustand 跨组件状态 / ❌ class 组件 / ❌ React.FC / ❌ default export
-**CI job**: `pnpm/action-setup@v2` + `setup-node@v4` + `pnpm install --frozen-lockfile` + `pnpm typecheck` + `pnpm lint` + `pnpm test -- --passWithNoTests`
+**CI job**: `pnpm/action-setup@v2` + `setup-node@v4` + `pnpm install --frozen-lockfile` + `pnpm typecheck` + `pnpm lint` + `pnpm test`
 
 ### Go + Gin
 **Commands**: `go run ./cmd/server` / `go build ./...` / `go test ./...` / `go vet ./...` / `golangci-lint run`
@@ -78,7 +78,7 @@
 ### Python + FastAPI
 **Commands**: `uvicorn main:app --reload` / `python -m pytest` / `ruff check .` / `mypy src/` / `black .`
 **Conventions**: ✅ Pydantic v2 model_validate / ✅ async/await for DB / ✅ Depends 依赖注入 / ✅ HTTPException with detail / ❌ print() → logging / ❌ `from module import *`
-**CI job**: `setup-python@v5` python-version '3.12' + `pip install -r requirements.txt` + `ruff check .` + `mypy src/` + `python -m pytest --passWithNoTests`
+**CI job**: `setup-python@v5` python-version '3.12' + `pip install -r requirements.txt` + `ruff check .` + `mypy src/` + `python -m pytest`
 
 ### Spring Boot
 **Commands**: `./gradlew bootRun` / `./gradlew test` / `./gradlew build` / `mvn spring-boot:run` / `mvn test` / `mvn verify`
@@ -93,12 +93,12 @@
 ### Django
 **Commands**: `python manage.py runserver` / `python manage.py test` / `python manage.py makemigrations` / `python manage.py migrate`
 **Conventions**: ✅ class-based views / ✅ ModelForm for validation / ✅ select_related / prefetch_related 防 N+1 / ❌ raw SQL unless necessary / ❌ business logic in views
-**CI job**: `setup-python@v5` python-version '3.12' + `pip install -r requirements.txt` + `python manage.py test --passWithNoTests`
+**CI job**: `setup-python@v5` python-version '3.12' + `pip install -r requirements.txt` + `python manage.py test`
 
 ### Flask
 **Commands**: `flask run --debug` / `python -m pytest` / `ruff check .`
 **Conventions**: ✅ Blueprint 模块化 / ✅ app factory 模式 / ✅ marshmallow / Pydantic 校验 / ❌ Flask-Script → Click / ❌ global request in service
-**CI job**: `setup-python@v5` + `pip install -r requirements.txt` + `ruff check .` + `python -m pytest --passWithNoTests`
+**CI job**: `setup-python@v5` + `pip install -r requirements.txt` + `ruff check .` + `python -m pytest`
 
 ### Nuxt 3
 **Commands**: `pnpm dev` / `pnpm build` / `pnpm preview` / `pnpm lint` / `pnpm test`
@@ -113,7 +113,7 @@
 ### Laravel
 **Commands**: `php artisan serve` / `php artisan test` / `composer pint` / `php artisan migrate`
 **Conventions**: ✅ Eloquent relationships over raw joins / ✅ Form Request validation / ✅ Queues for heavy async / ❌ N+1 → `with()` eager load / ❌ business logic in blade
-**CI job**: `setup-php@v2` php-version '8.3' + `composer install` + `composer pint -- --test` + `php artisan test --passWithNoTests`
+**CI job**: `setup-php@v2` php-version '8.3' + `composer install` + `composer pint -- --test` + `php artisan test`
 
 ### Hono
 **Commands**: `pnpm dev` / `pnpm build` / `pnpm test`
@@ -223,19 +223,19 @@
 ### Vitest
 **Commands**: `npx vitest` / `npx vitest --coverage` / `npx vitest --ui`
 **Conventions**: ✅ describe / it 语义化 / ✅ `vi.fn()` / `vi.spyOn()` mock / ❌ 测试间共享可变状态 / ❌ setTimeout 不 await
-**CI job**: `setup-node@v4` + `npm ci` + `npx vitest run --coverage --passWithNoTests`
+**CI job**: `setup-node@v4` + `npm ci` + `npx vitest run --coverage`（零用例时 vitest 默认非 0 退出，禁止 `--passWithNoTests`）
 **Gate**: 测试失败 → npx vitest run / 覆盖率阈值 → test:cov 配置 threshold 后据此退出非 0
 
 ### Jest
 **Commands**: `npx jest` / `npx jest --coverage` / `npx jest --watch`
 **Conventions**: ✅ `jest.mock()` 模块级别 / ✅ `beforeEach` 重置状态 / ❌ 异步测试无 `await expect().rejects` / ❌ 测试代码依赖执行顺序
-**CI job**: `setup-node@v4` + `npm ci` + `npx jest --coverage --passWithNoTests`
+**CI job**: `setup-node@v4` + `npm ci` + `npx jest --coverage`（零用例时 jest 默认非 0 退出，禁止 `--passWithNoTests`）
 **Gate**: 测试失败 → npx jest --runInBand / 覆盖率阈值 → test:cov 配置 threshold 后据此退出非 0
 
 ### pytest
 **Commands**: `python -m pytest` / `python -m pytest --cov` / `python -m pytest -k "pattern"`
 **Conventions**: ✅ `fixture` 复用 setup / ✅ `parametrize` 多 case / ✅ `conftest.py` 共享 fixtures / ❌ `assert` 用于库代码 / ❌ 测试间共享可变 fixture state
-**CI job**: `setup-python@v5` + `pip install -r requirements.txt` + `python -m pytest --cov --passWithNoTests`
+**CI job**: `setup-python@v5` + `pip install -r requirements.txt` + `python -m pytest --cov`
 
 ### JUnit 5
 **Commands**: `./gradlew test` / `mvn test`
@@ -414,7 +414,7 @@
 - uses: actions/setup-python@v5
   with: { python-version: '3.12' }
 - run: pip install -r requirements.txt
-- run: python -m pytest --passWithNoTests   # 用假 embedding 测索引/检索
+- run: python -m pytest   # 用假 embedding 测索引/检索；零用例时 pytest 退出码 5（判红），禁止用 --passWithNoTests 兜底
 ```
 **Gate**: 硬编码密钥 → 密钥扫描（见「硬编码密钥 / Token」） / 缓存目录入库 → `.gitignore` 含缓存目录 + `git ls-files` 断言无命中 / 依赖清单漂移 → 比对 `requirements*.txt` / `pyproject.toml` 与 AGENTS.md 技术栈行（见「依赖清单 ↔ 规范漂移」）
 

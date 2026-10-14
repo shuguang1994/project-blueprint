@@ -1,5 +1,6 @@
 # Step 3：建立自适应文档体系
 
+> 版本: v2.0 | 更新: 2026-10-14
 > `SKILL.md` Step 3 的完整实现细节，由 SKILL.md 的「Step 索引与按需加载」表按需加载。
 > 关联：references/code-conventions.md、references/ai-common-mistakes.md、references/knowledge-base.md、references/mcp-tools.md、references/gates-templates.md、references/docs-check.mjs、references/ai-work-protocol.md、references/docs-skeleton.md、references/spec-driven.md、references/step-5-ci-and-gates.md
 
@@ -125,15 +126,26 @@ docs/
 
 > 一~六章内容从 code-conventions.md 提取（核心规则进 AGENTS.md，详细进本文件）；七章从 knowledge-base.md 组件 Conventions 展开；八章从 ai-common-mistakes.md 按技术栈裁剪。
 
-**B-04-BUG知识库.md 模板结构**（修复典型 Bug 时记录，含「是否规范缺失」与「规范反哺」字段）：
+**BUG 知识库（`docs/B/B-04-BUG知识库.md`）模板结构**（修复典型 Bug 时记录，含「是否规范缺失」与「规范反哺」字段）
+
+> **schema 唯一源 = 本模板**（`references/docs-skeleton.md` 的 B-04 条目定义与之同源）：条目标题一律 `## BUG-<NNN> | <标题>`（三位补零），顶部须有「症状速查表」。`references/ai-work-protocol.md` 第六章给的是**条目内部结构**的等价展开，`references/eval-baseline.md` 的转化率分母按 `## BUG-` 标题计数——三处口径一致，**改一处必须同步另外两处**。
 
 ```markdown
 # BUG 知识库
 
 > 典型 Bug 记录与规范反哺闭环。每条 Bug 记录后检查是否暴露规范缺失。更新: {date}
 
-## {BUG 编号} | {标题}
-- 现象 / 根因 / 修复方案
+## 症状速查表
+
+| 关键词（用户 / 开发者可观察到的现象） | 条目 |
+|--------------------------------------|------|
+| {现象关键词} | → BUG-001 |
+
+## BUG-<NNN> | <标题>
+- 症状关键词: {与上表关键词一致}
+- 症状 / 根因（含 `文件:行号`）/ 修复方案（❌ 错误写法 → ✅ 正确写法）
+- 预防措施: {可执行的检查 → 对应门禁命令或脚本路径；不可机检则标 `[无门禁]` + 写明原因}
+- 实例: {文件链接} + {日期}
 - 是否规范缺失: 是 / 否
 - 规范反哺: {若是 → 补充 B-01-开发规范.md 第X章规则 + AGENTS.md 强制规范新增一条 ✅/❌ 防复发}
 - 关联: {组件知识库 / ai-common-mistakes 条目 / 出现次数}
@@ -251,21 +263,24 @@ Step 1 探测结果
 | 文件 | 说明 | 触发条件 | 模板来源 |
 |---|---|---|---|
 | `scripts/gates.json` | 门禁清单（唯一事实源） | 始终（至少 2 条种子门禁） | `references/gates-templates.md` §一 / §八 |
-| `scripts/verify.{mjs\|py\|sh}` | 统一门禁入口（从清单读取执行） | 始终 | `references/gates-templates.md` §二 |
-| `scripts/check-constitution.{mjs\|py}` | 宪法自校验（红线 ↔ 门禁双向比对） | 生成 AGENTS.md 后始终 | `references/gates-templates.md` §三 |
+| `docs/B/B-00-红线与门禁映射.md` | **红线权威表**（`gates.json` 的 `source` 唯一引用源；`RL-NN` 稳定 ID + 档位 + 对应门禁） | **始终，且与 `gates.json` 同时生成** | `references/gates-templates.md` §一之二 |
+| `scripts/verify.{mjs\|py\|sh}` 或 `Makefile` 的 `verify` 目标 | 统一门禁入口（从清单读取执行） | 始终 | `references/gates-templates.md` §二（Node）/ §五（Python / Makefile） |
+| `scripts/check-constitution.{mjs\|py}` | 宪法自校验（红线权威表 ↔ 门禁双向比对，规则 A~E） | 生成红线权威表后始终 | `references/gates-templates.md` §三（Node）/ §五（Python）/ `references/check-constitution-py-template.md` |
 | `scripts/docs-check.{mjs\|py}` | 文档一致性校验（种子门禁 `docs-consistency`） | 生成 docs/ 后始终 | `references/docs-check.mjs` / `references/gates-templates.md` §八 |
-| `scripts/drift-check.{mjs\|py}` | 规范漂移校验（种子门禁 `spec-drift`：依赖↔规范 / 模块速查表↔目录 / 门禁有效性） | 生成 AGENTS.md 后始终 | `references/gates-templates.md` §八 / 参考实现 `references/drift-check.mjs` |
+| `scripts/drift-check.{mjs\|py}` | 规范漂移校验（种子门禁 `spec-drift`：依赖↔规范 / 模块速查表↔目录 / 门禁有效性 / **测试框架↔CI test 步骤**） | 生成 AGENTS.md 后始终 | `references/gates-templates.md` §八 / 参考实现 `references/drift-check.mjs` |
 | `scripts/checks/<id>.*` | 具体检查脚本 | 按需（生长出来的领域门禁） | 按 `references/gates-templates.md` §五翻译 |
-| `docs/B/B-06-门禁与工作协议.md` | AI 编程工作协议 + 门禁生长细则 | **中大型项目**（按规模阈值） | `references/ai-work-protocol.md` |
-| `docs/B/B-04-BUG知识库.md` | 缺陷模式库（编号唯一 + 症状速查表 + 预防措施绑定门禁） | 始终 | 本文件 Step 3.1 现有模板（需按其升级后的要素生成） |
+| `docs/B/B-07-门禁与工作协议.md` | AI 编程工作协议 + 门禁生长细则 | **中大型项目**（按规模阈值） | `references/ai-work-protocol.md` |
+| `docs/B/B-04-BUG知识库.md` | 缺陷模式库（`## BUG-NNN` 编号唯一 + 症状速查表 + 预防措施绑定门禁） | 始终 | 本文件 Step 3.1 模板（**schema 唯一源**） |
 
 **B. 门禁种子规则**
 
-初始化时**至少播种 2 条种子门禁**：`docs-consistency`（文档一致性，`source`: `AGENTS#文档契约`）+ `spec-drift`（规范漂移，`source`: `AGENTS#技术栈`）。`level` 按项目存量情况定：**新项目 `blocking`，已有存量（文档 / 规范债）的项目 `warn`**。小项目只播种这两条，**不生成 `scripts/checks/` 目录**。完整清单、`source` 取值与 `gates.json` 条目示例见 `references/gates-templates.md` §八（**以该文件为准**）。
+初始化时**至少播种 2 条种子门禁**：`docs-consistency`（文档一致性，`source`: `AGENTS#RL-01@文档契约`）+ `spec-drift`（规范漂移，`source`: `AGENTS#RL-02@技术栈`）；**同时**在 `docs/B/B-00-红线与门禁映射.md` 中登记 `RL-01` / `RL-02` 两条 `blocking` 红线。`level` 按项目存量情况定：**新项目 `blocking`，已有存量（文档 / 规范债）的项目 `warn`**。小项目只播种这两条，**不生成 `scripts/checks/` 目录**。完整清单、`source` 取值、权威表结构与 `gates.json` 条目示例见 `references/gates-templates.md` §一之二 / §八（**以该文件为准**）。
+
+> **`source` 的必要形态**：`AGENTS#<红线 ID>@<章节名>`。缺 `<红线 ID>`（只写章节名）时 `check-constitution` 规则 A' 记 `warning`（章节改名即静默断链）；**权威表未生成**时规则 A/E 双双降级，违宪审查只剩"查僵尸门禁"一半——这两种情况都必须当场修掉，不得带着降级态交付。
 
 **C. 宿主选择**
 
-脚本宿主（`{mjs|py|sh}` / Makefile）按 **`references/step-5-ci-and-gates.md` 的 Step 5.5 宿主选择规则**确定，此处只说明"生成物扩展名取决于宿主"。
+脚本宿主（`{mjs|py|sh}` / Makefile `verify` 目标）按 **`references/step-5-ci-and-gates.md` 的 Step 5.5 宿主选择规则**确定。**硬性要求**：CI 里引用了某个宿主，就必须真的产出它（`references/gates-templates.md` §五 给出 `scripts/verify.py` / `scripts/check-constitution.py` 的可运行实现与 Makefile 目标；**未产出宿主就不得在 CI 中引用**——那会让 CI 从未跑过门禁）。
 
 **D. 生成内容时必须同时写入**
 
@@ -286,7 +301,7 @@ Step 1 探测结果
   - `docs/E/README.md`: "分析优化。定期审计时更新。"
 - docs/ 已存在 → 只补缺失
 - 文件名中英双语
-- **按规模阈值触发（避免过度工程）**：判定项目规模（源码文件数 / 是否多人协作 / 是否已有测试与 CI）。**低于阈值的项目**只生成两条种子门禁（`docs-consistency` + `spec-drift`）及对应检查脚本 + 统一入口 `scripts/verify.*`，**不生成** `scripts/checks/` 目录与 `docs/B/B-06-门禁与工作协议.md`；**达到阈值的项目**全量生成门禁层与协议文档。阈值默认：源码文件 ≥ 30 个 或 已存在 CI 配置 或 已发生 ≥ 3 次回归缺陷
+- **按规模阈值触发（避免过度工程）**：判定项目规模（源码文件数 / 是否多人协作 / 是否已有测试与 CI）。**低于阈值的项目**只生成两条种子门禁（`docs-consistency` + `spec-drift`）、红线权威表 `docs/B/B-00-红线与门禁映射.md` 及对应检查脚本 + 统一入口 `scripts/verify.*`，**不生成** `scripts/checks/` 目录与 `docs/B/B-07-门禁与工作协议.md`；**达到阈值的项目**全量生成门禁层与协议文档。阈值默认：源码文件 ≥ 30 个 或 已存在 CI 配置 或 已发生 ≥ 3 次回归缺陷
 
 ### 详细参考
 见 `references/docs-skeleton.md`

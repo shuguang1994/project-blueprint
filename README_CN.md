@@ -5,6 +5,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![skills.sh](https://img.shields.io/badge/skills.sh-project--blueprint-orange)](https://skills.sh)
+[![version](https://img.shields.io/badge/version-2.0.0-blue)](CHANGELOG.md)
+[![breaking change](https://img.shields.io/badge/%E5%8D%87%E7%BA%A7%E8%AF%B4%E6%98%8E-v2.0.0%20Breaking%20Change-informational)](CHANGELOG.md#200---2026-10-14)
 
 **标签 (Topics)** ·
 [![dsh-plugin](https://img.shields.io/badge/dsh--plugin-blue)](https://github.com/topics/dsh-plugin)
@@ -75,11 +77,12 @@ dsh plugin --profile web add 'github:shuguang1994/project-blueprint'
 | **基础代码规范实写**    | 初始化即写入基础代码规范（命名/目录结构/错误处理/日志/安全/性能 6 类），B-01 实写 8 章，非占位符 |
 | **AI 高频错误防犯**    | 内置 7 大类 27 条 AI 高频错误知识库，初始化优先注入防犯规则，BUG 反哺持续迭代 |
 | **宪法层与门禁生长**    | AGENTS.md 写入元规则 + 6 步生长流程，项目的 AI 在开发中按宪法自动长出领域门禁 |
-| **门禁清单与统一入口**   | `scripts/gates.json` 唯一事实源 + `verify.*` 统一入口 + `check-constitution` 宪法自校验 |
+| **门禁清单与统一入口**   | `scripts/gates.json` 唯一事实源 + `verify.*` 统一入口；CI 中**门禁 job 已内联**，不依赖"记得追加"；每个 job 首条命令**运行时自证**（`command -v` + 版本打印），缺运行时在第一行暴露 |
+| **红线权威表 + 双向违宪审查** | 稳定 ID（`RL-NN`，append-only）+ `docs/B/B-00-红线与门禁映射.md` 为 `source` 唯一引用源；`check-constitution` 规则 A~E **双向**校验——既查"门禁成僵尸"，也查"**有红线却无门禁**"（规则 E）；权威表缺失时降级但**显式声明未覆盖风险**，不静默给绿 |
 | **文档契约与校验**     | 文档状态头/编号/索引契约 + `docs-check` 校验脚本（error 阻断 / warning 不阻断） |
 | **AI 编程工作协议**    | 7 步任务生命周期 + 证据标准 + DoD + 缺陷复盘模板 |
 | **规范驱动开发六阶段**   | specify → plan → tasks → checklist → implement → verify；spec checklist 可直接注册为门禁（`source: spec#<change-id>`） |
-| **规范漂移门**        | 种子门禁校验依赖清单↔AGENTS.md 技术栈行、模块速查表↔实际目录、门禁有效性（`drift-check.*`） |
+| **规范漂移门**        | 种子门禁校验依赖清单↔AGENTS.md 技术栈行、模块速查表↔实际目录、门禁有效性、**测试框架↔CI test 步骤**（`drift-check.*`）；**无源码根时回退到顶层目录比对**，不适用时输出**适用性裁定**（原因/风险/裁定），不静默跳过 |
 
 ## 生成内容一览
 
@@ -88,20 +91,21 @@ dsh plugin --profile web add 'github:shuguang1994/project-blueprint'
 | `AGENTS.md`                 | 项目规范（架构原则约束：高内聚低耦合 / 组合优于继承 / 避免全局状态 / 纯函数优先）；monorepo 下为「全局约束 + 子项目索引」 |
 | `<子项目>/AGENTS.md`          | ≥2 个构建/清单文件时的各子项目包级规范（monorepo：根 = 全局 + 索引，包 = 就近包级，closest-file-wins） |
 | `docs/`                     | A/B/C/D/E 五级分类文档骨架 + 分类 README 维护指令（含 B-01-开发规范，实写 8 章）           |
-| `.github/workflows/ci.yml`  | CI 流水线（语言自适应，支持 GitHub/Gitee/其他）              |
+| `docs/B/B-00-红线与门禁映射.md`    | **红线权威表**（`source` 唯一引用源）：`RL-NN` 稳定 ID + 档位 + 对应门禁 + 无门禁原因；与 `gates.json` **同时生成** |
+| `.github/workflows/ci.yml`  | CI 流水线（语言自适应，支持 GitHub/Gitee/其他）；**门禁 job 已内联** + 运行时自证；test 步骤按探测结果保留/删除（**无 `--passWithNoTests` 假绿开关**） |
 | `.gitignore`                | 按语言选择的精选规则                                    |
 | `CHANGELOG.md`              | 版本记录（[Unreleased] 初始化占位，发版按 AGENTS.md 发布规范更新） |
 | `.husky/pre-commit`         | JS/TS 项目提交前 lint 检查（非 JS 项目跳过）                |
 | `CLAUDE.md`                 | Claude Code 指向文件（基线）                          |
 | `.cursor/rules/project.mdc` | Cursor 指向文件（基线 + 私有增强层）                        |
-| `docs/B/B-03-测试指南.md`       | 测试制度（分层策略、编写时机、框架特定模式）                        |
+| `docs/B/B-03-测试指南.md`       | 测试制度（分层策略、编写时机、框架特定模式）；未生成 CI test 步骤时写入「建立测试后补 CI test 步骤」契约 |
 | `docs/B/B-05-MCP工具清单.md`    | MCP 工具清单 + 组合建议 + 安装命令（按需生成）                  |
-| `scripts/gates.json`        | 门禁清单（唯一事实源，含来源/级别/装配阶段/命令；默认播种 2 条种子门禁）       |
-| `scripts/verify.*`          | 门禁统一入口（宿主按项目自适应：Node/Python/make/shell）          |
-| `scripts/check-constitution.*` | 宪法自校验（AGENTS.md 红线 ↔ 门禁清单双向一致）                 |
+| `scripts/gates.json`        | 门禁清单（唯一事实源，含来源/级别/装配阶段/命令；默认播种 2 条种子门禁，`source` 形如 `AGENTS#RL-01@文档契约`） |
+| `scripts/verify.*`          | 门禁统一入口（宿主按项目自适应：Node/Python/make/shell；**Python 与 Makefile 宿主均提供可运行实现**，未产出宿主不得在 CI 引用） |
+| `scripts/check-constitution.*` | 宪法自校验（红线权威表 ↔ 门禁清单**双向**一致；规则 A / A' / B / C / D / E） |
 | `scripts/docs-check.*`      | 文档一致性校验（编号/状态头/索引/归档冲突 + 体积；**校验范围自适应**：遍历 `docs/` 实际存在的子目录；error 阻断） |
-| `scripts/drift-check.*`     | 规范漂移校验（依赖↔技术栈行 / 模块速查表↔实际目录 / 门禁有效性）—— 第二条种子门禁 `spec-drift` |
-| `docs/B/B-06-门禁与工作协议.md`   | 门禁生长流程 + 证据标准 + DoD（中大型项目按需生成）                 |
+| `scripts/drift-check.*`     | 规范漂移校验（依赖↔技术栈行 / 模块速查表↔实际目录 / 门禁有效性 / **测试框架↔CI test 步骤**）—— 第二条种子门禁 `spec-drift` |
+| `docs/B/B-07-门禁与工作协议.md`   | 门禁生长流程 + 证据标准 + DoD（中大型项目按需生成）                 |
 
 > **按需生成**：小型项目只生成单条门禁 + 统一入口，不生成完整门禁层与协议文档（保持轻量，避免过度工程）。
 
@@ -174,6 +178,8 @@ Project Blueprint 不预设"检查哪些文件"。它扫描你的项目，自主
 | **模块速查表自动生成**     | 读取实际源码目录，按文件模式推断职责，无法确定时联网搜索                                    | 无竞品提供                                           |
 | **MCP 工具自动推荐**    | **按**探测技术栈三层递进自动匹配 MCP 工具，输出组合建议（必装/推荐/可选）+ 可执行安装文档；双层联网保障命令不过时 | 竞品仅预设固定 MCP 配置（如 Project Genesis Phase 9），无自主推荐 |
 | **7 语言 15 框架知识库** | 95 个组件条目含 Commands + Conventions + CI，中文为第一语言                     | 竞品最多覆盖 JS/TS 生态                                 |
+| **红线权威表 + 双向违宪审查** | 红线以稳定 ID（`RL-NN`）落表，`gates.json` 的 `source` 引用它；校验**双向**——既查门禁成僵尸，也查"**有红线却无门禁**"（规则 E）；权威表缺失时降级并**声明未覆盖风险**，不静默给绿 | 竞品的规范文件是散文，改章节名即断链且无人发现；无"红线↔门禁"双向校验 |
+| **CI 门禁内联 + 运行时自证** | 门禁 job 直接内联进每种语言 workflow（不依赖"记得追加"）；每个 job 首条命令 `command -v` + 版本打印，缺运行时在**第一行**暴露 | 竞品模板多为片段式，接线靠人工且失败模式静默 |
 
 ## 与众不同之处
 
